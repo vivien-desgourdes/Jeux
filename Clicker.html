@@ -411,4 +411,228 @@ const ACHIEVEMENTS = [
   {id:'a6', emoji:'🧚',label:'1ère fée',            check:()=>gens.fairy>=1},
   {id:'a7', emoji:'💎',label:'10 000 étoiles',      check:()=>totalEarned>=10000},
   {id:'a8', emoji:'🦄',label:'1ère licorne',        check:()=>gens.unicorn>=1},
-  {id:'a9', emoji:'✨',label:'1er prestige',        
+  {id:'a9', emoji:'✨',label:'1er prestige',        check:()=>prestige>=1},
+  {id:'a10',emoji:'🐉',label:'1er dragon',          check:()=>gens.dragon>=1},
+  {id:'a11',emoji:'🪄',label:'10 baguettes',        check:()=>gens.wand>=10},
+  {id:'a12',emoji:'🌈',label:'1 million',           check:()=>totalEarned>=1e6},
+  {id:'a13',emoji:'🏰',label:'1er château',         check:()=>gens.castle>=1},
+  {id:'a14',emoji:'🌌',label:'1ère galaxie',        check:()=>gens.galaxy>=1},
+  {id:'a15',emoji:'👑',label:'Prestige ×5',         check:()=>prestige>=5},
+];
+
+let score=0,totalEarned=0,prestige=0,clickMult=1,totalClicks=0,critCount=0;
+let gens={},genCosts={},genBoosts={},achUnlocked=new Set();
+
+GEN_DATA.forEach(g=>{gens[g.id]=0;genCosts[g.id]=g.baseCost;genBoosts[g.id]=1;});
+
+function boostGen(id,m){genBoosts[id]=(genBoosts[id]||1)*m;}
+
+function fmt(n){
+  if(n>=1e15)return(n/1e15).toFixed(2)+'Q';
+  if(n>=1e12)return(n/1e12).toFixed(2)+'T';
+  if(n>=1e9) return(n/1e9).toFixed(2)+'Md';
+  if(n>=1e6) return(n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return(n/1e3).toFixed(1)+'K';
+  return Math.floor(n).toString();
+}
+
+function getPerSec(){
+  let t=0;
+  GEN_DATA.forEach(g=>t+=gens[g.id]*g.base*(genBoosts[g.id]||1));
+  return t*clickMult*(1+prestige*0.25);
+}
+function getClickVal(){return Math.max(1,Math.floor(clickMult*(1+prestige*0.1)));}
+
+function buildGenerators(){
+  const c=document.getElementById('genList');c.innerHTML='';
+  GEN_DATA.forEach(g=>{
+    const d=document.createElement('div');
+    d.className='gen-item';d.id='gen_'+g.id;
+    d.innerHTML=`<div class="gen-emoji">${g.emoji}</div>
+      <div class="gen-info"><div class="gen-name">${g.name}</div><div class="gen-desc">${g.desc}</div></div>
+      <div class="gen-right"><div class="gen-count" id="gc_${g.id}">0</div>
+      <div class="gen-cost-row">🪙 <span id="gco_${g.id}">${fmt(g.baseCost)}</span></div></div>`;
+    d.onclick=()=>buyGen(g.id);c.appendChild(d);
+  });
+}
+
+function buildUpgrades(){
+  const c=document.getElementById('upgradeList');c.innerHTML='';
+  UPGRADES.forEach(u=>{
+    const d=document.createElement('div');
+    d.className='upg-item';d.id='upg_'+u.id;
+    d.innerHTML=`<div class="upg-emoji">${u.emoji}</div>
+      <div class="upg-info"><div class="upg-name">${u.name}</div><div class="upg-desc">${u.desc}</div></div>
+      <div class="upg-cost">🪙${fmt(u.cost)}</div>`;
+    d.onclick=()=>buyUpgrade(u.id);c.appendChild(d);
+  });
+}
+
+function buildAch(){
+  const g=document.getElementById('achGrid');g.innerHTML='';
+  ACHIEVEMENTS.forEach(a=>{
+    const d=document.createElement('div');
+    d.className='ach-badge';d.id='ach_'+a.id;
+    d.innerHTML=`${a.emoji}<div class="tip">${a.label}</div>`;
+    g.appendChild(d);
+  });
+}
+
+document.getElementById('clickBtn').addEventListener('click',e=>{
+  totalClicks++;
+  const isCrit=Math.random()<0.05;
+  const base=getClickVal();
+  const gain=isCrit?base*10:base;
+  score+=gain;totalEarned+=gain;
+  if(isCrit){
+    critCount++;
+    spawnNum('⭐×10 SUPER!',e.clientX,e.clientY,'crit');
+    const el=document.createElement('div');el.className='crit-overlay';
+    document.body.appendChild(el);setTimeout(()=>el.remove(),400);
+  }else{
+    spawnNum('+'+fmt(gain)+'⭐',e.clientX,e.clientY,'');
+  }
+  const s=document.getElementById('score');
+  s.classList.remove('pop');void s.offsetWidth;s.classList.add('pop');
+  setTimeout(()=>s.classList.remove('pop'),100);
+  updateUI();
+});
+
+function buyGen(id){
+  const cost=genCosts[id];if(score<cost)return;
+  score-=cost;gens[id]++;genCosts[id]=Math.floor(cost*1.15);updateUI();
+}
+
+function buyUpgrade(uid){
+  const u=UPGRADES.find(x=>x.id===uid);
+  if(!u||u.done||score<u.cost)return;
+  score-=u.cost;u.done=true;u.apply();
+  notify(u.emoji+' '+u.name,u.desc+' activé !');updateUI();
+}
+
+document.getElementById('prestigeBtn').onclick=()=>{
+  if(score<10000)return;
+  const gain=Math.floor(Math.sqrt(score/10000));
+  prestige+=gain;
+  notify('✨ Prestige !',`+${gain} pts de prestige gagnés !`);
+  resetGame();updateUI();
+};
+
+function resetGame(){
+  score=0;clickMult=1;
+  GEN_DATA.forEach(g=>{gens[g.id]=0;genCosts[g.id]=g.baseCost;genBoosts[g.id]=1;});
+  UPGRADES.forEach(u=>{u.done=false;});buildUpgrades();
+}
+
+function updateUI(){
+  const ps=getPerSec(),cv=getClickVal();
+  document.getElementById('score').textContent=fmt(score);
+  document.getElementById('scoreHeader').textContent=fmt(score);
+  document.getElementById('perSec').textContent=fmt(ps);
+  document.getElementById('perClick').textContent=fmt(cv);
+  document.getElementById('prestigeHeader').textContent='×'+(1+prestige*0.25).toFixed(2);
+  document.getElementById('prestigeDisplay').textContent=prestige+' ✨';
+  document.getElementById('prestigeBonus').textContent='+'+(prestige*25)+'% bonus';
+  const pct=Math.min(100,(score/10000)*100);
+  document.getElementById('prestigeBar').style.width=pct+'%';
+  document.getElementById('prestigeProgress').textContent=fmt(score)+' / 10K';
+  const pGain=score>=10000?'+'+Math.floor(Math.sqrt(score/10000))+' pts':'';
+  document.getElementById('prestigePreview').textContent=
+    score>=10000?`🎉 Reset pour gagner ${pGain} de prestige !`:`Atteignez 10 000 étoiles 🌟`;
+  document.getElementById('prestigeBtn').disabled=score<10000;
+
+  const level=Math.floor(1+Math.log10(Math.max(1,totalEarned)));
+  const next=Math.pow(10,level),prev=Math.pow(10,level-1);
+  const lp=Math.min(100,((totalEarned-prev)/(next-prev))*100);
+  document.getElementById('levelBadge').textContent='Niveau '+level;
+  document.getElementById('levelBar').style.width=lp+'%';
+  document.getElementById('levelNext').textContent=fmt(next);
+
+  GEN_DATA.forEach(g=>{
+    const el=document.getElementById('gen_'+g.id);if(!el)return;
+    document.getElementById('gc_'+g.id).textContent=gens[g.id];
+    document.getElementById('gco_'+g.id).textContent=fmt(genCosts[g.id]);
+    el.classList.toggle('cant-afford',score<genCosts[g.id]);
+  });
+
+  UPGRADES.forEach(u=>{
+    const el=document.getElementById('upg_'+u.id);if(!el)return;
+    el.classList.toggle('bought',u.done);
+    if(!u.done)el.classList.toggle('cant-afford',score<u.cost);
+    else el.classList.remove('cant-afford');
+  });
+
+  ACHIEVEMENTS.forEach(a=>{
+    if(!achUnlocked.has(a.id)&&a.check()){
+      achUnlocked.add(a.id);
+      const el=document.getElementById('ach_'+a.id);
+      if(el)el.classList.add('unlocked');
+      notify('🏆 Succès débloqué !',a.label);
+    }
+  });
+}
+
+setInterval(()=>{
+  const inc=getPerSec()/20;score+=inc;totalEarned+=inc;updateUI();
+},50);
+
+function spawnNum(text,x,y,cls){
+  const el=document.createElement('div');
+  el.className='float-num '+cls;el.textContent=text;
+  el.style.left=(x+(Math.random()*30-15))+'px';el.style.top=(y-10)+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),900);
+}
+
+function notify(title,body){
+  const el=document.createElement('div');el.className='notif';
+  el.innerHTML=`<div class="notif-title">${title}</div><div class="notif-body">${body}</div>`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),3200);
+}
+
+function saveGame(){
+  localStorage.setItem('star_save',JSON.stringify({
+    score,totalEarned,prestige,clickMult,totalClicks,critCount,
+    gens,genCosts,genBoosts,achUnlocked:[...achUnlocked],
+    upgsDone:UPGRADES.filter(u=>u.done).map(u=>u.id)
+  }));
+  localStorage.setItem('star_time',Date.now());
+}
+
+function loadGame(){
+  const raw=localStorage.getItem('star_save');if(!raw)return;
+  try{
+    const s=JSON.parse(raw);
+    score=s.score||0;totalEarned=s.totalEarned||0;prestige=s.prestige||0;
+    clickMult=s.clickMult||1;totalClicks=s.totalClicks||0;critCount=s.critCount||0;
+    if(s.gens)Object.assign(gens,s.gens);
+    if(s.genCosts)Object.assign(genCosts,s.genCosts);
+    if(s.genBoosts)Object.assign(genBoosts,s.genBoosts);
+    if(s.achUnlocked)s.achUnlocked.forEach(id=>{
+      achUnlocked.add(id);
+      const el=document.getElementById('ach_'+id);if(el)el.classList.add('unlocked');
+    });
+    if(s.upgsDone)s.upgsDone.forEach(uid=>{
+      const u=UPGRADES.find(x=>x.id===uid);if(u){u.done=true;u.apply();}
+    });
+  }catch(e){}
+}
+
+function checkOffline(){
+  const t=localStorage.getItem('star_time');if(!t)return;
+  const diff=(Date.now()-parseInt(t))/1000;if(diff<30)return;
+  const gain=Math.floor(getPerSec()*diff*0.5);if(gain<=0)return;
+  score+=gain;totalEarned+=gain;
+  document.getElementById('offlineGain').textContent='+'+fmt(gain)+' ⭐';
+  document.getElementById('offlineTime').textContent=
+    `Absent ${Math.floor(diff/60)}m ${Math.floor(diff%60)}s (50% d'efficacité)`;
+  document.getElementById('offlineModal').classList.add('show');
+}
+
+function closeModal(){document.getElementById('offlineModal').classList.remove('show');}
+
+setInterval(saveGame,3000);
+
+buildGenerators();buildUpgrades();buildAch();loadGame();checkOffline();updateUI();
+</script>
+</body>
+</html>

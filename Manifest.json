@@ -1,0 +1,16 @@
+{
+  "name": "Star Clicker Destiny",
+  "short_name": "StarClicker",
+  "description": "Devenez l'architecte de l'infini avec Vivien.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff8c42",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1828/1828884.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

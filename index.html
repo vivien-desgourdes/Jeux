@@ -257,20 +257,51 @@ setInterval(() => { state.score += getPS() / 10; checkAchievements(); updateUI()
 function spawnComet(isFirstLoad = false) {
   const now = Date.now();
   const nextSpawn = parseInt(localStorage.getItem('nextCometTime')) || 0;
-  if (isFirstLoad && now < nextSpawn) { setTimeout(() => spawnComet(), nextSpawn - now); return; }
-  if (state.score < 1000) { setTimeout(() => spawnComet(), 10000); return; }
-  const c = document.createElement('div'); c.className = 'comet'; c.textContent = '☄️';
+  
+  if (isFirstLoad && now < nextSpawn) { 
+    setTimeout(() => spawnComet(), nextSpawn - now); 
+    return; 
+  }
+  
+  if (state.score < 1000) { 
+    setTimeout(() => spawnComet(), 10000); 
+    return; 
+  }
+
+  // --- LOGIQUE LÉGENDAIRE ---
+  const isLegendary = Math.random() < 0.10; // 10% de chance
+  const c = document.createElement('div');
+  c.className = 'comet';
+  c.textContent = isLegendary ? '🌠' : '☄️';
+  
+  if (isLegendary) {
+    c.style.filter = "drop-shadow(0 0 25px #ffd700) hue-rotate(45deg)";
+    c.style.fontSize = "4.5rem"; // Plus grosse
+  }
+
   c.onclick = () => { 
     state.cometsClicked++;
-    let bonus = Math.max(5000, Math.floor(getPS() * 180)); 
-    state.score += bonus; c.remove(); checkAchievements(); updateUI(); notify("☄️ RARE ! +" + fmtCompact(bonus)); 
+    // Bonus : x180 pour Rare (3 min), x1800 pour Légendaire (30 min)
+    let multiplier = isLegendary ? 1800 : 180;
+    let bonus = Math.max(5000, Math.floor(getPS() * multiplier)); 
+    
+    state.score += bonus; 
+    c.remove(); 
+    checkAchievements(); 
+    updateUI(); 
+    
+    const msg = isLegendary ? "🌟 LÉGENDAIRE ! +" : "☄️ RARE ! +";
+    notify(msg + fmtCompact(bonus)); 
   };
+
   document.body.appendChild(c);
   setTimeout(() => { if(c.parentNode) c.remove(); }, 5000);
+
   let nextDelay = Math.random() * 40000 + 40000;
   localStorage.setItem('nextCometTime', now + nextDelay + 5000);
   setTimeout(() => spawnComet(), nextDelay);
 }
+
 
 loadGame(); updateUI(); spawnComet(true);
 </script>

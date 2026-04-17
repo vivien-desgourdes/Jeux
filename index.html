@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌟 STAR CLICKER - DESTINY</title>
+<link rel="manifest" href="Manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -144,7 +146,6 @@ header { grid-column: 1/-1; display: flex; justify-content: space-between; align
 </div>
 
 <script>
-/* --- CONFIGURATION --- */
 const STORY_DATA = {
   'start': "Le ciel est noir. Cliquez sur l'étoile pour faire naître la première lueur...",
   'Fleur du Néant': "La Fleur du Néant s'est fanée. Sa poussière magique stabilise l'espace.",
@@ -176,7 +177,6 @@ const GEN_DATA = [
 let state = { score: 0, defeatedBosses: [], clicks: 0 };
 let gens = { fleur: 0, wand: 0, fairy: 0, unicorn: 0, dragon: 0, castle: 0 };
 
-/* --- FONCTIONS --- */
 const fmtCompact = n => {
   if (n >= 1000000000) return (n/1000000000).toFixed(2)+'B';
   if (n >= 1000000) return (n/1000000).toFixed(2)+'M';
@@ -220,10 +220,11 @@ function updateUI() {
     bossArea.innerHTML = "<div style='color:var(--green); font-weight:800; text-align:center;'>🌌 LÉGENDE TERMINÉE 🌌</div>";
   } else {
     let reqs = [];
-    if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 50000) reqs.push("50k Clics"); }
+    /* --- AJUSTEMENT DES PRÉREQUIS ICI --- */
+    if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 10000) reqs.push("10k Clics"); }
     if (nextBoss.id === 'Phénix Solaire') { if(gens.wand < 50) reqs.push("50 Baguettes"); }
     if (nextBoss.id === 'Hydre d\'Émeraude') { if(gens.fairy < 100) reqs.push("100 Fées"); }
-    if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 150000) reqs.push("150k Clics"); }
+    if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 25000) reqs.push("25k Clics"); }
     const canFight = state.score >= nextBoss.cost && reqs.length === 0;
     bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')">
       <div class="item-icon">${nextBoss.emoji}</div>
@@ -256,19 +257,16 @@ function loadGame() {
 
 setInterval(() => { state.score += getPS() / 10; updateUI(); saveGame(); }, 100);
 
-/* --- NOUVEL ÉQUILIBRAGE COMÈTE --- */
 function spawnComet() {
   if (state.score < 1000) { setTimeout(spawnComet, 10000); return; }
   const c = document.createElement('div');
   c.className = 'comet'; c.textContent = '☄️';
   c.onclick = () => { 
-    let bonus = Math.max(5000, Math.floor(getPS() * 180)); // Bonus un peu plus gros (3 min de prod)
+    let bonus = Math.max(5000, Math.floor(getPS() * 180)); 
     state.score += bonus; c.remove(); updateUI(); notify("☄️ RARE ! +" + fmtCompact(bonus)); 
   };
   document.body.appendChild(c);
   setTimeout(() => { if(c.parentNode) c.remove(); }, 5000);
-  
-  // Nouveau délai : Entre 40 et 80 secondes
   let nextDelay = Math.random() * 40000 + 40000;
   setTimeout(spawnComet, nextDelay);
 }

@@ -44,7 +44,6 @@ header { grid-column: 1/-1; display: flex; justify-content: space-between; align
 .list-item:hover{ border-color:var(--blue); background:#f8fafc; }
 .list-item.cant-afford{ opacity:0.5; pointer-events:none; filter: grayscale(0.8); }
 
-/* Style des succès */
 .achievement-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: #f1f5f9; margin-bottom: 8px; filter: grayscale(1); opacity: 0.6; transition: 0.3s; border: 1px solid transparent; }
 .achievement-item.unlocked { filter: grayscale(0); opacity: 1; background: #fffbeb; border-color: var(--yellow); }
 .ach-icon { font-size: 1.5rem; }
@@ -81,24 +80,12 @@ header { grid-column: 1/-1; display: flex; justify-content: space-between; align
       📊 Clics totaux : <span id="totalClicks" style="color:var(--purple); font-family:'Baloo 2';">0</span>
     </div>
   </div>
-  <div class="card">
-    <div class="card-title">📖 GRIMOIRE DES ÉTOILES</div>
-    <div id="storyText" style="font-style: italic; color: #475569; min-height: 40px; line-height: 1.5;">Il était une fois...</div>
-  </div>
-  <div class="card">
-    <div class="card-title">⚙️ BOUTIQUE MAGIQUE</div>
-    <div id="genList"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">⚔️ CHALLENGE BOSS</div>
-    <div id="BossList"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">🏆 SUCCÈS (<span id="achCount">0</span>/30)</div>
-    <div id="SuccesList" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
-  </div>
+  <div class="card"><div class="card-title">📖 GRIMOIRE DES ÉTOILES</div><div id="storyText" style="font-style: italic; color: #475569; min-height: 40px; line-height: 1.5;">Il était une fois...</div></div>
+  <div class="card"><div class="card-title">⚙️ BOUTIQUE MAGIQUE</div><div id="genList"></div></div>
+  <div class="card"><div class="card-title">⚔️ CHALLENGE BOSS</div><div id="BossList"></div></div>
+  <div class="card"><div class="card-title">🏆 SUCCÈS (<span id="achCount">0</span>/31)</div><div id="SuccesList" style="max-height: 400px; overflow-y: auto;"></div></div>
  
-  <footer class="footer-signature">✨ Créé par <strong>Vivien</strong> - 2026 — Bon amusement ! ✨</footer>
+  <footer class="footer-signature">✨ Créé par <strong>Vivien</strong> - 2026 ✨</footer>
 </div>
 
 <script>
@@ -124,15 +111,13 @@ const BOSS_DATA = [
 const GEN_DATA = [ 
   {id:'fleur', emoji:'🌼', name:'fleur', base:1, cost:50}, 
   {id:'wand', emoji:'🪄', name:'Baguette', base:5, cost:100}, 
-  {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:200}, 
+  {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:300}, 
   {id:'unicorn',emoji:'🦄', name:'Licorne', base:45, cost:2000}, 
   {id:'dragon', emoji:'🐉', name:'Dragon', base:200, cost:15000}, 
   {id:'castle', emoji:'🏰', name:'Château', base:1000, cost:100000} 
 ];
 
-// --- NOUVEAU : BASE DE DONNÉES DES SUCCÈS ---
 const ACHIEVEMENTS_DATA = [
-  // Clics
   { id: 'click_1', emoji: '🖱️', name: 'Apprenti', desc: '100 clics', check: (s, g) => s.clicks >= 100 },
   { id: 'click_2', emoji: '⚡', name: 'Hyperactif', desc: '1 000 clics', check: (s, g) => s.clicks >= 1000 },
   { id: 'click_3', emoji: '🌀', name: 'Frénésie', desc: '5 000 clics', check: (s, g) => s.clicks >= 5000 },
@@ -166,10 +151,13 @@ const ACHIEVEMENTS_DATA = [
   { id: 'all_gens', emoji: '🏬', name: 'Collectionneur', desc: 'Avoir au moins 1 de chaque bâtiment', check: (s, g) => Object.values(g).every(v => v > 0) },
   { id: 'ps_high', emoji: '🚀', name: 'Vitesse Lumière', desc: 'Produire 5k/sec', check: (s, g) => getPS() >= 5000 },
   { id: 'ps_ultra', emoji: '🌌', name: 'Big Bang', desc: 'Produire 50k/sec', check: (s, g) => getPS() >= 50000 },
-  { id: 'starter', emoji: '🥉', name: 'Premiers pas', desc: 'Acheter son premier bâtiment', check: (s, g) => Object.values(g).some(v => v > 0) }
+  { id: 'starter', emoji: '🥉', name: 'Premiers pas', desc: 'Acheter son premier bâtiment', check: (s, g) => Object.values(g).some(v => v > 0) },
+  { id: 'comet_leg', emoji: '🌟', name: 'Élu des Astres', desc: 'Trouver une comète légendaire', check: (s, g) => s.unlockedLegendary === true },
+  { id: 'comet_1', emoji: '🌠', name: 'Voeu exaucé', desc: 'Cliquer sur une comète', check: (s, g) => s.cometsClicked >= 1 }
+
 ];
 
-let state = { score: 0, defeatedBosses: [], clicks: 0, unlockedAchievements: [], cometsClicked: 0 };
+let state = { score: 0, defeatedBosses: [], clicks: 0, unlockedAchievements: [], cometsClicked: 0, unlockedLegendary: false };
 let gens = { fleur: 0, wand: 0, fairy: 0, unicorn: 0, dragon: 0, castle: 0 };
 
 const fmtCompact = n => { 
@@ -178,20 +166,17 @@ const fmtCompact = n => {
   if (n >= 1000) return (n/1000).toFixed(1)+'k'; 
   return Math.floor(n); 
 };
-
 const fmtPrecise = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function notify(text) { 
   const container = document.getElementById('toast-container'); 
   const t = document.createElement('div'); t.className = 'toast'; t.textContent = text; 
-  container.appendChild(t); 
-  setTimeout(() => t.remove(), 3000); 
+  container.appendChild(t); setTimeout(() => t.remove(), 3000); 
 }
 
 function getPS() { return GEN_DATA.reduce((acc, g) => acc + (gens[g.id] * g.base), 0); }
 function getClickPower() { return Math.max(1, Math.floor(getPS() * 0.1)); }
 
-// --- NOUVEAU : GESTION DES SUCCÈS ---
 function checkAchievements() {
   ACHIEVEMENTS_DATA.forEach(ach => {
     if (!state.unlockedAchievements.includes(ach.id) && ach.check(state, gens)) {
@@ -211,37 +196,26 @@ function updateUI() {
   const lastBoss = state.defeatedBosses[state.defeatedBosses.length - 1];
   document.getElementById('storyText').textContent = lastBoss ? STORY_DATA[lastBoss] : STORY_DATA['start'];
 
-  // Boutique
   document.getElementById('genList').innerHTML = GEN_DATA.map(g => {
     let price = Math.floor(g.cost * Math.pow(1.15, gens[g.id]));
     return `<div class="list-item ${state.score < price ? 'cant-afford' : ''}" onclick="buy('${g.id}', ${price})"><div class="item-icon">${g.emoji}</div><div class="item-info"><div class="item-name">${g.name}</div><div class="item-cost">🪙 ${fmtCompact(price)}</div></div><div class="item-count">${gens[g.id]}</div></div>`;
   }).join('');
 
-  // Boss
   const bossArea = document.getElementById('BossList');
   const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
   if (!nextBoss) bossArea.innerHTML = "<div style='color:var(--green); font-weight:800; text-align:center;'>🌌 LÉGENDE TERMINÉE 🌌</div>";
   else {
     let reqs = [];
     if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 3000) reqs.push("3k Clics"); }
-    if (nextBoss.id === 'Phénix Solaire') { if(gens.wand < 50) reqs.push("50 Baguettes"); }
-    if (nextBoss.id === 'Hydre d\'Émeraude') { if(gens.fairy < 80) reqs.push("80 Fées"); }
     if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 10000) reqs.push("10k Clics"); }
     const canFight = state.score >= nextBoss.cost && reqs.length === 0;
-    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')"><div class="item-icon">${nextBoss.emoji}</div><div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;font-weight:800;">Requis: ${reqs.join(' & ')}</span>` : ''}</div></div></div>`;
+    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')"><div class="item-icon">${nextBoss.emoji}</div><div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;">Requis: ${reqs.join(' & ')}</span>` : ''}</div></div></div>`;
   }
 
-  // --- NOUVEAU : AFFICHAGE DES SUCCÈS ---
   document.getElementById('achCount').textContent = state.unlockedAchievements.length;
   document.getElementById('SuccesList').innerHTML = ACHIEVEMENTS_DATA.map(ach => {
     const isUnlocked = state.unlockedAchievements.includes(ach.id);
-    return `<div class="achievement-item ${isUnlocked ? 'unlocked' : ''}">
-      <div class="ach-icon">${isUnlocked ? ach.emoji : '🔒'}</div>
-      <div class="ach-info">
-        <div class="ach-name">${ach.name}</div>
-        <div class="ach-desc">${ach.desc}</div>
-      </div>
-    </div>`;
+    return `<div class="achievement-item ${isUnlocked ? 'unlocked' : ''}"><div class="ach-icon">${isUnlocked ? ach.emoji : '🔒'}</div><div class="ach-info"><div class="ach-name">${ach.name}</div><div class="ach-desc">${ach.desc}</div></div></div>`;
   }).join('');
 }
 
@@ -257,51 +231,29 @@ setInterval(() => { state.score += getPS() / 10; checkAchievements(); updateUI()
 function spawnComet(isFirstLoad = false) {
   const now = Date.now();
   const nextSpawn = parseInt(localStorage.getItem('nextCometTime')) || 0;
+  if (isFirstLoad && now < nextSpawn) { setTimeout(() => spawnComet(), nextSpawn - now); return; }
+  if (state.score < 1000) { setTimeout(() => spawnComet(), 10000); return; }
   
-  if (isFirstLoad && now < nextSpawn) { 
-    setTimeout(() => spawnComet(), nextSpawn - now); 
-    return; 
-  }
-  
-  if (state.score < 1000) { 
-    setTimeout(() => spawnComet(), 10000); 
-    return; 
-  }
-
-  // --- LOGIQUE LÉGENDAIRE ---
-  const isLegendary = Math.random() < 0.10; // 10% de chance
+  const isLegendary = Math.random() < 0.10;
   const c = document.createElement('div');
   c.className = 'comet';
   c.textContent = isLegendary ? '🌠' : '☄️';
-  
-  if (isLegendary) {
-    c.style.filter = "drop-shadow(0 0 25px #ffd700) hue-rotate(45deg)";
-    c.style.fontSize = "4.5rem"; // Plus grosse
-  }
+  if (isLegendary) { c.style.filter = "drop-shadow(0 0 25px #ffd700) hue-rotate(45deg)"; c.style.fontSize = "4.5rem"; }
 
   c.onclick = () => { 
     state.cometsClicked++;
-    // Bonus : x180 pour Rare (3 min), x1800 pour Légendaire (30 min)
+    if (isLegendary) state.unlockedLegendary = true;
     let multiplier = isLegendary ? 1800 : 180;
     let bonus = Math.max(5000, Math.floor(getPS() * multiplier)); 
-    
-    state.score += bonus; 
-    c.remove(); 
-    checkAchievements(); 
-    updateUI(); 
-    
-    const msg = isLegendary ? "🌟 LÉGENDAIRE ! +" : "☄️ RARE ! +";
-    notify(msg + fmtCompact(bonus)); 
+    state.score += bonus; c.remove(); checkAchievements(); updateUI(); 
+    notify((isLegendary ? "🌟 LÉGENDAIRE ! +" : "☄️ RARE ! +") + fmtCompact(bonus)); 
   };
-
   document.body.appendChild(c);
   setTimeout(() => { if(c.parentNode) c.remove(); }, 5000);
-
   let nextDelay = Math.random() * 40000 + 40000;
   localStorage.setItem('nextCometTime', now + nextDelay + 5000);
   setTimeout(() => spawnComet(), nextDelay);
 }
-
 
 loadGame(); updateUI(); spawnComet(true);
 </script>

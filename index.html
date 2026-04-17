@@ -39,9 +39,19 @@ header { grid-column: 1/-1; display: flex; justify-content: space-between; align
 
 .star-btn{ width:160px; height:160px; border-radius:50%; border:none; cursor:pointer; background:linear-gradient(145deg,var(--yellow),var(--orange)); box-shadow:0 8px 0 #c96a00, 0 15px 30px rgba(255,140,66,0.3); font-size:4.5rem; transition: 0.1s; outline: none !important; -webkit-tap-highlight-color: transparent; }
 .star-btn:active{ transform:translateY(4px) scale(0.95); box-shadow:0 2px 0 #c96a00; }
+
 .list-item{ display:flex; align-items:center; gap:12px; padding:12px; margin-bottom:10px; border:2px solid #e2e8f0; border-radius:16px; cursor:pointer; transition:0.2s; }
 .list-item:hover{ border-color:var(--blue); background:#f8fafc; }
 .list-item.cant-afford{ opacity:0.5; pointer-events:none; filter: grayscale(0.8); }
+
+/* Style des succès */
+.achievement-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: #f1f5f9; margin-bottom: 8px; filter: grayscale(1); opacity: 0.6; transition: 0.3s; border: 1px solid transparent; }
+.achievement-item.unlocked { filter: grayscale(0); opacity: 1; background: #fffbeb; border-color: var(--yellow); }
+.ach-icon { font-size: 1.5rem; }
+.ach-info { flex: 1; }
+.ach-name { font-weight: 800; font-size: 0.9rem; font-family: 'Baloo 2'; line-height: 1.2; }
+.ach-desc { font-size: 0.75rem; color: #64748b; }
+
 .item-icon{ font-size:2.2rem; }
 .item-info{ flex:1; }
 .item-name{ font-family:'Baloo 2'; font-weight:700; font-size:1rem; }
@@ -71,9 +81,23 @@ header { grid-column: 1/-1; display: flex; justify-content: space-between; align
       📊 Clics totaux : <span id="totalClicks" style="color:var(--purple); font-family:'Baloo 2';">0</span>
     </div>
   </div>
-  <div class="card"><div class="card-title">📖 GRIMOIRE DES ÉTOILES</div><div id="storyText" style="font-style: italic; color: #475569; min-height: 40px; line-height: 1.5;">Il était une fois...</div></div>
-  <div class="card"><div class="card-title">⚙️ BOUTIQUE MAGIQUE</div><div id="genList"></div></div>
-  <div class="card"><div class="card-title">⚔️ CHALLENGE BOSS</div><div id="BossList"></div></div>
+  <div class="card">
+    <div class="card-title">📖 GRIMOIRE DES ÉTOILES</div>
+    <div id="storyText" style="font-style: italic; color: #475569; min-height: 40px; line-height: 1.5;">Il était une fois...</div>
+  </div>
+  <div class="card">
+    <div class="card-title">⚙️ BOUTIQUE MAGIQUE</div>
+    <div id="genList"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">⚔️ CHALLENGE BOSS</div>
+    <div id="BossList"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🏆 SUCCÈS (<span id="achCount">0</span>/30)</div>
+    <div id="SuccesList" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+  </div>
+ 
   <footer class="footer-signature">✨ Créé par <strong>Vivien</strong> - 2026 — Bon amusement ! ✨</footer>
 </div>
 
@@ -92,7 +116,7 @@ const BOSS_DATA = [
   {id:'Fleur du Néant', emoji:'💀', name:'Fleur du Néant', cost:500000}, 
   {id:'Titan de Cristal', emoji:'👹', name:'Titan de Cristal', cost:2500000}, 
   {id:'Gardien des Ombres', emoji:'👽', name:'Gardien des Ombres', cost:10000000}, 
-  {id:'Phénix Solaire', emoji:'🔥', name:'Phénix Solaire', cost:75000000}, // Passé à 75M
+  {id:'Phénix Solaire', emoji:'🔥', name:'Phénix Solaire', cost:75000000}, 
   {id:'Hydre d\'Émeraude', emoji:'🐍', name:'Hydre d\'Émeraude', cost:250000000}, 
   {id:'Ancien Dieu des Étoiles', emoji:'👁️', name:'Dieu des Étoiles', cost:1000000000} 
 ];
@@ -106,7 +130,46 @@ const GEN_DATA = [
   {id:'castle', emoji:'🏰', name:'Château', base:1000, cost:100000} 
 ];
 
-let state = { score: 0, defeatedBosses: [], clicks: 0 };
+// --- NOUVEAU : BASE DE DONNÉES DES SUCCÈS ---
+const ACHIEVEMENTS_DATA = [
+  // Clics
+  { id: 'click_1', emoji: '🖱️', name: 'Apprenti', desc: '100 clics', check: (s, g) => s.clicks >= 100 },
+  { id: 'click_2', emoji: '⚡', name: 'Hyperactif', desc: '1 000 clics', check: (s, g) => s.clicks >= 1000 },
+  { id: 'click_3', emoji: '🌀', name: 'Frénésie', desc: '5 000 clics', check: (s, g) => s.clicks >= 5000 },
+  { id: 'click_4', emoji: '👑', name: 'Doigt d\'Or', desc: '10 000 clics', check: (s, g) => s.clicks >= 10000 },
+  // Score
+  { id: 'score_1', emoji: '💰', name: 'Petit pécule', desc: '10k Étoiles', check: (s, g) => s.score >= 10000 },
+  { id: 'score_2', emoji: '💎', name: 'Fortune', desc: '1M Étoiles', check: (s, g) => s.score >= 1000000 },
+  { id: 'score_3', emoji: '🔱', name: 'Milliardaire', desc: '1B Étoiles', check: (s, g) => s.score >= 1000000000 },
+  // Bâtiments
+  { id: 'fleur_10', emoji: '🌸', name: 'Jardinier', desc: '10 Fleurs', check: (s, g) => g.fleur >= 10 },
+  { id: 'fleur_50', emoji: '🌿', name: 'Botaniste', desc: '50 Fleurs', check: (s, g) => g.fleur >= 50 },
+  { id: 'wand_25', emoji: '🪄', name: 'Magicien', desc: '25 Baguettes', check: (s, g) => g.wand >= 25 },
+  { id: 'wand_50', emoji: '🔮', name: 'Archimage', desc: '50 Baguettes', check: (s, g) => g.wand >= 50 },
+  { id: 'fairy_25', emoji: '✨', name: 'Ami des Fées', desc: '25 Fées', check: (s, g) => g.fairy >= 25 },
+  { id: 'fairy_100', emoji: '🧚', name: 'Roi des Pixels', desc: '100 Fées', check: (s, g) => g.fairy >= 100 },
+  { id: 'uni_10', emoji: '🌈', name: 'Écurie Arc-en-ciel', desc: '10 Licornes', check: (s, g) => g.unicorn >= 10 },
+  { id: 'uni_30', emoji: '🦄', name: 'Légende Pure', desc: '30 Licornes', check: (s, g) => g.unicorn >= 30 },
+  { id: 'drag_10', emoji: '🔥', name: 'Dresseur', desc: '10 Dragons', check: (s, g) => g.dragon >= 10 },
+  { id: 'drag_30', emoji: '🐉', name: 'Maître des Cieux', desc: '30 Dragons', check: (s, g) => g.dragon >= 30 },
+  { id: 'cast_10', emoji: '🧱', name: 'Bâtisseur', desc: '10 Châteaux', check: (s, g) => g.castle >= 10 },
+  { id: 'cast_50', emoji: '🏰', name: 'Empereur', desc: '50 Châteaux', check: (s, g) => g.castle >= 50 },
+  // Boss
+  { id: 'boss_1', emoji: '🦴', name: 'Désherbage', desc: 'Vaincre la Fleur du Néant', check: (s, g) => s.defeatedBosses.includes('Fleur du Néant') },
+  { id: 'boss_2', emoji: '🔨', name: 'Brise-Glace', desc: 'Vaincre le Titan de Cristal', check: (s, g) => s.defeatedBosses.includes('Titan de Cristal') },
+  { id: 'boss_3', emoji: '🌑', name: 'Exorciste', desc: 'Vaincre le Gardien des Ombres', check: (s, g) => s.defeatedBosses.includes('Gardien des Ombres') },
+  { id: 'boss_4', emoji: '☀️', name: 'Extincteur', desc: 'Vaincre le Phénix Solaire', check: (s, g) => s.defeatedBosses.includes('Phénix Solaire') },
+  { id: 'boss_5', emoji: '🗡️', name: 'Héros Épique', desc: 'Vaincre l\'Hydre d\'Émeraude', check: (s, g) => s.defeatedBosses.includes('Hydre d\'Émeraude') },
+  { id: 'boss_6', emoji: '👁️', name: 'DÉICIDE', desc: 'Vaincre le Dieu des Étoiles', check: (s, g) => s.defeatedBosses.includes('Ancien Dieu des Étoiles') },
+  // Divers
+  { id: 'comet_1', emoji: '🌠', name: 'Voeu exaucé', desc: 'Cliquer sur une comète', check: (s, g) => s.cometsClicked >= 1 },
+  { id: 'all_gens', emoji: '🏬', name: 'Collectionneur', desc: 'Avoir au moins 1 de chaque bâtiment', check: (s, g) => Object.values(g).every(v => v > 0) },
+  { id: 'ps_high', emoji: '🚀', name: 'Vitesse Lumière', desc: 'Produire 5k/sec', check: (s, g) => getPS() >= 5000 },
+  { id: 'ps_ultra', emoji: '🌌', name: 'Big Bang', desc: 'Produire 50k/sec', check: (s, g) => getPS() >= 50000 },
+  { id: 'starter', emoji: '🥉', name: 'Premiers pas', desc: 'Acheter son premier bâtiment', check: (s, g) => Object.values(g).some(v => v > 0) }
+];
+
+let state = { score: 0, defeatedBosses: [], clicks: 0, unlockedAchievements: [], cometsClicked: 0 };
 let gens = { fleur: 0, wand: 0, fairy: 0, unicorn: 0, dragon: 0, castle: 0 };
 
 const fmtCompact = n => { 
@@ -128,6 +191,16 @@ function notify(text) {
 function getPS() { return GEN_DATA.reduce((acc, g) => acc + (gens[g.id] * g.base), 0); }
 function getClickPower() { return Math.max(1, Math.floor(getPS() * 0.1)); }
 
+// --- NOUVEAU : GESTION DES SUCCÈS ---
+function checkAchievements() {
+  ACHIEVEMENTS_DATA.forEach(ach => {
+    if (!state.unlockedAchievements.includes(ach.id) && ach.check(state, gens)) {
+      state.unlockedAchievements.push(ach.id);
+      notify("🏆 SUCCÈS : " + ach.name);
+    }
+  });
+}
+
 function updateUI() {
   document.getElementById('headerScore').textContent = fmtPrecise(state.score);
   document.getElementById('score').textContent = fmtCompact(state.score);
@@ -138,60 +211,48 @@ function updateUI() {
   const lastBoss = state.defeatedBosses[state.defeatedBosses.length - 1];
   document.getElementById('storyText').textContent = lastBoss ? STORY_DATA[lastBoss] : STORY_DATA['start'];
 
+  // Boutique
   document.getElementById('genList').innerHTML = GEN_DATA.map(g => {
     let price = Math.floor(g.cost * Math.pow(1.15, gens[g.id]));
     return `<div class="list-item ${state.score < price ? 'cant-afford' : ''}" onclick="buy('${g.id}', ${price})"><div class="item-icon">${g.emoji}</div><div class="item-info"><div class="item-name">${g.name}</div><div class="item-cost">🪙 ${fmtCompact(price)}</div></div><div class="item-count">${gens[g.id]}</div></div>`;
   }).join('');
 
+  // Boss
   const bossArea = document.getElementById('BossList');
   const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
-  
   if (!nextBoss) bossArea.innerHTML = "<div style='color:var(--green); font-weight:800; text-align:center;'>🌌 LÉGENDE TERMINÉE 🌌</div>";
   else {
     let reqs = [];
-    if (nextBoss.id === 'Gardien des Ombres') { 
-        if(gens.dragon < 30) reqs.push("30 Dragons"); 
-        if(state.clicks < 3000) reqs.push("3k Clics"); 
-    }
-    if (nextBoss.id === 'Phénix Solaire') { 
-        if(gens.wand < 50) reqs.push("50 Baguettes"); 
-    }
-    if (nextBoss.id === 'Hydre d\'Émeraude') { 
-        if(gens.fairy < 100) reqs.push("100 Fées"); 
-    }
-    if (nextBoss.id === 'Ancien Dieu des Étoiles') { 
-        if(gens.castle < 50) reqs.push("50 Châteaux"); 
-        if(state.clicks < 10000) reqs.push("10k Clics"); 
-    }
-    
+    if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 3000) reqs.push("3k Clics"); }
+    if (nextBoss.id === 'Phénix Solaire') { if(gens.wand < 50) reqs.push("50 Baguettes"); }
+    if (nextBoss.id === 'Hydre d\'Émeraude') { if(gens.fairy < 100) reqs.push("100 Fées"); }
+    if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 10000) reqs.push("10k Clics"); }
     const canFight = state.score >= nextBoss.cost && reqs.length === 0;
-    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')">
-      <div class="item-icon">${nextBoss.emoji}</div>
-      <div class="item-info">
-        <div class="item-name">${nextBoss.name}</div>
-        <div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;font-weight:800;">Requis: ${reqs.join(' & ')}</span>` : ''}</div>
-      </div></div>`;
+    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')"><div class="item-icon">${nextBoss.emoji}</div><div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;font-weight:800;">Requis: ${reqs.join(' & ')}</span>` : ''}</div></div></div>`;
   }
+
+  // --- NOUVEAU : AFFICHAGE DES SUCCÈS ---
+  document.getElementById('achCount').textContent = state.unlockedAchievements.length;
+  document.getElementById('SuccesList').innerHTML = ACHIEVEMENTS_DATA.map(ach => {
+    const isUnlocked = state.unlockedAchievements.includes(ach.id);
+    return `<div class="achievement-item ${isUnlocked ? 'unlocked' : ''}">
+      <div class="ach-icon">${isUnlocked ? ach.emoji : '🔒'}</div>
+      <div class="ach-info">
+        <div class="ach-name">${ach.name}</div>
+        <div class="ach-desc">${ach.desc}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function buy(id, cost) { if (state.score >= cost) { state.score -= cost; gens[id]++; updateUI(); } }
-function fightBoss(id, cost, reqs) { 
-  if (reqs === "" && state.score >= cost) { 
-    state.score -= cost; 
-    state.defeatedBosses.push(id); 
-    updateUI(); 
-    saveGame(); 
-    notify("⚔️ Victoire !"); 
-  } else if (reqs !== "") {
-    notify("⚠️ Requis : " + reqs); 
-  }
-}
+function buy(id, cost) { if (state.score >= cost) { state.score -= cost; gens[id]++; checkAchievements(); updateUI(); } }
+function fightBoss(id, cost, reqs) { if (reqs === "" && state.score >= cost) { state.score -= cost; state.defeatedBosses.push(id); checkAchievements(); updateUI(); saveGame(); notify("⚔️ Victoire !"); } else if (reqs !== "") notify("⚠️ Requis : " + reqs); }
 
-document.getElementById('clickBtn').onclick = () => { state.score += getClickPower(); state.clicks++; const s = document.getElementById('score'); s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); updateUI(); };
+document.getElementById('clickBtn').onclick = () => { state.score += getClickPower(); state.clicks++; checkAchievements(); const s = document.getElementById('score'); s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); updateUI(); };
 function saveGame() { localStorage.setItem('starSave_v2', JSON.stringify({ state, gens })); }
 function loadGame() { const saved = localStorage.getItem('starSave_v2'); if (saved) { const d = JSON.parse(saved); Object.assign(state, d.state); Object.assign(gens, d.gens); } }
 
-setInterval(() => { state.score += getPS() / 10; updateUI(); saveGame(); }, 100);
+setInterval(() => { state.score += getPS() / 10; checkAchievements(); updateUI(); saveGame(); }, 100);
 
 function spawnComet(isFirstLoad = false) {
   const now = Date.now();
@@ -199,7 +260,11 @@ function spawnComet(isFirstLoad = false) {
   if (isFirstLoad && now < nextSpawn) { setTimeout(() => spawnComet(), nextSpawn - now); return; }
   if (state.score < 1000) { setTimeout(() => spawnComet(), 10000); return; }
   const c = document.createElement('div'); c.className = 'comet'; c.textContent = '☄️';
-  c.onclick = () => { let bonus = Math.max(5000, Math.floor(getPS() * 180)); state.score += bonus; c.remove(); updateUI(); notify("☄️ RARE ! +" + fmtCompact(bonus)); };
+  c.onclick = () => { 
+    state.cometsClicked++;
+    let bonus = Math.max(5000, Math.floor(getPS() * 180)); 
+    state.score += bonus; c.remove(); checkAchievements(); updateUI(); notify("☄️ RARE ! +" + fmtCompact(bonus)); 
+  };
   document.body.appendChild(c);
   setTimeout(() => { if(c.parentNode) c.remove(); }, 5000);
   let nextDelay = Math.random() * 40000 + 40000;

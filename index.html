@@ -86,15 +86,45 @@ const STORY_DATA = {
   'Phénix Solaire': "Le Phénix a partagé ses flammes. Votre pouvoir de clic est désormais incandescent.",
   'Hydre d\'Émeraude': "L'Hydre est vaincue. La nature et la magie fusionnent dans tout l'univers.",
   'Ancien Dieu des Étoiles': "L'Ancien Dieu vous a légué son sceptre. Vous êtes l'architecte de l'Infini. Félicitations !"
-};const BOSS_DATA = [ {id:'Fleur du Néant', emoji:'💀', name:'Fleur du Néant', cost:500000}, {id:'Titan de Cristal', emoji:'👹', name:'Titan de Cristal', cost:2500000}, {id:'Gardien des Ombres', emoji:'👽', name:'Gardien des Ombres', cost:10000000}, {id:'Phénix Solaire', emoji:'🔥', name:'Phénix Solaire', cost:50000000}, {id:'Hydre d\'Émeraude', emoji:'🐍', name:'Hydre d\'Émeraude', cost:250000000}, {id:'Ancien Dieu des Étoiles', emoji:'👁️', name:'Dieu des Étoiles', cost:1000000000} ];
-const GEN_DATA = [ {id:'fleur', emoji:'🌼', name:'fleur', base:1, cost:50}, {id:'wand', emoji:'🪄', name:'Baguette', base:5, cost:100}, {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:300}, {id:'unicorn',emoji:'🦄', name:'Licorne', base:45, cost:2000}, {id:'dragon', emoji:'🐉', name:'Dragon', base:200, cost:15000}, {id:'castle', emoji:'🏰', name:'Château', base:1000, cost:100000} ];
+};
+
+const BOSS_DATA = [ 
+  {id:'Fleur du Néant', emoji:'💀', name:'Fleur du Néant', cost:500000}, 
+  {id:'Titan de Cristal', emoji:'👹', name:'Titan de Cristal', cost:2500000}, 
+  {id:'Gardien des Ombres', emoji:'👽', name:'Gardien des Ombres', cost:10000000}, 
+  {id:'Phénix Solaire', emoji:'🔥', name:'Phénix Solaire', cost:50000000}, 
+  {id:'Hydre d\'Émeraude', emoji:'🐍', name:'Hydre d\'Émeraude', cost:250000000}, 
+  {id:'Ancien Dieu des Étoiles', emoji:'👁️', name:'Dieu des Étoiles', cost:1000000000} 
+];
+
+const GEN_DATA = [ 
+  {id:'fleur', emoji:'🌼', name:'fleur', base:1, cost:50}, 
+  {id:'wand', emoji:'🪄', name:'Baguette', base:5, cost:100}, 
+  {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:300}, 
+  {id:'unicorn',emoji:'🦄', name:'Licorne', base:45, cost:2000}, 
+  {id:'dragon', emoji:'🐉', name:'Dragon', base:200, cost:15000}, 
+  {id:'castle', emoji:'🏰', name:'Château', base:1000, cost:100000} 
+];
 
 let state = { score: 0, defeatedBosses: [], clicks: 0 };
 let gens = { fleur: 0, wand: 0, fairy: 0, unicorn: 0, dragon: 0, castle: 0 };
 
-const fmtCompact = n => { if (n >= 1000000000) return (n/1000000000).toFixed(2)+'B'; if (n >= 1000000) return (n/1000000).toFixed(2)+'M'; if (n >= 1000) return (n/1000).toFixed(1)+'k'; return Math.floor(n); };
+const fmtCompact = n => { 
+  if (n >= 1000000000) return (n/1000000000).toFixed(2)+'B'; 
+  if (n >= 1000000) return (n/1000000).toFixed(2)+'M'; 
+  if (n >= 1000) return (n/1000).toFixed(1)+'k'; 
+  return Math.floor(n); 
+};
+
 const fmtPrecise = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-function notify(text) { const container = document.getElementById('toast-container'); const t = document.createElement('div'); t.className = 'toast'; t.textContent = text; container.appendChild(t); setTimeout(() => t.remove(), 3000); }
+
+function notify(text) { 
+  const container = document.getElementById('toast-container'); 
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = text; 
+  container.appendChild(t); 
+  setTimeout(() => t.remove(), 3000); 
+}
+
 function getPS() { return GEN_DATA.reduce((acc, g) => acc + (gens[g.id] * g.base), 0); }
 function getClickPower() { return Math.max(1, Math.floor(getPS() * 0.1)); }
 
@@ -104,25 +134,29 @@ function updateUI() {
   document.getElementById('totalClicks').textContent = state.clicks.toLocaleString();
   document.getElementById('perSec').textContent = getPS().toLocaleString();
   document.getElementById('clickVal').textContent = fmtCompact(getClickPower());
-  document.getElementById('storyText').textContent = state.defeatedBosses.length > 0 ? STORY_DATA[state.defeatedBosses[state.defeatedBosses.length-1]] : STORY_DATA['start'];
+  
+  const lastBoss = state.defeatedBosses[state.defeatedBosses.length - 1];
+  document.getElementById('storyText').textContent = lastBoss ? STORY_DATA[lastBoss] : STORY_DATA['start'];
+
   document.getElementById('genList').innerHTML = GEN_DATA.map(g => {
     let price = Math.floor(g.cost * Math.pow(1.15, gens[g.id]));
     return `<div class="list-item ${state.score < price ? 'cant-afford' : ''}" onclick="buy('${g.id}', ${price})"><div class="item-icon">${g.emoji}</div><div class="item-info"><div class="item-name">${g.name}</div><div class="item-cost">🪙 ${fmtCompact(price)}</div></div><div class="item-count">${gens[g.id]}</div></div>`;
   }).join('');
+
   const bossArea = document.getElementById('BossList');
   const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
-  if (!nextBoss) bossArea.innerHTML = "🌌 LÉGENDE TERMINÉE 🌌";
+  if (!nextBoss) bossArea.innerHTML = "<div style='color:var(--green); font-weight:800; text-align:center;'>🌌 LÉGENDE TERMINÉE 🌌</div>";
   else {
     let reqs = [];
-    if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 5000) reqs.push("5k Clics"); } // CHANGÉ À 5K
-    if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 25000) reqs.push("25k Clics"); }
+    if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 3000) reqs.push("3k Clics"); }
+    if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 10000) reqs.push("10k Clics"); }
     const canFight = state.score >= nextBoss.cost && reqs.length === 0;
-    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')"><div class="item-icon">${nextBoss.emoji}</div><div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br>Requis: ${reqs.join(' & ')}` : ''}</div></div></div>`;
+    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')"><div class="item-icon">${nextBoss.emoji}</div><div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;font-weight:800;">Requis: ${reqs.join(' & ')}</span>` : ''}</div></div></div>`;
   }
 }
 
 function buy(id, cost) { if (state.score >= cost) { state.score -= cost; gens[id]++; updateUI(); } }
-function fightBoss(id, cost, reqs) { if (reqs === "" && state.score >= cost) { state.score -= cost; state.defeatedBosses.push(id); updateUI(); saveGame(); notify("⚔️ Victoire !"); } else if (reqs !== "") notify("Requis: " + reqs); }
+function fightBoss(id, cost, reqs) { if (reqs === "" && state.score >= cost) { state.score -= cost; state.defeatedBosses.push(id); updateUI(); saveGame(); notify("⚔️ Victoire !"); } else if (reqs !== "") notify("⚠️ Requis : " + reqs); }
 
 document.getElementById('clickBtn').onclick = () => { state.score += getClickPower(); state.clicks++; const s = document.getElementById('score'); s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); updateUI(); };
 function saveGame() { localStorage.setItem('starSave_v2', JSON.stringify({ state, gens })); }
@@ -130,7 +164,6 @@ function loadGame() { const saved = localStorage.getItem('starSave_v2'); if (sav
 
 setInterval(() => { state.score += getPS() / 10; updateUI(); saveGame(); }, 100);
 
-/* --- SYSTÈME COMÈTE ANTI-TRICHE --- */
 function spawnComet(isFirstLoad = false) {
   const now = Date.now();
   const nextSpawn = parseInt(localStorage.getItem('nextCometTime')) || 0;

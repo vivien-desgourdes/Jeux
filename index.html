@@ -78,8 +78,15 @@ header { grid-column: 1/-1; display: flex; justify-content: space-between; align
 </div>
 
 <script>
-const STORY_DATA = { 'start': "Le ciel est noir. Cliquez sur l'étoile...", 'Fleur du Néant': "La Fleur du Néant s'est fanée...", 'Titan de Cristal': "Le Titan s'est brisé...", 'Gardien des Ombres': "L'ombre recule...", 'Phénix Solaire': "Le Phénix a partagé ses flammes...", 'Hydre d\'Émeraude': "L'Hydre est vaincue...", 'Ancien Dieu des Étoiles': "Félicitations !" };
-const BOSS_DATA = [ {id:'Fleur du Néant', emoji:'💀', name:'Fleur du Néant', cost:500000}, {id:'Titan de Cristal', emoji:'👹', name:'Titan de Cristal', cost:2500000}, {id:'Gardien des Ombres', emoji:'👽', name:'Gardien des Ombres', cost:10000000}, {id:'Phénix Solaire', emoji:'🔥', name:'Phénix Solaire', cost:50000000}, {id:'Hydre d\'Émeraude', emoji:'🐍', name:'Hydre d\'Émeraude', cost:250000000}, {id:'Ancien Dieu des Étoiles', emoji:'👁️', name:'Dieu des Étoiles', cost:1000000000} ];
+const STORY_DATA = {
+  'start': "Le ciel est noir. Cliquez sur l'étoile pour faire naître la première lueur...",
+  'Fleur du Néant': "La Fleur du Néant s'est fanée. Sa poussière magique stabilise l'espace.",
+  'Titan de Cristal': "Le Titan s'est brisé. La lumière se reflète désormais sur ses éclats.",
+  'Gardien des Ombres': "L'ombre recule. Mais au cœur du soleil, une nouvelle menace s'éveille...",
+  'Phénix Solaire': "Le Phénix a partagé ses flammes. Votre pouvoir de clic est désormais incandescent.",
+  'Hydre d\'Émeraude': "L'Hydre est vaincue. La nature et la magie fusionnent dans tout l'univers.",
+  'Ancien Dieu des Étoiles': "L'Ancien Dieu vous a légué son sceptre. Vous êtes l'architecte de l'Infini. Félicitations !"
+};const BOSS_DATA = [ {id:'Fleur du Néant', emoji:'💀', name:'Fleur du Néant', cost:500000}, {id:'Titan de Cristal', emoji:'👹', name:'Titan de Cristal', cost:2500000}, {id:'Gardien des Ombres', emoji:'👽', name:'Gardien des Ombres', cost:10000000}, {id:'Phénix Solaire', emoji:'🔥', name:'Phénix Solaire', cost:50000000}, {id:'Hydre d\'Émeraude', emoji:'🐍', name:'Hydre d\'Émeraude', cost:250000000}, {id:'Ancien Dieu des Étoiles', emoji:'👁️', name:'Dieu des Étoiles', cost:1000000000} ];
 const GEN_DATA = [ {id:'fleur', emoji:'🌼', name:'fleur', base:1, cost:50}, {id:'wand', emoji:'🪄', name:'Baguette', base:5, cost:100}, {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:300}, {id:'unicorn',emoji:'🦄', name:'Licorne', base:45, cost:2000}, {id:'dragon', emoji:'🐉', name:'Dragon', base:200, cost:15000}, {id:'castle', emoji:'🏰', name:'Château', base:1000, cost:100000} ];
 
 let state = { score: 0, defeatedBosses: [], clicks: 0 };

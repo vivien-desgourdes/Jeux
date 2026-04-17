@@ -160,7 +160,7 @@ const ACHIEVEMENTS_DATA = [
   { id: 'boss_3', emoji: '🌑', name: 'Exorciste', desc: 'Vaincre le Gardien des Ombres', check: (s, g) => s.defeatedBosses.includes('Gardien des Ombres') },
   { id: 'boss_4', emoji: '☀️', name: 'Extincteur', desc: 'Vaincre le Phénix Solaire', check: (s, g) => s.defeatedBosses.includes('Phénix Solaire') },
   { id: 'boss_5', emoji: '🗡️', name: 'Héros Épique', desc: 'Vaincre l\'Hydre d\'Émeraude', check: (s, g) => s.defeatedBosses.includes('Hydre d\'Émeraude') },
-  { id: 'boss_6', emoji: '👁️', name: 'DÉICIDE', desc: 'Vaincre le Dieu des Étoiles', check: (s, g) => s.defeatedBosses.includes('Ancien Dieu des Étoiles') },
+  { id: 'boss_6', emoji: '👁️', name: 'BENEDICTION', desc: 'Recevoir l\'onction du Dieu des Étoiles', check: (s, g) => s.defeatedBosses.includes('Ancien Dieu des Étoiles') },
   // Divers
   { id: 'comet_1', emoji: '🌠', name: 'Voeu exaucé', desc: 'Cliquer sur une comète', check: (s, g) => s.cometsClicked >= 1 },
   { id: 'all_gens', emoji: '🏬', name: 'Collectionneur', desc: 'Avoir au moins 1 de chaque bâtiment', check: (s, g) => Object.values(g).every(v => v > 0) },

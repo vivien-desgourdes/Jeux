@@ -92,7 +92,7 @@ const BOSS_DATA = [
   {id:'Fleur du Néant', emoji:'💀', name:'Fleur du Néant', cost:500000}, 
   {id:'Titan de Cristal', emoji:'👹', name:'Titan de Cristal', cost:2500000}, 
   {id:'Gardien des Ombres', emoji:'👽', name:'Gardien des Ombres', cost:10000000}, 
-  {id:'Phénix Solaire', emoji:'🔥', name:'Phénix Solaire', cost:75000000}, 
+  {id:'Phénix Solaire', emoji:'🔥', name:'Phénix Solaire', cost:75000000}, // Passé à 75M
   {id:'Hydre d\'Émeraude', emoji:'🐍', name:'Hydre d\'Émeraude', cost:250000000}, 
   {id:'Ancien Dieu des Étoiles', emoji:'👁️', name:'Dieu des Étoiles', cost:1000000000} 
 ];
@@ -145,18 +145,47 @@ function updateUI() {
 
   const bossArea = document.getElementById('BossList');
   const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
+  
   if (!nextBoss) bossArea.innerHTML = "<div style='color:var(--green); font-weight:800; text-align:center;'>🌌 LÉGENDE TERMINÉE 🌌</div>";
   else {
     let reqs = [];
-    if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 3000) reqs.push("3k Clics"); }
-    if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 10000) reqs.push("10k Clics"); }
+    if (nextBoss.id === 'Gardien des Ombres') { 
+        if(gens.dragon < 30) reqs.push("30 Dragons"); 
+        if(state.clicks < 3000) reqs.push("3k Clics"); 
+    }
+    if (nextBoss.id === 'Phénix Solaire') { 
+        if(gens.wand < 50) reqs.push("50 Baguettes"); 
+    }
+    if (nextBoss.id === 'Hydre d\'Émeraude') { 
+        if(gens.fairy < 100) reqs.push("100 Fées"); 
+    }
+    if (nextBoss.id === 'Ancien Dieu des Étoiles') { 
+        if(gens.castle < 50) reqs.push("50 Châteaux"); 
+        if(state.clicks < 10000) reqs.push("10k Clics"); 
+    }
+    
     const canFight = state.score >= nextBoss.cost && reqs.length === 0;
-    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')"><div class="item-icon">${nextBoss.emoji}</div><div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;font-weight:800;">Requis: ${reqs.join(' & ')}</span>` : ''}</div></div></div>`;
+    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')">
+      <div class="item-icon">${nextBoss.emoji}</div>
+      <div class="item-info">
+        <div class="item-name">${nextBoss.name}</div>
+        <div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;font-weight:800;">Requis: ${reqs.join(' & ')}</span>` : ''}</div>
+      </div></div>`;
   }
 }
 
 function buy(id, cost) { if (state.score >= cost) { state.score -= cost; gens[id]++; updateUI(); } }
-function fightBoss(id, cost, reqs) { if (reqs === "" && state.score >= cost) { state.score -= cost; state.defeatedBosses.push(id); updateUI(); saveGame(); notify("⚔️ Victoire !"); } else if (reqs !== "") notify("⚠️ Requis : " + reqs); }
+function fightBoss(id, cost, reqs) { 
+  if (reqs === "" && state.score >= cost) { 
+    state.score -= cost; 
+    state.defeatedBosses.push(id); 
+    updateUI(); 
+    saveGame(); 
+    notify("⚔️ Victoire !"); 
+  } else if (reqs !== "") {
+    notify("⚠️ Requis : " + reqs); 
+  }
+}
 
 document.getElementById('clickBtn').onclick = () => { state.score += getClickPower(); state.clicks++; const s = document.getElementById('score'); s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); updateUI(); };
 function saveGame() { localStorage.setItem('starSave_v2', JSON.stringify({ state, gens })); }

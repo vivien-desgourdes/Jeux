@@ -111,7 +111,7 @@ const BOSS_DATA = [
 const GEN_DATA = [ 
   {id:'fleur', emoji:'🌼', name:'fleur', base:1, cost:50}, 
   {id:'wand', emoji:'🪄', name:'Baguette', base:5, cost:100}, 
-  {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:300}, 
+  {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:200}, 
   {id:'unicorn',emoji:'🦄', name:'Licorne', base:45, cost:2000}, 
   {id:'dragon', emoji:'🐉', name:'Dragon', base:200, cost:15000}, 
   {id:'castle', emoji:'🏰', name:'Château', base:1000, cost:100000} 
@@ -203,7 +203,7 @@ function updateUI() {
     let reqs = [];
     if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 3000) reqs.push("3k Clics"); }
     if (nextBoss.id === 'Phénix Solaire') { if(gens.wand < 50) reqs.push("50 Baguettes"); }
-    if (nextBoss.id === 'Hydre d\'Émeraude') { if(gens.fairy < 100) reqs.push("100 Fées"); }
+    if (nextBoss.id === 'Hydre d\'Émeraude') { if(gens.fairy < 80) reqs.push("80 Fées"); }
     if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 10000) reqs.push("10k Clics"); }
     const canFight = state.score >= nextBoss.cost && reqs.length === 0;
     bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')"><div class="item-icon">${nextBoss.emoji}</div><div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;">Requis: ${reqs.join(' & ')}</span>` : ''}</div></div></div>`;

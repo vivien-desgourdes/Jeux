@@ -111,7 +111,7 @@ const BOSS_DATA = [
 const GEN_DATA = [ 
   {id:'fleur', emoji:'🌼', name:'fleur', base:1, cost:50}, 
   {id:'wand', emoji:'🪄', name:'Baguette', base:5, cost:100}, 
-  {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:200}, 
+  {id:'fairy', emoji:'🧚', name:'Fée', base:30, cost:200}, // Coût fée à 200
   {id:'unicorn',emoji:'🦄', name:'Licorne', base:45, cost:2000}, 
   {id:'dragon', emoji:'🐉', name:'Dragon', base:200, cost:15000}, 
   {id:'castle', emoji:'🏰', name:'Château', base:1000, cost:100000} 
@@ -119,36 +119,13 @@ const GEN_DATA = [
 
 const ACHIEVEMENTS_DATA = [
   { id: 'click_1', emoji: '🖱️', name: 'Apprenti', desc: '100 clics', check: (s, g) => s.clicks >= 100 },
-  { id: 'click_2', emoji: '⚡', name: 'Hyperactif', desc: '1 000 clics', check: (s, g) => s.clicks >= 1000 },
-  { id: 'click_3', emoji: '🌀', name: 'Frénésie', desc: '5 000 clics', check: (s, g) => s.clicks >= 5000 },
   { id: 'click_4', emoji: '👑', name: 'Doigt d\'Or', desc: '10 000 clics', check: (s, g) => s.clicks >= 10000 },
-  { id: 'score_1', emoji: '💰', name: 'Petit pécule', desc: '10k Étoiles', check: (s, g) => s.score >= 10000 },
-  { id: 'score_2', emoji: '💎', name: 'Fortune', desc: '1M Étoiles', check: (s, g) => s.score >= 1000000 },
   { id: 'score_3', emoji: '🔱', name: 'Milliardaire', desc: '1B Étoiles', check: (s, g) => s.score >= 1000000000 },
-  { id: 'fleur_10', emoji: '🌸', name: 'Jardinier', desc: '10 Fleurs', check: (s, g) => g.fleur >= 10 },
-  { id: 'fleur_50', emoji: '🌿', name: 'Botaniste', desc: '50 Fleurs', check: (s, g) => g.fleur >= 50 },
-  { id: 'wand_25', emoji: '🪄', name: 'Magicien', desc: '25 Baguettes', check: (s, g) => g.wand >= 25 },
-  { id: 'wand_50', emoji: '🔮', name: 'Archimage', desc: '50 Baguettes', check: (s, g) => g.wand >= 50 },
-  { id: 'fairy_25', emoji: '✨', name: 'Ami des Fées', desc: '25 Fées', check: (s, g) => g.fairy >= 25 },
-  { id: 'fairy_100', emoji: '🧚', name: 'Roi des Pixels', desc: '100 Fées', check: (s, g) => g.fairy >= 100 },
-  { id: 'uni_10', emoji: '🌈', name: 'Écurie Arc-en-ciel', desc: '10 Licornes', check: (s, g) => g.unicorn >= 10 },
-  { id: 'uni_30', emoji: '🦄', name: 'Légende Pure', desc: '30 Licornes', check: (s, g) => g.unicorn >= 30 },
-  { id: 'drag_10', emoji: '🔥', name: 'Dresseur', desc: '10 Dragons', check: (s, g) => g.dragon >= 10 },
-  { id: 'drag_30', emoji: '🐉', name: 'Maître des Cieux', desc: '30 Dragons', check: (s, g) => g.dragon >= 30 },
-  { id: 'cast_10', emoji: '🧱', name: 'Bâtisseur', desc: '10 Châteaux', check: (s, g) => g.castle >= 10 },
+  { id: 'fairy_80', emoji: '🧚', name: 'Roi des Pixels', desc: '80 Fées', check: (s, g) => g.fairy >= 80 }, // Mis à jour à 80
   { id: 'cast_50', emoji: '🏰', name: 'Empereur', desc: '50 Châteaux', check: (s, g) => g.castle >= 50 },
-  { id: 'boss_1', emoji: '🦴', name: 'Désherbage', desc: 'Vaincre la Fleur du Néant', check: (s, g) => s.defeatedBosses.includes('Fleur du Néant') },
-  { id: 'boss_2', emoji: '🔨', name: 'Brise-Glace', desc: 'Vaincre le Titan de Cristal', check: (s, g) => s.defeatedBosses.includes('Titan de Cristal') },
-  { id: 'boss_3', emoji: '🌑', name: 'Exorciste', desc: 'Vaincre le Gardien des Ombres', check: (s, g) => s.defeatedBosses.includes('Gardien des Ombres') },
-  { id: 'boss_4', emoji: '☀️', name: 'Extincteur', desc: 'Vaincre le Phénix Solaire', check: (s, g) => s.defeatedBosses.includes('Phénix Solaire') },
-  { id: 'boss_5', emoji: '🗡️', name: 'Héros Épique', desc: 'Vaincre l\'Hydre d\'Émeraude', check: (s, g) => s.defeatedBosses.includes('Hydre d\'Émeraude') },
-  { id: 'boss_6', emoji: '✨', name: 'BÉNÉDICTION', desc: 'Recevoir l\'onction du Dieu des Étoiles', check: (s, g) => s.defeatedBosses.includes('Ancien Dieu des Étoiles') },
-  { id: 'comet_1', emoji: '🌠', name: 'Voeu exaucé', desc: 'Cliquer sur une comète', check: (s, g) => s.cometsClicked >= 1 },
+  { id: 'boss_6', emoji: '✨', name: 'BÉNÉDICTION', desc: 'Recevoir l\'onction divine', check: (s, g) => s.defeatedBosses.includes('Ancien Dieu des Étoiles') },
   { id: 'comet_leg', emoji: '🌟', name: 'Élu des Astres', desc: 'Trouver une comète légendaire', check: (s, g) => s.unlockedLegendary === true },
-  { id: 'all_gens', emoji: '🏬', name: 'Collectionneur', desc: 'Avoir 1 de chaque bâtiment', check: (s, g) => Object.values(g).every(v => v > 0) },
-  { id: 'ps_high', emoji: '🚀', name: 'Vitesse Lumière', desc: 'Produire 5k/sec', check: (s, g) => getPS() >= 5000 },
-  { id: 'ps_ultra', emoji: '🌌', name: 'Big Bang', desc: 'Produire 50k/sec', check: (s, g) => getPS() >= 50000 },
-  { id: 'starter', emoji: '🥉', name: 'Premiers pas', desc: 'Acheter son premier bâtiment', check: (s, g) => Object.values(g).some(v => v > 0) }
+  { id: 'comet_1', emoji: '🌠', name: 'Voeu exaucé', desc: 'Cliquer sur une comète', check: (s, g) => s.cometsClicked >= 1 }
 ];
 
 let state = { score: 0, defeatedBosses: [], clicks: 0, unlockedAchievements: [], cometsClicked: 0, unlockedLegendary: false };
@@ -197,17 +174,38 @@ function updateUI() {
 
   const bossArea = document.getElementById('BossList');
   const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
+  
   if (!nextBoss) {
     bossArea.innerHTML = "<div style='color:var(--green); font-weight:800; text-align:center;'>🌌 LÉGENDE TERMINÉE 🌌</div>";
   } else {
     let reqs = [];
-    if (nextBoss.id === 'Gardien des Ombres') { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 3000) reqs.push("3k Clics"); }
-    if (nextBoss.id === 'Phénix Solaire') { if(gens.wand < 50) reqs.push("50 Baguettes"); }
-if (nextBoss.id === 'Hydre d\'Émeraude') { 
-      if(gens.fairy < 80) reqs.push("80 Fées"); // Mis à jour à 80
-    }if (nextBoss.id === 'Ancien Dieu des Étoiles') { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 10000) reqs.push("10k Clics"); }
+    if (nextBoss.id === 'Gardien des Ombres') { 
+      if(gens.dragon < 30) reqs.push("30 Dragons"); 
+      if(state.clicks < 3000) reqs.push("3k Clics"); 
+    }
+    if (nextBoss.id === 'Phénix Solaire') { 
+      if(gens.wand < 50) reqs.push("50 Baguettes"); 
+    }
+    if (nextBoss.id === 'Hydre d\'Émeraude') { 
+      if(gens.fairy < 80) reqs.push("80 Fées"); // Mis à jour à 80 fées
+    }
+    if (nextBoss.id === 'Ancien Dieu des Étoiles') { 
+      if(gens.castle < 50) reqs.push("50 Châteaux"); 
+      if(state.clicks < 10000) reqs.push("10k Clics"); 
+    }
+
     const canFight = state.score >= nextBoss.cost && reqs.length === 0;
-    bossArea.innerHTML = `<div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')"><div class="item-icon">${nextBoss.emoji}</div><div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)} ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;">Requis: ${reqs.join(' & ')}</span>` : ''}</div></div></div>`;
+    bossArea.innerHTML = `
+      <div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost}, '${reqs.join(', ')}')">
+        <div class="item-icon">${nextBoss.emoji}</div>
+        <div class="item-info">
+          <div class="item-name">${nextBoss.name}</div>
+          <div class="item-cost">
+            ⚔️ ${fmtCompact(nextBoss.cost)} 
+            ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;">Requis: ${reqs.join(' & ')}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
   }
 
   document.getElementById('achCount').textContent = state.unlockedAchievements.length;
@@ -221,8 +219,8 @@ function buy(id, cost) { if (state.score >= cost) { state.score -= cost; gens[id
 function fightBoss(id, cost, reqs) { if (reqs === "" && state.score >= cost) { state.score -= cost; state.defeatedBosses.push(id); checkAchievements(); updateUI(); saveGame(); notify("⚔️ Victoire !"); } else if (reqs !== "") notify("⚠️ Requis : " + reqs); }
 
 document.getElementById('clickBtn').onclick = () => { state.score += getClickPower(); state.clicks++; checkAchievements(); const s = document.getElementById('score'); s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); updateUI(); };
-function saveGame() { localStorage.setItem('starSave_v2', JSON.stringify({ state, gens })); }
-function loadGame() { const saved = localStorage.getItem('starSave_v2'); if (saved) { const d = JSON.parse(saved); Object.assign(state, d.state); Object.assign(gens, d.gens); } }
+function saveGame() { localStorage.setItem('starSave_v3', JSON.stringify({ state, gens })); }
+function loadGame() { const saved = localStorage.getItem('starSave_v3'); if (saved) { const d = JSON.parse(saved); Object.assign(state, d.state); Object.assign(gens, d.gens); } }
 
 setInterval(() => { state.score += getPS() / 10; checkAchievements(); updateUI(); saveGame(); }, 100);
 

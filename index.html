@@ -527,9 +527,26 @@ function loadGame() {
 setInterval(() => { state.score += getPS() / 10; checkAchievements(); updateUI(); saveGame(); }, 100);
 
 function spawnComet(isFirstLoad = false) {
-  if (state.score < 1000) { setTimeout(() => spawnComet(), 10000); return; }
-  const c = document.createElement('div');
-  c.className = 'comet'; c.textContent = '☄️';
+  const now = Date.now();
+  const savedNextSpawn = parseInt(localStorage.getItem('nextCometTime')) || 0;
+
+  // SÉCURITÉ : Si on charge la page et que l'heure prévue n'est pas encore passée
+  if (isFirstLoad && now < savedNextSpawn) {
+    const remainingTime = savedNextSpawn - now;
+    console.log(`⏳ Comète en attente : encore ${Math.round(remainingTime/1000)}s`);
+    setTimeout(() => spawnComet(), remainingTime);
+    return;
+  }
+
+  // Ne pas spawn si le score est trop bas
+  if (state.score < 1000) { 
+    setTimeout(() => spawnComet(), 10000); 
+    return; 
+  }
+  
+  // --- Logique d'apparition ---
+  const isLegendary = Math.random() < 0.10;
+  const c = document.createElement('div');  c.className = 'comet'; c.textContent = '☄️';
   c.onclick = () => { 
     state.cometsClicked++;
     let bonus = Math.max(5000, Math.floor(getPS() * 180 * getCometMultiplier())); 
@@ -538,15 +555,17 @@ function spawnComet(isFirstLoad = false) {
   };
   document.body.appendChild(c);
   setTimeout(() => { if(c.parentNode) c.remove(); }, 5000);
-  setTimeout(() => spawnComet(), Math.random() * 40000 + 40000);
-}
 
-const sessionStart = Date.now();
-setInterval(() => {
-  const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
-  const m = Math.floor(elapsed / 60); const s = elapsed % 60;
-  document.getElementById('sessionTimer').textContent = `${m}m${String(s).padStart(2,'0')}s`;
-}, 1000);
+  // --- Calcul du prochain passage ---
+  // On définit le prochain spawn entre 40 et 80 secondes
+  let nextDelay = Math.random() * 40000 + 40000; 
+  const nextAppearanceTime = Date.now() + nextDelay;
+  
+  // On enregistre IMMÉDIATEMENT dans le localStorage
+  localStorage.setItem('nextCometTime', nextAppearanceTime);
+  
+  setTimeout(() => spawnComet(), nextDelay);
+}
 
 loadGame(); updateUI(); spawnComet(true);
 </script>

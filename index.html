@@ -434,77 +434,50 @@ function checkAchievements() {
 
 function updateUI() {
   document.getElementById('score').textContent = fmtCompact(state.score);
-  document.getElementById('totalClicks').textContent = state.clicks.toLocaleString();
   document.getElementById('perSec').textContent = fmtCompact(getPS());
-  document.getElementById('clickVal').textContent = fmtCompact(getClickPower());
   document.getElementById('eclatsCount').textContent = state.eclats;
-  document.getElementById('prestigeCount').textContent = state.prestigeCount + 1;
-  document.getElementById('achCountHeader').textContent = state.unlockedAchievements.length;
+  document.getElementById('totalClicks').textContent = state.clicks;
 
-  const godDefeated = state.defeatedBosses.includes('Étoile Mère');
-  document.getElementById('prestigeBtn').style.display = godDefeated ? 'block' : 'none';
-  if (godDefeated) {
-    const gain = getPrestigeEclats();
-    document.getElementById('prestigeBtn').textContent = `🌀 PRESTIGE (+${gain} Éclat${gain > 1 ? 's' : ''})`;
+  // Boss Central
+  const bossArea = document.getElementById('centralBossContainer');
+  const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
+  if (nextBoss) {
+    const canAfford = state.score >= nextBoss.cost;
+    bossArea.innerHTML = `
+      <div class="list-item ${!canAfford ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost})">
+        <div class="item-icon">${nextBoss.emoji}</div>
+        <div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)}</div></div>
+      </div>`;
+  } else {
+    bossArea.innerHTML = "<div style='text-align:center; font-weight:800; color:var(--green);'>🌌 UNIVERS CONQUIS</div>";
   }
 
-  const prestigeKey = state.prestigeCount > 0 ? `prestige_${Math.min(state.prestigeCount, 5)}` : null;
-  const lastBoss = state.defeatedBosses[state.defeatedBosses.length - 1];
-  document.getElementById('storyText').textContent = (prestigeKey && !godDefeated) ? (STORY_DATA[prestigeKey] || STORY_DATA['prestige_5']) : (lastBoss ? STORY_DATA[lastBoss] || '' : STORY_DATA['start']);
+  // Story
+  const lastBoss = state.defeatedBosses[state.defeatedBosses.length-1] || 'start';
+  document.getElementById('storyText').textContent = state.prestigeCount > 0 && lastBoss === 'start' ? STORY_DATA['prestige_1'] : STORY_DATA[lastBoss];
 
+  // Shop
   document.getElementById('genList').innerHTML = GEN_DATA.map(g => {
-    const costMult = getCostMultiplier();
-    let totalPrice = 0;
-    for (let i = 0; i < buyQty; i++) totalPrice += Math.floor(g.cost * Math.pow(1.15, gens[g.id] + i) * costMult);
-    const canAfford = state.score >= totalPrice;
-    return `<div class="list-item ${!canAfford ? 'cant-afford' : ''}" onclick="buy('${g.id}', ${buyQty})">
+    const cost = Math.floor(g.cost * Math.pow(1.15, gens[g.id]));
+    return `<div class="list-item ${state.score < cost ? 'cant-afford' : ''}" onclick="buy('${g.id}')">
       <div class="item-icon">${g.emoji}</div>
-      <div class="item-info">
-        <div class="item-name">${g.name}</div>
-        <div class="item-cost">🪙 ${fmtCompact(totalPrice)}</div>
-      </div>
+      <div class="item-info"><div class="item-name">${g.name}</div><div class="item-cost">🪙 ${fmtCompact(cost)}</div></div>
       <div class="item-count">${gens[g.id]}</div>
     </div>`;
   }).join('');
 
-  const passiveBonus = getPrestigePassiveBonus();
-  document.getElementById('prestigeShop').innerHTML = (state.eclats === 0 && state.prestigeCount === 0)
-    ? `<div style="color:#94a3b8; font-size:0.85rem; font-style:italic;">Faites un Prestige pour débloquer la boutique !</div>`
-    : `<div style="background:#f3e8ff;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:700;">Bonus passif : ×${passiveBonus.toFixed(2)}</div>` +
-      PRESTIGE_SHOP.map(upg => {
-        const lvl = state.prestigeUpgrades[upg.id] || 0;
-        const cost = upg.costPerLevel * (lvl + 1);
-        const maxed = lvl >= upg.maxLevel;
-        return `<div class="list-item ${state.eclats >= cost && !maxed ? '' : 'cant-afford'}" onclick="buyPrestigeUpgrade('${upg.id}')">
-          <div class="item-icon">${upg.emoji}</div>
-          <div class="item-info">
-            <div class="item-name">${upg.name}</div>
-            <div class="item-cost">${maxed ? '✅ MAX' : `✨ ${cost} Éclats`} — ${upg.desc}</div>
-          </div>
-          <div class="item-count">${lvl}/${upg.maxLevel}</div>
-        </div>`;
-      }).join('');
-
-  const bossArea = document.getElementById('BossList');
-  const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
-  if (!nextBoss) {
-    bossArea.innerHTML = "<div style='color:var(--green); font-weight:800; text-align:center;'>Vainqueur Absolu !</div>";
-  } else {
-    const bossCost = getBossCost(nextBoss.cost);
-    bossArea.innerHTML = `<div class="list-item ${state.score < bossCost ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id.replace(/'/g, "\\'")}', ${bossCost}, '')">
-        <div class="item-icon">${nextBoss.emoji}</div>
-        <div class="item-info">
-          <div class="item-name">${nextBoss.name}</div>
-          <div class="item-cost">⚔️ ${fmtCompact(bossCost)}</div>
-        </div>
-      </div>`;
-  }
-
-  document.getElementById('achCount').textContent = state.unlockedAchievements.length;
-  document.getElementById('SuccesList').innerHTML = ACHIEVEMENTS_DATA.map(ach => {
-    const isUnlocked = state.unlockedAchievements.includes(ach.id);
-    return `<div class="achievement-item ${isUnlocked ? 'unlocked' : ''}"><div class="ach-icon">${isUnlocked ? ach.emoji : '🔒'}</div><div class="ach-info"><div class="ach-name">${ach.name}</div><div class="ach-desc">${ach.desc}</div></div></div>`;
+  // Prestige Shop
+  document.getElementById('prestigeShop').innerHTML = PRESTIGE_SHOP.map(upg => {
+    const lvl = state.prestigeUpgrades[upg.id] || 0;
+    const cost = upg.costPerLevel * (lvl + 1);
+    return `<div class="list-item ${state.eclats < cost ? 'cant-afford' : ''}" onclick="buyPrestigeUpgrade('${upg.id}')">
+      <div class="item-icon">${upg.emoji}</div>
+      <div class="item-info"><div class="item-name">${upg.name}</div><div class="item-cost">✨ ${cost} Éclats</div></div>
+      <div class="item-count">${lvl}</div>
+    </div>`;
   }).join('');
+
+  document.getElementById('prestigeBtn').style.display = state.defeatedBosses.includes('Étoile Mère') ? 'block' : 'none';
 }
   function buy(id, qty = 1) {
   const g = GEN_DATA.find(g => g.id === id);

@@ -201,6 +201,7 @@ header { grid-column: 1/-1; display: flex; justify-content: space-between; align
     <div class="tab-bar">
       <button class="tab-btn active" onclick="setTab('shop')">⚙️ Boutique</button>
       <button class="tab-btn" onclick="setTab('prestige')">✨ Prestige</button>
+      <button class="tab-btn" onclick="setTab('boss')">⚔️ Boss</button>
       <button class="tab-btn" onclick="setTab('ach')">🏆 Succès</button>
     </div>
 
@@ -340,9 +341,10 @@ function setBuyQty(n) {
 function setTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  const idx = ['shop','prestige','boss','ach'].indexOf(name);
-  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  const panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+  const btn = document.querySelector(`.tab-btn[onclick="setTab('${name}')"]`);
+  if (btn) btn.classList.add('active');
 }
 
 let state = { score: 0, defeatedBosses: [], clicks: 0, unlockedAchievements: [], cometsClicked: 0, unlockedLegendary: false, prestigeCount: 0, eclats: 0, prestigeUpgrades: {}, maxGens: {fleur:0, wand:0, fairy:0, unicorn:0, dragon:0, castle:0} };
@@ -446,49 +448,109 @@ function checkAchievements() {
 function updateUI() {
   document.getElementById('score').textContent = fmtCompact(state.score);
   document.getElementById('perSec').textContent = fmtCompact(getPS());
+  document.getElementById('clickVal').textContent = fmtCompact(getClickPower());
   document.getElementById('eclatsCount').textContent = state.eclats;
-  document.getElementById('totalClicks').textContent = state.clicks;
+  document.getElementById('prestigeCount').textContent = state.prestigeCount + 1;
+  document.getElementById('totalClicks').textContent = state.clicks.toLocaleString();
+  document.getElementById('achCount').textContent = state.unlockedAchievements.length;
+  document.getElementById('achCountHeader').textContent = state.unlockedAchievements.length;
+
+  // Bouton prestige
+  const godDefeated = state.defeatedBosses.includes('Étoile Mère');
+  const prestigeBtn = document.getElementById('prestigeBtn');
+  prestigeBtn.style.display = godDefeated ? 'block' : 'none';
+  if (godDefeated) {
+    const gain = getPrestigeEclats();
+    prestigeBtn.textContent = `🌀 PRESTIGE (+${gain} Éclat${gain > 1 ? 's' : ''})`;
+  }
 
   // Boss Central
   const bossArea = document.getElementById('centralBossContainer');
   const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
   if (nextBoss) {
-    const canAfford = state.score >= nextBoss.cost;
+    const bossCost = getBossCost(nextBoss.cost);
+    let reqs = [];
+    if (nextBoss.prestigeReq && state.prestigeCount < nextBoss.prestigeReq) reqs.push(`Cycle ${nextBoss.prestigeReq + 1} requis`);
+    if (nextBoss.eclatsReq && state.eclats < nextBoss.eclatsReq) reqs.push(`${nextBoss.eclatsReq} Éclats requis`);
+    if (nextBoss.id.includes('Gardien')) { if(gens.dragon < 30) reqs.push("30 Dragons"); if(state.clicks < 3000) reqs.push("3k Clics"); }
+    if (nextBoss.id.includes('Phénix')) { if(gens.wand < 50) reqs.push("50 Baguettes"); }
+    if (nextBoss.id.includes('Hydre')) { if(gens.fairy < 80) reqs.push("80 Fées"); }
+    if (nextBoss.id.includes('Étoile')) { if(gens.castle < 50) reqs.push("50 Châteaux"); if(state.clicks < 10000) reqs.push("10k Clics"); }
+    if (nextBoss.id.includes('Ombre')) { if(gens.castle < 40) reqs.push("40 Châteaux"); }
+    if (nextBoss.id.includes('Titan du Vide')) { if(gens.castle < 60) reqs.push("60 Châteaux"); if(getPS() < 500000) reqs.push("500k/sec"); }
+    if (nextBoss.id.includes('Infini')) { if(gens.castle < 80) reqs.push("80 Châteaux"); if(getPS() < 5000000) reqs.push("5M/sec"); if(state.eclats < 15) reqs.push("15 Éclats"); }
+    const canFight = state.score >= bossCost && reqs.length === 0;
+    const cycleLabel = state.prestigeCount > 0 ? ` <span style="color:var(--purple);font-size:0.75rem;">[×${Math.pow(2.5,state.prestigeCount).toFixed(1)}]</span>` : '';
+    const badge = nextBoss.eclatsReq ? `<span style="background:linear-gradient(135deg,var(--purple),var(--pink));color:white;border-radius:20px;padding:1px 8px;font-size:0.7rem;margin-left:4px;">✨ POST-PRESTIGE</span>` : '';
     bossArea.innerHTML = `
-      <div class="list-item ${!canAfford ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id}', ${nextBoss.cost})">
+      <div class="list-item ${!canFight ? 'cant-afford' : ''}" onclick="fightBoss('${nextBoss.id.replace(/'/g,"\\'")}', ${bossCost})">
         <div class="item-icon">${nextBoss.emoji}</div>
-        <div class="item-info"><div class="item-name">${nextBoss.name}</div><div class="item-cost">⚔️ ${fmtCompact(nextBoss.cost)}</div></div>
+        <div class="item-info">
+          <div class="item-name">${nextBoss.name}${cycleLabel}${badge}</div>
+          <div class="item-cost">⚔️ ${fmtCompact(bossCost)}${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;">Requis: ${reqs.join(' & ')}</span>` : ''}</div>
+        </div>
       </div>`;
   } else {
     bossArea.innerHTML = "<div style='text-align:center; font-weight:800; color:var(--green);'>🌌 UNIVERS CONQUIS</div>";
   }
 
   // Story
-  const lastBoss = state.defeatedBosses[state.defeatedBosses.length-1] || 'start';
-  document.getElementById('storyText').textContent = state.prestigeCount > 0 && lastBoss === 'start' ? STORY_DATA['prestige_1'] : STORY_DATA[lastBoss];
+  const lastBoss = state.defeatedBosses[state.defeatedBosses.length - 1];
+  const prestigeKey = state.prestigeCount > 0 ? `prestige_${Math.min(state.prestigeCount, 5)}` : null;
+  document.getElementById('storyText').textContent = (prestigeKey && !lastBoss) ? (STORY_DATA[prestigeKey] || STORY_DATA['prestige_5']) : (lastBoss ? STORY_DATA[lastBoss] || '' : STORY_DATA['start']);
 
   // Shop
   document.getElementById('genList').innerHTML = GEN_DATA.map(g => {
-    const cost = Math.floor(g.cost * Math.pow(1.15, gens[g.id]));
-    return `<div class="list-item ${state.score < cost ? 'cant-afford' : ''}" onclick="buy('${g.id}')">
+    const costMult = getCostMultiplier();
+    let totalPrice = 0;
+    for (let i = 0; i < buyQty; i++) totalPrice += Math.floor(g.cost * Math.pow(1.15, gens[g.id] + i) * costMult);
+    const price1 = Math.floor(g.cost * Math.pow(1.15, gens[g.id]) * costMult);
+    const canAfford = state.score >= totalPrice;
+    return `<div class="list-item ${!canAfford ? 'cant-afford' : ''}" onclick="buy('${g.id}', ${buyQty})">
       <div class="item-icon">${g.emoji}</div>
-      <div class="item-info"><div class="item-name">${g.name}</div><div class="item-cost">🪙 ${fmtCompact(cost)}</div></div>
+      <div class="item-info">
+        <div class="item-name">${g.name}</div>
+        <div class="item-cost">🪙 ${fmtCompact(totalPrice)}${buyQty > 1 ? ` <span style="color:#94a3b8;font-size:0.75rem;">(${fmtCompact(price1)} chacun)</span>` : ''}</div>
+      </div>
       <div class="item-count">${gens[g.id]}</div>
     </div>`;
   }).join('');
 
   // Prestige Shop
-  document.getElementById('prestigeShop').innerHTML = PRESTIGE_SHOP.map(upg => {
-    const lvl = state.prestigeUpgrades[upg.id] || 0;
-    const cost = upg.costPerLevel * (lvl + 1);
-    return `<div class="list-item ${state.eclats < cost ? 'cant-afford' : ''}" onclick="buyPrestigeUpgrade('${upg.id}')">
-      <div class="item-icon">${upg.emoji}</div>
-      <div class="item-info"><div class="item-name">${upg.name}</div><div class="item-cost">✨ ${cost} Éclats</div></div>
-      <div class="item-count">${lvl}</div>
+  const passiveBonus = getPrestigePassiveBonus();
+  document.getElementById('prestigeShop').innerHTML = 
+    (state.eclats === 0 && state.prestigeCount === 0
+      ? `<div style="color:#94a3b8;font-size:0.85rem;font-style:italic;">Faites votre premier Prestige pour débloquer des améliorations permanentes !</div>`
+      : `<div style="background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-family:'Baloo 2';font-size:0.9rem;font-weight:700;">
+          🌀 Bonus passif actuel : <span style="color:var(--purple);">×${passiveBonus.toFixed(2)} production</span>
+          <span style="color:#94a3b8;font-weight:400;font-size:0.8rem;"> (+5% par cycle)</span>
+        </div>`) +
+    PRESTIGE_SHOP.map(upg => {
+      const lvl = state.prestigeUpgrades[upg.id] || 0;
+      const cost = upg.costPerLevel * (lvl + 1);
+      const maxed = lvl >= upg.maxLevel;
+      const canAfford = state.eclats >= cost && !maxed;
+      return `<div class="list-item ${canAfford ? '' : 'cant-afford'}" onclick="buyPrestigeUpgrade('${upg.id}')">
+        <div class="item-icon">${upg.emoji}</div>
+        <div class="item-info">
+          <div class="item-name">${upg.name}</div>
+          <div class="item-cost" style="color:#7c3aed;">${maxed ? '✅ MAX' : `✨ ${cost} Éclat${cost > 1 ? 's' : ''}`} — ${upg.desc}</div>
+        </div>
+        <div class="item-count" style="color:var(--purple);">${lvl}/${upg.maxLevel}</div>
+      </div>`;
+    }).join('');
+
+  // Succès
+  document.getElementById('SuccesList').innerHTML = ACHIEVEMENTS_DATA.map(ach => {
+    const isUnlocked = state.unlockedAchievements.includes(ach.id);
+    return `<div class="achievement-item ${isUnlocked ? 'unlocked' : ''}">
+      <div class="ach-icon">${isUnlocked ? ach.emoji : '🔒'}</div>
+      <div class="ach-info">
+        <div class="ach-name">${ach.name}</div>
+        <div class="ach-desc">${ach.desc}</div>
+      </div>
     </div>`;
   }).join('');
-
-  document.getElementById('prestigeBtn').style.display = state.defeatedBosses.includes('Étoile Mère') ? 'block' : 'none';
 }
   function buy(id, qty = 1) {
   const g = GEN_DATA.find(g => g.id === id);
@@ -512,6 +574,16 @@ function loadGame() {
     const d = JSON.parse(saved); 
     Object.assign(state, d.state); 
     Object.assign(gens, d.gens);
+    if (!state.prestigeCount) state.prestigeCount = 0;
+    if (!state.eclats) state.eclats = 0;
+    if (!state.prestigeUpgrades) state.prestigeUpgrades = {};
+    if (!state.maxGens) {
+      state.maxGens = {};
+      Object.keys(gens).forEach(k => state.maxGens[k] = gens[k]);
+    }
+    if (!state.unlockedAchievements) state.unlockedAchievements = [];
+    if (!state.defeatedBosses) state.defeatedBosses = [];
+    if (!state.cometsClicked) state.cometsClicked = 0;
   } 
 }
 
@@ -558,7 +630,35 @@ function spawnComet(isFirstLoad = false) {
   setTimeout(() => spawnComet(), nextDelay);
 }
 
-loadGame(); updateUI(); spawnComet(true);
+// Timer de session
+const sessionStart = Date.now();
+setInterval(() => {
+  const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+  const h = Math.floor(elapsed / 3600);
+  const m = Math.floor((elapsed % 3600) / 60);
+  const s = elapsed % 60;
+  const el = document.getElementById('sessionTimer');
+  if (el) el.textContent = h > 0 ? `${h}h${String(m).padStart(2,'0')}m` : `${m}m${String(s).padStart(2,'0')}s`;
+}, 1000);
+
+function spawnPulseStar() {
+  if (state.score < 50000) { setTimeout(spawnPulseStar, 30000); return; }
+  const c = document.createElement('div');
+  c.className = 'pulse-star';
+  c.textContent = '💫';
+  const autoBonus = Math.max(100, Math.floor(getClickPower() * 8 * getCometMultiplier()));
+  const clickBonus = Math.max(500, Math.floor(getClickPower() * 40 * getCometMultiplier()));
+  c.onclick = () => {
+    state.score += clickBonus; state.clicks += 10;
+    c.remove(); checkAchievements(); updateUI();
+    notify("💫 Étoile attrapée ! +" + fmtCompact(clickBonus));
+  };
+  document.body.appendChild(c);
+  setTimeout(() => { if (c.parentNode) { c.remove(); state.score += autoBonus; state.clicks += 3; } }, 6000);
+  setTimeout(spawnPulseStar, Math.random() * 20000 + 25000);
+}
+
+loadGame(); updateUI(); spawnComet(true); setTimeout(spawnPulseStar, 30000);
 </script>
   <footer class="footer-signature">✨ Créé par <strong>Vivien</strong> - 2026 ✨</footer>
 

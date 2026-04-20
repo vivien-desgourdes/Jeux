@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌟 STAR CLICKER - DESTINY</title>
+  <link rel="manifest" href="Manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+
+    /* =====================================================
+       VARIABLES & RESET
+    ===================================================== */
+    :root {
+      --yellow:  #ffd234;
+      --orange:  #ff8c42;
+      --pink:    #ff5fa0;
+      --purple:  #a855f7;
+      --blue:    #3b82f6;
+      --green:   #22c55e;
+      --shadow:  0 4px 0 rgba(0,0,0,.12), 0 8px 24px rgba(0,0,0,.08);
+      --radius:  20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      touch-action: manipulation;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(160deg, #fff1fa 0%, #e8f4ff 50%, #f0fff4 100%);
+      min-height: 100vh;
+      color: #2d2d4e;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* =====================================================
+       LAYOUT PRINCIPAL
+    ===================================================== */
+    #app {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+    }
+
+    #app > .card.main-area  { grid-column: 1; }
+    #app > .card.story-card { grid-column: 2; }
+    #app > .card.tabs-card  { grid-column: 1 / -1; }
+    header                  { grid-column: 1 / -1; }
+
+    .footer-signature {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 20px;
+      font-family: 'Baloo 2', cursive;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    /* =====================================================
+       CARTES
+    ===================================================== */
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .card-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 15px 25px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .header-stats-group { display: flex; gap: 20px; flex-wrap: wrap; }
+
+    .stat-item  { font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1rem; }
+    .stat-label { color: #94a3b8; font-size: 0.8rem; }
+
+    .logo {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--orange), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    #prestigeBtn {
+      display: none;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 0.95rem;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #7c3aed;
+    }
+
+    /* =====================================================
+       ZONE DE CLIC PRINCIPALE
+    ===================================================== */
+    .main-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .score-number {
+      font-family: 'Baloo 2', cursive;
+      font-size: 4.5rem;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1;
+    }
+
+    .score-number.pop { animation: clickPop 0.1s ease-out; }
+    @keyframes clickPop { 50% { transform: scale(1.05); } }
+
+    .star-btn {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(145deg, var(--yellow), var(--orange));
+      box-shadow: 0 8px 0 #c96a00, 0 15px 30px rgba(255,140,66,0.3);
+      font-size: 4.5rem;
+      transition: 0.1s;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+
+    .star-btn:active { transform: translateY(4px) scale(0.95); box-shadow: 0 2px 0 #c96a00; }
+
+    /* =====================================================
+       ANIMATIONS AU CLIC
+    ===================================================== */
+    .click-ripple {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 500;
+      transform: translate(-50%, -50%) scale(0);
+      background: radial-gradient(circle, rgba(255,210,52,0.55) 0%, rgba(255,140,66,0.2) 60%, transparent 80%);
+      animation: rippleOut 0.55s ease-out forwards;
+    }
+    @keyframes rippleOut {
+      0%   { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+    }
+
+    .click-particle {
+      position: fixed; pointer-events: none; z-index: 501;
+      font-size: 1.4rem; font-family: 'Baloo 2', cursive; font-weight: 800;
+      color: var(--orange); text-shadow: 0 2px 6px rgba(255,140,66,0.5);
+      animation: particleFly var(--dur, 0.8s) ease-out forwards;
+      white-space: nowrap;
+    }
+    @keyframes particleFly {
+      0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      60%  { opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -80px))) scale(0.5); opacity: 0; }
+    }
+
+    .click-ring {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 499;
+      border: 3px solid rgba(255, 210, 52, 0.7);
+      transform: translate(-50%, -50%) scale(0.3);
+      animation: ringExpand 0.6s ease-out forwards;
+    }
+    @keyframes ringExpand {
+      0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+    }
+
+    /* =====================================================
+       COMBO & CRITIQUE
+    ===================================================== */
+
+    #combo-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      min-height: 54px;
+    }
+
+    #combo-label {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1.1rem;
+      transition: color 0.2s, transform 0.1s;
+    }
+
+    #combo-bar-wrap {
+      width: 160px;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 50px;
+      overflow: hidden;
+    }
+
+    #combo-bar {
+      height: 100%;
+      border-radius: 50px;
+      width: 100%;
+      transition: width 0.1s linear, background 0.3s;
+      background: var(--blue);
+    }
+
+    /* Texte "CRITIQUE !" animé */
+    .critical-text {
+      position: fixed;
+      pointer-events: none;
+      z-index: 600;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 2.8rem;
+      color: #fff;
+      text-shadow: 0 0 20px #ffd234, 0 0 40px #ff8c42, 0 4px 0 rgba(0,0,0,0.3);
+      animation: criticalPop 1.1s ease-out forwards;
+      white-space: nowrap;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes criticalPop {
+      0%   { transform: translate(-50%, -50%) scale(0.4) rotate(-8deg); opacity: 1; }
+      20%  { transform: translate(-50%, -50%) scale(1.3) rotate(3deg);  opacity: 1; }
+      60%  { transform: translate(-50%, -50%) scale(1.0) rotate(0deg);  opacity: 1; }
+      100% { transform: translate(-50%, calc(-50% - 80px)) scale(0.8);  opacity: 0; }
+    }
+
+    /* Flash doré sur le bouton lors d'un critique */
+    .star-btn.critical-flash { animation: critFlash 0.4s ease-out; }
+
+    @keyframes critFlash {
+      0%   { box-shadow: 0 8px 0 #c96a00, 0 0 0px rgba(255,210,52,0); }
+      30%  { box-shadow: 0 8px 0 #c96a00, 0 0 60px rgba(255,210,52,0.9); }
+      100% { box-shadow: 0 8px 0 #c96a00, 0 15px 30px rgba(255,140,66,0.3); }
+    }
+
+    /* =====================================================
+       BARRE DE VIE DES BOSS
+    ===================================================== */
+
+    .boss-fight-area {
+      padding: 4px 0 2px;
+    }
+
+    .boss-fight-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .boss-fight-emoji { font-size: 2rem; }
+
+    .boss-fight-name {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 1rem;
+      flex: 1;
+    }
+
+    .boss-hp-text {
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #ef4444;
+    }
+
+    /* Barre de vie */
+    .boss-hp-bar-wrap {
+      background: #fee2e2;
+      border-radius: 50px;
+      height: 14px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      border: 1px solid #fca5a5;
+    }
+
+    .boss-hp-bar {
+      height: 100%;
+      border-radius: 50px;
+      background: linear-gradient(90deg, #ef4444, #f97316);
+      transition: width 0.15s ease-out;
+    }
+
+    /* La barre devient orange puis verte quand le boss est presque mort */
+    .boss-hp-bar.mid  { background: linear-gradient(90deg, #f97316, #fbbf24); }
+    .boss-hp-bar.low  { background: linear-gradient(90deg, #22c55e, #86efac); animation: hpPulse 0.6s ease-in-out infinite alternate; }
+
+    @keyframes hpPulse { from { opacity: 1; } to { opacity: 0.6; } }
+
+    /* Coût requis */
+    .boss-cost-row {
+      font-size: 0.8rem;
+      color: #b45309;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .boss-cost-row.ok { color: #16a34a; }
+
+    /* Message "boss pas encore débloqué" */
+    .boss-locked-msg {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      font-style: italic;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    /* Flash rouge sur le boss quand on lui inflige des dégâts */
+    @keyframes bossHit {
+      0%   { background: linear-gradient(135deg, #fff 0%, #fff5f5 100%); }
+      30%  { background: linear-gradient(135deg, #ffe4e4 0%, #ffd0d0 100%); }
+      100% { background: linear-gradient(135deg, #fff 0%, #fff5f5 100%); }
+    }
+
+    .boss-area-fixed.hit { animation: bossHit 0.3s ease-out; }
+
+    /* =====================================================
+       LISTES (boutique, boss, succès)
+    ===================================================== */
+    .list-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px; margin-bottom: 10px;
+      border: 2px solid #e2e8f0; border-radius: 16px;
+      cursor: pointer; transition: 0.2s;
+      outline: none; -webkit-tap-highlight-color: transparent; user-select: none;
+    }
+    .list-item:hover      { border-color: var(--blue); background: #f8fafc; }
+    .list-item.cant-afford { opacity: 0.5; pointer-events: none; filter: grayscale(0.8); }
+
+    .item-icon  { font-size: 2.2rem; }
+    .item-info  { flex: 1; }
+    .item-name  { font-family: 'Baloo 2', cursive; font-weight: 700; font-size: 1rem; }
+    .item-cost  { font-size: 0.85rem; color: #b45309; font-weight: 700; }
+    .item-count { font-family: 'Baloo 2', cursive; font-size: 1.6rem; font-weight: 800; color: var(--blue); }
+
+    /* =====================================================
+       SUCCÈS
+    ===================================================== */
+    .achievement-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; border-radius: 12px;
+      background: #f1f5f9; margin-bottom: 8px;
+      filter: grayscale(1); opacity: 0.6; transition: 0.3s;
+      border: 1px solid transparent;
+    }
+    .achievement-item.unlocked { filter: grayscale(0); opacity: 1; background: #fffbeb; border-color: var(--yellow); }
+    .ach-icon { font-size: 1.5rem; }
+    .ach-info { flex: 1; }
+    .ach-name { font-weight: 800; font-size: 0.9rem; font-family: 'Baloo 2', cursive; line-height: 1.2; }
+    .ach-desc { font-size: 0.75rem; color: #64748b; }
+
+    /* =====================================================
+       OBJETS VOLANTS (comètes, étoiles)
+    ===================================================== */
+    .comet     { position: fixed; cursor: pointer; z-index: 1000; animation: fly 5s linear forwards; font-size: 3.5rem; }
+    .pulse-star{ position: fixed; cursor: pointer; z-index: 1000; animation: flyPulse 6s linear forwards; font-size: 2.8rem; filter: drop-shadow(0 0 10px #a855f7); }
+    @keyframes fly      { from { left: 115%; top: -100px; } to { left: -100px; top: 80%;  } }
+    @keyframes flyPulse { from { left: 115%; top: 30%;    } to { left: -100px; top: 60%;  } }
+
+    /* =====================================================
+       ONGLETS
+    ===================================================== */
+    .tab-bar {
+      display: flex; gap: 6px; margin-bottom: 16px;
+      background: #f1f5f9; border-radius: 14px; padding: 4px;
+    }
+    .tab-btn {
+      flex: 1; font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 0.85rem;
+      padding: 8px 4px; border: none; border-radius: 10px;
+      background: transparent; color: #94a3b8; cursor: pointer; transition: 0.2s; outline: none;
+    }
+    .tab-btn.active { background: #fff; color: #2d2d4e; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .tab-panel        { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* =====================================================
+       ZONE BOSS FIXE
+    ===================================================== */
+    .boss-area-fixed {
+      grid-column: 1;
+      padding: 15px !important;
+      background: linear-gradient(135deg, #fff 0%, #fff5f5 100%);
+      border: 2px solid #fee2e2;
+    }
+    #centralBossContainer .list-item { margin-bottom: 0; background: white; }
+
+    /* =====================================================
+       NOTIFICATIONS
+    ===================================================== */
+    #toast-container {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+    }
+    .toast {
+      background: rgba(45, 45, 78, 0.95); color: white;
+      padding: 12px 25px; border-radius: 50px;
+      font-family: 'Baloo 2', cursive; font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 2px solid var(--yellow);
+      animation: slideIn 0.5s ease-out, fadeOut 0.5s ease forwards 2.5s;
+      text-align: center; min-width: 280px;
+    }
+    @keyframes slideIn { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
+
+    /* =====================================================
+       MODALES
+    ===================================================== */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 9998;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: #fff; border-radius: 24px; padding: 32px 28px;
+      max-width: 420px; width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      text-align: center; font-family: 'Nunito', sans-serif;
+    }
+    .modal-box h2    { font-family: 'Baloo 2', cursive; font-size: 1.8rem; font-weight: 800; margin-bottom: 16px; }
+    .modal-box p     { color: #475569; line-height: 1.7; margin-bottom: 8px; font-size: 0.95rem; }
+    .modal-stat      { background: #f8fafc; border-radius: 12px; padding: 10px 16px; margin: 8px 0; font-weight: 700; color: #2d2d4e; font-size: 0.95rem; }
+    .modal-btns      { display: flex; gap: 12px; margin-top: 20px; justify-content: center; }
+
+    .btn-confirm {
+      font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1rem;
+      padding: 12px 28px; border-radius: 50px; border: none;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      color: white; cursor: pointer; box-shadow: 0 4px 0 #7c3aed;
+    }
+    .btn-cancel {
+      font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1rem;
+      padding: 12px 28px; border-radius: 50px; border: 2px solid #e2e8f0;
+      background: #f8fafc; color: #94a3b8; cursor: pointer;
+    }
+
+    /* Modale Prestige */
+    #prestige-modal .modal-box { border: 3px solid var(--purple); }
+    #prestige-modal h2 { background: linear-gradient(135deg, var(--purple), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* Modale Hors-ligne */
+    #offline-modal .modal-box { border: 3px solid var(--yellow); max-width: 400px; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    #offline-modal h2 { background: linear-gradient(135deg, var(--yellow), var(--orange)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .offline-stars-display { font-family: 'Baloo 2', cursive; font-size: 3rem; font-weight: 800; color: #1e293b; margin: 12px 0; text-shadow: 0 2px 8px rgba(255,200,0,0.3); }
+    .offline-detail        { background: #fffbeb; border: 2px solid #fde68a; border-radius: 14px; padding: 12px 16px; margin: 10px 0; font-size: 0.9rem; color: #92400e; font-weight: 700; }
+    .offline-detail.green  { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+    .offline-bar-wrap      { background: #f1f5f9; border-radius: 50px; height: 10px; margin: 8px 0 4px; overflow: hidden; }
+    .offline-bar           { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--yellow), var(--orange)); transition: width 1s ease; }
+    .offline-bar-label     { font-size: 0.78rem; color: #94a3b8; margin-bottom: 10px; }
+
+    .btn-collect {
+      font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 1.1rem;
+      padding: 14px 36px; border-radius: 50px; border: none;
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      color: white; cursor: pointer; box-shadow: 0 5px 0 #c96a00;
+      margin-top: 16px; transition: 0.1s;
+    }
+    .btn-collect:active { transform: translateY(3px); box-shadow: 0 2px 0 #c96a00; }
+
+    /* Boutons quantité achat */
+    .buy-toggle-wrap { display: flex; background: #f1f5f9; border-radius: 12px; padding: 3px; gap: 2px; }
+    .buy-toggle {
+      font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 0.85rem;
+      padding: 5px 14px; border-radius: 9px; border: none;
+      background: transparent; color: #94a3b8; cursor: pointer; outline: none; transition: 0.15s;
+    }
+    .buy-toggle.active { background: var(--blue); color: white; }
+
+    /* =====================================================
+       RESPONSIVE MOBILE
+    ===================================================== */
+    @media (max-width: 768px) {
+      #app { grid-template-columns: 1fr; padding: 10px; gap: 15px; }
+      #app > .card.main-area  { order: 1; grid-column: 1; }
+      #app > .card.story-card { order: 2; grid-column: 1; }
+      #app > .card.tabs-card  { order: 3; grid-column: 1; }
+      header        { flex-direction: column; gap: 10px; padding: 15px; }
+      .logo         { font-size: 1.5rem; }
+      .score-number { font-size: 3.2rem; }
+      .star-btn     { width: 140px; height: 140px; font-size: 3.8rem; }
+      .tab-btn      { font-size: 0.75rem; padding: 10px 2px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="toast-container"></div>
+
+  <!-- MODALE PRESTIGE -->
+  <div id="prestige-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h2>🌀 PRESTIGE</h2>
+      <p id="prestige-modal-story" style="font-style:italic; color:#7c3aed; margin-bottom:14px;"></p>
+      <div class="modal-stat">✨ Éclats gagnés : <span id="modal-eclats" style="color:var(--purple);">0</span></div>
+      <div class="modal-stat">⚡ Bonus passif : <span id="modal-passive" style="color:var(--blue);">×1.00</span> production</div>
+      <div class="modal-stat">👹 Boss : <span style="color:#ef4444;">×<span id="modal-boss-mult">2.5</span> plus forts</span></div>
+      <p style="margin-top:12px; font-size:0.85rem; color:#94a3b8;">Score, générateurs et boss sont réinitialisés.<br>Succès et Éclats sont conservés.</p>
+      <div class="modal-btns">
+        <button class="btn-cancel"  id="btn-prestige-cancel">Annuler</button>
+        <button class="btn-confirm" id="btn-prestige-confirm">Transcender !</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE GAINS HORS LIGNE -->
+  <div id="offline-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h2>💤 Bienvenue !</h2>
+      <p style="color:#475569; font-size:0.95rem; margin-bottom:4px;">Vos générateurs ont travaillé pendant votre absence !</p>
+      <div class="offline-detail">⏱️ Absent pendant : <strong id="offline-duration">0 min</strong></div>
+      <div class="offline-detail green">🚀 Production : <strong id="offline-ps">0</strong> /sec</div>
+      <p style="font-size:0.85rem; color:#94a3b8; margin:4px 0;">Gains collectés :</p>
+      <div class="offline-stars-display" id="offline-earned">+0 ⭐</div>
+      <div class="offline-bar-wrap"><div class="offline-bar" id="offline-bar" style="width:50%;"></div></div>
+      <div class="offline-bar-label" id="offline-bar-label">Efficacité hors ligne : 50%</div>
+      <p style="font-size:0.78rem; color:#94a3b8;">Cap hors ligne : <strong id="offline-cap-label">8 heures</strong> — Améliorable avec les Éclats</p>
+      <button class="btn-collect" id="btn-collect-offline">🌟 Récupérer !</button>
+    </div>
+  </div>
+
+  <!-- APPLICATION -->
+  <div id="app">
+
+    <header class="card">
+      <div class="header-top">
+        <div class="logo">🌟 STAR CLICKER</div>
+        <button id="prestigeBtn">🌀 PRESTIGE</button>
+      </div>
+      <div class="header-stats">
+        <div class="header-stats-group">
+          <div class="stat-item">🚀 <span id="perSec" style="color:var(--blue);">0</span> <span class="stat-label">/sec</span></div>
+          <div class="stat-item">👆 <span id="clickVal" style="color:var(--pink);">1</span> <span class="stat-label">/clic</span></div>
+          <div class="stat-item">⏱️ <span id="sessionTimer" style="color:#64748b;">0m00s</span></div>
+        </div>
+        <div class="header-stats-group">
+          <div class="stat-item">🌀 <span class="stat-label">Cycle</span> <span id="prestigeCount" style="color:var(--purple);">1</span></div>
+          <div class="stat-item">✨ <span id="eclatsCount" style="color:var(--purple);">0</span> <span class="stat-label">Éclats</span></div>
+          <div class="stat-item">🏆 <span id="achCountHeader" style="color:var(--yellow);">0</span><span class="stat-label">/40</span></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="card main-area">
+      <div>
+        <div class="score-number" id="score">0</div>
+        <p style="font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Étoiles collectées</p>
+      </div>
+      <button class="star-btn" id="clickBtn">⭐</button>
+
+      <!-- Système Combo -->
+      <div id="combo-display">
+        <div id="combo-label" style="color:#94a3b8;">Pas de combo</div>
+        <div id="combo-bar-wrap">
+          <div id="combo-bar"></div>
+        </div>
+      </div>
+
+      <div style="font-weight:700; color:#64748b;">
+        📊 Clics totaux : <span id="totalClicks" style="color:var(--purple); font-family:'Baloo 2',cursive;">0</span>
+      </div>
+    </div>
+
+    <div class="card boss-area-fixed">
+      <div class="card-title" style="margin-bottom:10px; font-size:1rem;">⚔️ DÉFI ACTUEL</div>
+      <div id="centralBossContainer"></div>
+    </div>
+
+    <div class="card story-card">
+      <div class="card-title">📖 GRIMOIRE DES ÉTOILES</div>
+      <div id="storyText" style="font-style:italic; color:#475569; min-height:40px; line-height:1.5;">Il était une fois...</div>
+    </div>
+
+    <div class="card tabs-card">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="shop">⚙️ Boutique</button>
+        <button class="tab-btn"        data-tab="prestige">✨ Prestige</button>
+        <button class="tab-btn"        data-tab="boss">⚔️ Boss</button>
+        <button class="tab-btn"        data-tab="ach">🏆 Succès</button>
+      </div>
+
+      <div id="tab-shop" class="tab-panel active">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <div class="card-title" style="margin-bottom:0;">⚙️ BOUTIQUE MAGIQUE</div>
+          <div class="buy-toggle-wrap">
+            <button class="buy-toggle active" id="buyToggle1"  data-qty="1">×1</button>
+            <button class="buy-toggle"        id="buyToggle10" data-qty="10">×10</button>
+          </div>
+        </div>
+        <div id="genList"></div>
+      </div>
+
+      <div id="tab-prestige" class="tab-panel">
+        <div class="card-title">✨ BOUTIQUE PRESTIGE</div>
+        <div id="prestigeShop"></div>
+      </div>
+
+      <div id="tab-boss" class="tab-panel">
+        <div class="card-title">⚔️ CHALLENGE BOSS</div>
+        <div id="BossList"></div>
+      </div>
+
+      <div id="tab-ach" class="tab-panel">
+        <div class="card-title">🏆 SUCCÈS (<span id="achCount">0</span>/40)</div>
+        <div id="SuccesList" style="max-height:400px; overflow-y:auto;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer-signature">✨ Créé par <strong>Vivien</strong> - 2026 ✨</footer>
+
+  <script>
+
+    // =====================================================
+    //  DONNÉES DU JEU
+    // =====================================================
+
+    const STORY_DATA = {
+      'start':             "Au commencement, il n'y avait que le vide. Puis votre main s'est levée, et la première étoile est née du néant. Chaque clic est une promesse faite à l'univers...",
+      'Fleur du Néant':    "La Fleur du Néant s'est éteinte sous vos doigts. Sa poussière noire se transmute en lumière dorée, tissant un voile protecteur autour de vos étoiles. Mais quelque chose de plus lourd remue dans les profondeurs du ciel...",
+      'Titan de Cristal':  "Le Titan de Cristal s'est brisé en mille éclats éblouissants. Chaque fragment reflète une version de vous-même — toutes victorieuses. La lumière se propage désormais plus vite, portée par ses débris magnifiques. Une ombre gigantesque prend forme à l'horizon...",
+      'Gardien des Ombres':"L'obscurité s'est retirée comme une marée. Le Gardien des Ombres, vaincu, vous lègue ses secrets : la nuit aussi peut nourrir les étoiles. Mais depuis le coeur brûlant d'une nébuleuse lointaine, quelque chose de solaire et de furieux vous observe...",
+      'Phénix Solaire':    "Le Phénix Solaire a plongé dans vos flammes et en est ressorti différent — apaisé. Ses cendres ont fusionné avec votre essence. Chaque clic porte maintenant la chaleur d'un soleil. L'univers tremble. L'Hydre aux mille têtes émerge des océans stellaires...",
+      "Hydre d'Émeraude":  "L'Hydre d'Émeraude est tombée, et la nature cosmique a repris ses droits. Les galaxies fleurissent là où régnait le chaos. Vous avez équilibré ce qui était brisé. Mais au fond du cosmos, une présence ancienne ouvre les yeux pour la première fois depuis l'aube des temps...",
+      'Étoile Mère':       "L'Étoile Mère ne tombe pas — elle vous reconnaît. Après des éons de solitude, elle voit en vous son égal. Elle vous offre sa bénédiction et fusionne doucement avec votre lumière. Vous portez désormais en vous le feu originel de l'univers. Mais l'infini n'a pas de fin... Le PRESTIGE vous appelle.",
+      'Ombre Inversée':    "L'Ombre Inversée s'est regardée dans votre lumière et s'est consumée. Elle était le reflet de tout ce que vous avez détruit pour grandir. La victoire a un goût amer, mais nécessaire. Quelque chose de plus vaste que le néant s'éveille dans les plis de l'espace-temps...",
+      'Titan du Vide':     "Le Vide lui-même vient d'être brisé. Ce n'est pas un être que vous avez vaincu — c'est une absence. Et dans cette absence, quelque chose d'incompréhensible prend forme. L'Infini Lui-même commence à se matérialiser. Êtes-vous prêt à affronter la fin de toutes choses ?",
+      "L'Infini Lui-même": "Silence. Puis tout recommence. Vous avez vaincu l'Infini — ce qui ne peut pas être fait, vous l'avez fait. Il n'y a plus rien au-delà. Vous êtes le commencement et la fin. L'alpha et l'oméga de cet univers. Et pourtant... une nouvelle étoile vient de naître au loin.",
+      'prestige_1': "Cycle II — La mémoire de vos actions précédentes vibre dans le vide. L'univers n'est plus inconnu : il porte la trace de votre passage, rendant chaque nouvelle étoile plus simple à forger.",
+      'prestige_2': "Cycle III — Le cosmos a appris de vos victoires passées. Les boss sont plus sombres, plus rapides, plus affamés. Le prix de la gloire augmente. Mais vos Éclats Stellaires brillent d'un feu que rien ne peut éteindre.",
+      'prestige_3': "Cycle IV — Vous n'êtes plus un héros. Vous êtes une constante de l'univers. Les galaxies se plient autour de votre trajectoire. Les ennemis savent qu'ils ne peuvent pas gagner — et pourtant ils combattent.",
+      'prestige_4': "Cycle V — Les dieux anciens ont gravé votre nom dans le tissu de l'espace-temps. Chaque étoile que vous créez porte votre marque. Le prestige n'est plus une renaissance — c'est une ascension.",
+      'prestige_5': "Cycle VI et au-delà — Les dimensions plient. Le temps se courbe. Votre légende transcende ce que les mots peuvent décrire. Vous existez en dehors du cycle, au-dessus des lois de cet univers. Continuez, Éternel.",
+    };
+
+    const BOSS_DATA = [
+      { id: 'Fleur du Néant',    emoji: '💀', name: 'Fleur du Néant',    cost: 500000,       hp: 500000 },
+      { id: 'Titan de Cristal',  emoji: '👹', name: 'Titan de Cristal',  cost: 2500000,      hp: 3000000 },
+      { id: 'Gardien des Ombres',emoji: '👽', name: 'Gardien des Ombres',cost: 10000000,     hp: 20000000 },
+      { id: 'Phénix Solaire',    emoji: '🔥', name: 'Phénix Solaire',    cost: 75000000,     hp: 200000000 },
+      { id: "Hydre d'Émeraude",  emoji: '🐍', name: "Hydre d'Émeraude", cost: 250000000,    hp: 1000000000 },
+      { id: 'Étoile Mère',       emoji: '🌟', name: 'Étoile Mère',       cost: 1000000000,   hp: 5000000000 },
+      { id: 'Ombre Inversée',    emoji: '🌑', name: 'Ombre Inversée',    cost: 5000000000,   hp: 30000000000,  prestigeReq: 1, eclatsReq: 3 },
+      { id: 'Titan du Vide',     emoji: '⚡', name: 'Titan du Vide',     cost: 50000000000,  hp: 200000000000, prestigeReq: 2, eclatsReq: 8 },
+      { id: "L'Infini Lui-même", emoji: '💀', name: "L'Infini",          cost: 500000000000, hp: 2000000000000,prestigeReq: 4, eclatsReq: 20 },
+    ];
+
+    const GEN_DATA = [
+      { id: 'fleur',   emoji: '🌼', name: 'Fleur',    base: 1,    cost: 50 },
+      { id: 'wand',    emoji: '🪄', name: 'Baguette', base: 5,    cost: 100 },
+      { id: 'fairy',   emoji: '🧚', name: 'Fée',      base: 30,   cost: 200 },
+      { id: 'unicorn', emoji: '🦄', name: 'Licorne',  base: 45,   cost: 2000 },
+      { id: 'dragon',  emoji: '🐉', name: 'Dragon',   base: 200,  cost: 15000 },
+      { id: 'castle',  emoji: '🏰', name: 'Château',  base: 1000, cost: 100000 },
+    ];
+
+    const PRESTIGE_SHOP = [
+      { id: 'prod_boost',    emoji: '⚡', name: 'Mémoire Cosmique',     desc: '+15% production par niveau',                          costPerLevel: 1, maxLevel: 10 },
+      { id: 'click_boost',   emoji: '👆', name: 'Frappe Éternelle',     desc: 'Force du clic ×1.5 par niveau',                       costPerLevel: 2, maxLevel: 5  },
+      { id: 'head_start',    emoji: '🌱', name: 'Héritage Floral',      desc: 'Démarre avec 25 Fleurs par niveau',                   costPerLevel: 3, maxLevel: 3  },
+      { id: 'cost_reduce',   emoji: '💸', name: 'Économiste Stellaire', desc: '-5% coût générateurs par niveau',                     costPerLevel: 2, maxLevel: 5  },
+      { id: 'base_ps',       emoji: '🔋', name: 'Énergie Primordiale',  desc: '+500/sec de base sans générateur',                    costPerLevel: 2, maxLevel: 5  },
+      { id: 'eclat_bonus',   emoji: '💎', name: 'Cristallisation',      desc: '+1 Éclat bonus à chaque Prestige',                    costPerLevel: 4, maxLevel: 4  },
+      { id: 'comet_boost',   emoji: '☄️', name: "Chasseur d'Astres",    desc: 'Bonus comètes/étoiles ×2 par niveau',                 costPerLevel: 3, maxLevel: 3  },
+      { id: 'gen_start',     emoji: '🐉', name: 'Mémoire des Anciens',  desc: '+5 niveaux à tous les générateurs',                   costPerLevel: 5, maxLevel: 4  },
+      { id: 'ps_ultra2',     emoji: '🌌', name: 'Singularité',          desc: 'Produire 500k/sec débloque ×3 PS',                    costPerLevel: 8, maxLevel: 3  },
+      { id: 'offline_boost', emoji: '💤', name: 'Sommeil Cosmique',     desc: '+2h de cap hors ligne et +10% efficacité par niveau', costPerLevel: 3, maxLevel: 4  },
+    ];
+
+    const ACHIEVEMENTS_DATA = [
+      { id: 'click_1',           emoji: '🖱️', name: 'Apprenti',              desc: '100 clics',                                 check: (s) => s.clicks >= 100 },
+      { id: 'click_2',           emoji: '⚡', name: 'Hyperactif',             desc: '1 000 clics',                               check: (s) => s.clicks >= 1000 },
+      { id: 'click_3',           emoji: '🌀', name: 'Frénésie',               desc: '5 000 clics',                               check: (s) => s.clicks >= 5000 },
+      { id: 'click_4',           emoji: '👑', name: "Doigt d'Or",             desc: '10 000 clics',                              check: (s) => s.clicks >= 10000 },
+      { id: 'score_1',           emoji: '💰', name: 'Petit pécule',           desc: '10k Étoiles',                               check: (s) => s.score >= 10000 },
+      { id: 'score_2',           emoji: '💎', name: 'Fortune',                desc: '1M Étoiles',                                check: (s) => s.score >= 1000000 },
+      { id: 'score_3',           emoji: '🔱', name: 'Milliardaire',           desc: '1B Étoiles',                                check: (s) => s.score >= 1000000000 },
+      { id: 'fleur_10',          emoji: '🌸', name: 'Jardinier',              desc: '10 Fleurs',                                 check: (s) => (s.maxGens?.fleur   || 0) >= 10 },
+      { id: 'fleur_50',          emoji: '🌿', name: 'Botaniste',              desc: '50 Fleurs',                                 check: (s) => (s.maxGens?.fleur   || 0) >= 50 },
+      { id: 'wand_25',           emoji: '🪄', name: 'Magicien',               desc: '25 Baguettes',                              check: (s) => (s.maxGens?.wand    || 0) >= 25 },
+      { id: 'wand_50',           emoji: '🔮', name: 'Archimage',              desc: '50 Baguettes',                              check: (s) => (s.maxGens?.wand    || 0) >= 50 },
+      { id: 'fairy_25',          emoji: '✨', name: 'Ami des Fées',           desc: '25 Fées',                                   check: (s) => (s.maxGens?.fairy   || 0) >= 25 },
+      { id: 'fairy_80',          emoji: '🧚', name: 'Roi des Pixels',         desc: '80 Fées',                                   check: (s) => (s.maxGens?.fairy   || 0) >= 80 },
+      { id: 'uni_10',            emoji: '🌈', name: 'Écurie Arc-en-ciel',     desc: '10 Licornes',                               check: (s) => (s.maxGens?.unicorn || 0) >= 10 },
+      { id: 'uni_30',            emoji: '🦄', name: 'Légende Pure',           desc: '30 Licornes',                               check: (s) => (s.maxGens?.unicorn || 0) >= 30 },
+      { id: 'drag_10',           emoji: '🔥', name: 'Dresseur',               desc: '10 Dragons',                                check: (s) => (s.maxGens?.dragon  || 0) >= 10 },
+      { id: 'drag_30',           emoji: '🐉', name: 'Maître des Cieux',       desc: '30 Dragons',                                check: (s) => (s.maxGens?.dragon  || 0) >= 30 },
+      { id: 'cast_10',           emoji: '🧱', name: 'Bâtisseur',              desc: '10 Châteaux',                               check: (s) => (s.maxGens?.castle  || 0) >= 10 },
+      { id: 'cast_50',           emoji: '🏰', name: 'Empereur',               desc: '50 Châteaux',                               check: (s) => (s.maxGens?.castle  || 0) >= 50 },
+      { id: 'boss_1',            emoji: '🦴', name: 'Désherbage',             desc: 'Vaincre la Fleur du Néant',                 check: (s) => s.defeatedBosses.includes('Fleur du Néant') },
+      { id: 'boss_2',            emoji: '🔨', name: 'Brise-Glace',            desc: 'Vaincre le Titan de Cristal',               check: (s) => s.defeatedBosses.includes('Titan de Cristal') },
+      { id: 'boss_3',            emoji: '🌑', name: 'Exorciste',              desc: 'Vaincre le Gardien des Ombres',             check: (s) => s.defeatedBosses.includes('Gardien des Ombres') },
+      { id: 'boss_4',            emoji: '☀️', name: 'Extincteur',             desc: 'Vaincre le Phénix Solaire',                 check: (s) => s.defeatedBosses.includes('Phénix Solaire') },
+      { id: 'boss_5',            emoji: '🗡️', name: 'Héros Épique',           desc: "Vaincre l'Hydre d'Émeraude",               check: (s) => s.defeatedBosses.includes("Hydre d'Émeraude") },
+      { id: 'boss_6',            emoji: '🌟', name: 'Fusion Stellaire',       desc: "Recevoir la bénédiction de l'Étoile Mère", check: (s) => s.defeatedBosses.includes('Étoile Mère') },
+      { id: 'comet_1',           emoji: '🌠', name: 'Voeu exaucé',            desc: 'Cliquer sur une comète',                    check: (s) => s.cometsClicked >= 1 },
+      { id: 'comet_leg',         emoji: '🌟', name: 'Élu des Astres',         desc: 'Trouver une comète légendaire',             check: (s) => s.unlockedLegendary === true },
+      { id: 'all_gens',          emoji: '🏬', name: 'Collectionneur',         desc: 'Avoir 1 de chaque bâtiment',                check: (s) => GEN_DATA.every(g => (s.maxGens?.[g.id] || 0) >= 1) },
+      { id: 'ps_high',           emoji: '🚀', name: 'Vitesse Lumière',        desc: 'Produire 5k/sec',                           check: ()  => getPS() >= 5000 },
+      { id: 'ps_ultra',          emoji: '🌌', name: 'Big Bang',               desc: 'Produire 50k/sec',                          check: ()  => getPS() >= 50000 },
+      { id: 'starter',           emoji: '🥉', name: 'Premiers pas',           desc: 'Acheter son premier bâtiment',              check: (s) => GEN_DATA.some(g => (s.maxGens?.[g.id] || 0) > 0) },
+      { id: 'prestige_1',        emoji: '🌀', name: 'Renaître',               desc: 'Faire son 1er Prestige',                    check: (s) => s.prestigeCount >= 1 },
+      { id: 'prestige_3',        emoji: '🔄', name: 'Cycle Brisé',            desc: 'Faire 3 Prestiges',                         check: (s) => s.prestigeCount >= 3 },
+      { id: 'prestige_5',        emoji: '♾️', name: 'Éternel',                desc: 'Faire 5 Prestiges',                         check: (s) => s.prestigeCount >= 5 },
+      { id: 'prestige_10',       emoji: '🌌', name: "Au-delà de l'Infini",    desc: 'Faire 10 Prestiges',                        check: (s) => s.prestigeCount >= 10 },
+      { id: 'eclats_10',         emoji: '💠', name: "Chasseur d'Éclats",      desc: 'Posséder 10 Éclats Stellaires',
+        check: (s) => {
+          const spent = Object.entries(s.prestigeUpgrades || {}).reduce((sum, [id, lvl]) => {
+            const u = PRESTIGE_SHOP.find(u => u.id === id);
+            return sum + (u ? u.costPerLevel * lvl * (lvl + 1) / 2 : 0);
+          }, 0);
+          return (s.eclats + spent) >= 10;
+        }
+      },
+      { id: 'prestige_shop_full',emoji: '🏅', name: 'Transcendance',          desc: 'Maximiser un upgrade Prestige',
+        check: (s) => Object.entries(s.prestigeUpgrades || {}).some(([id, lvl]) => {
+          const u = PRESTIGE_SHOP.find(u => u.id === id);
+          return u && lvl >= u.maxLevel;
+        })
+      },
+      { id: 'boss_7',            emoji: '🌑', name: "Chasseur d'Ombres",      desc: "Vaincre l'Ombre Inversée",                  check: (s) => s.defeatedBosses.includes('Ombre Inversée') },
+      { id: 'boss_8',            emoji: '⚡', name: 'Briseur du Vide',         desc: 'Vaincre le Titan du Vide',                  check: (s) => s.defeatedBosses.includes('Titan du Vide') },
+      { id: 'boss_9',            emoji: '💀', name: 'FIN ABSOLUE',             desc: "Vaincre L'Infini Lui-même",                 check: (s) => s.defeatedBosses.includes("L'Infini Lui-même") },
+    ];
+
+
+    // =====================================================
+    //  ÉTAT DU JEU
+    // =====================================================
+
+    let state = {
+      score: 0,
+      clicks: 0,
+      defeatedBosses: [],
+      unlockedAchievements: [],
+      cometsClicked: 0,
+      unlockedLegendary: false,
+      prestigeCount: 0,
+      eclats: 0,
+      prestigeUpgrades: {},
+      maxGens: { fleur: 0, wand: 0, fairy: 0, unicorn: 0, dragon: 0, castle: 0 },
+      bossHp: {}, // PV actuels de chaque boss en cours de combat
+    };
+
+    let gens   = { fleur: 0, wand: 0, fairy: 0, unicorn: 0, dragon: 0, castle: 0 };
+    let buyQty = 1;
+
+
+    // =====================================================
+    //  UTILITAIRES
+    // =====================================================
+
+    // Formate un grand nombre en texte court : 1500 → "1.5k"
+    function fmtCompact(n) {
+      if (n >= 1e12) return (n / 1e12).toFixed(2) + 'T';
+      if (n >= 1e9)  return (n / 1e9).toFixed(2) + 'B';
+      if (n >= 1e6)  return (n / 1e6).toFixed(2) + 'M';
+      if (n >= 1e3)  return (n / 1e3).toFixed(1) + 'k';
+      return Math.floor(n);
+    }
+
+    // Affiche une notification temporaire
+    function notify(text) {
+      const toast = document.createElement('div');
+      toast.className   = 'toast';
+      toast.textContent = text;
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+
+    // =====================================================
+    //  CALCULS DE PRODUCTION
+    // =====================================================
+
+    function getBossCost(baseCost) { return Math.floor(baseCost * Math.pow(2.5, state.prestigeCount)); }
+    function getPrestigePassiveBonus() { return Math.pow(1.05, state.prestigeCount); }
+
+    function getProdMultiplier() {
+      const prodLvl = state.prestigeUpgrades['prod_boost'] || 0;
+      const singLvl = state.prestigeUpgrades['ps_ultra2']  || 0;
+      let mult = Math.pow(1.15, prodLvl) * getPrestigePassiveBonus();
+      if (singLvl > 0 && getBasePS() >= 500000) mult *= Math.pow(3, singLvl);
+      return mult;
+    }
+
+    function getClickMultiplier()  { return Math.pow(1.5,  state.prestigeUpgrades['click_boost'] || 0); }
+    function getCostMultiplier()   { return Math.pow(0.95, state.prestigeUpgrades['cost_reduce']  || 0); }
+    function getCometMultiplier()  { return Math.pow(2,    state.prestigeUpgrades['comet_boost']  || 0); }
+
+    function getBasePS() {
+      const baseLvl  = state.prestigeUpgrades['base_ps'] || 0;
+      const fromGens = GEN_DATA.reduce((total, g) => total + (gens[g.id] * g.base), 0);
+      return fromGens + baseLvl * 500;
+    }
+
+    function getPS()         { return getBasePS() * getProdMultiplier(); }
+    function getClickPower() { return Math.max(1, Math.floor(getPS() * 0.1 * getClickMultiplier())); }
+
+    function getPrestigeEclats() {
+      const bonus = state.prestigeUpgrades['eclat_bonus'] || 0;
+      return Math.max(1, Math.floor(Math.sqrt(state.score / 5000000))) + bonus;
+    }
+
+
+    // =====================================================
+    //  SYSTÈME HORS LIGNE
+    // =====================================================
+
+    function getOfflineCapSeconds() {
+      // Base 8h + 2h par niveau d'upgrade "Sommeil Cosmique"
+      return (8 + (state.prestigeUpgrades['offline_boost'] || 0) * 2) * 3600;
+    }
+
+    function getOfflineEfficiency() {
+      // Base 50% + 10% par niveau d'upgrade
+      return 0.5 + (state.prestigeUpgrades['offline_boost'] || 0) * 0.10;
+    }
+
+    let pendingOfflineGain = 0;
+
+    function checkOfflineEarnings() {
+      const lastSave = parseInt(localStorage.getItem('starSave_lastTime') || '0');
+      if (!lastSave) return;
+
+      const elapsedSeconds = (Date.now() - lastSave) / 1000;
+      if (elapsedSeconds < 60) return; // Moins d'une minute : pas de popup
+
+      const ps = getPS();
+      if (ps <= 0) return;
+
+      const effectiveSeconds = Math.min(elapsedSeconds, getOfflineCapSeconds());
+      const earned = Math.floor(ps * effectiveSeconds * getOfflineEfficiency());
+      if (earned <= 0) return;
+
+      pendingOfflineGain = earned;
+
+      // Durée lisible
+      const totalMinutes = Math.floor(elapsedSeconds / 60);
+      const hours = Math.floor(totalMinutes / 60);
+      const mins  = totalMinutes % 60;
+      const durationText = hours > 0 ? `${hours}h ${mins}min` : `${totalMinutes} min`;
+
+      const effPct   = Math.round(getOfflineEfficiency() * 100);
+      const capHours = (getOfflineCapSeconds() / 3600).toFixed(0);
+
+      document.getElementById('offline-duration').textContent  = durationText;
+      document.getElementById('offline-ps').textContent        = fmtCompact(ps);
+      document.getElementById('offline-earned').textContent    = '+' + fmtCompact(earned) + ' ⭐';
+      document.getElementById('offline-bar').style.width       = effPct + '%';
+      document.getElementById('offline-bar-label').textContent = `Efficacité hors ligne : ${effPct}%`;
+      document.getElementById('offline-cap-label').textContent = capHours + ' heures';
+      document.getElementById('offline-modal').classList.add('open');
+    }
+
+    function collectOffline() {
+      document.getElementById('offline-modal').classList.remove('open');
+      if (pendingOfflineGain > 0) {
+        state.score += pendingOfflineGain;
+        notify('💤 Gains hors ligne récupérés : +' + fmtCompact(pendingOfflineGain) + ' ⭐');
+        pendingOfflineGain = 0;
+        checkAchievements();
+        updateUI();
+        saveGame();
+      }
+    }
+
+
+    // =====================================================
+    //  SAUVEGARDE & CHARGEMENT
+    // =====================================================
+
+    function saveGame() {
+      localStorage.setItem('starSave_final',    JSON.stringify({ state, gens }));
+      localStorage.setItem('starSave_lastTime', Date.now().toString());
+    }
+
+    function loadGame() {
+      const saved = localStorage.getItem('starSave_final');
+      if (!saved) return;
+
+      const data = JSON.parse(saved);
+      Object.assign(state, data.state);
+      Object.assign(gens,  data.gens);
+
+      // Compatibilité avec d'anciennes sauvegardes
+      if (!state.prestigeCount)        state.prestigeCount = 0;
+      if (!state.eclats)               state.eclats = 0;
+      if (!state.prestigeUpgrades)     state.prestigeUpgrades = {};
+      if (!state.unlockedAchievements) state.unlockedAchievements = [];
+      if (!state.defeatedBosses)       state.defeatedBosses = [];
+      if (!state.cometsClicked)        state.cometsClicked = 0;
+      if (!state.bossHp)               state.bossHp = {};
+      if (!state.maxGens) {
+        state.maxGens = {};
+        Object.keys(gens).forEach(k => state.maxGens[k] = gens[k]);
+      }
+    }
+
+
+    // =====================================================
+    //  ACTIONS DU JOUEUR
+    // =====================================================
+
+    // Acheter qty générateurs
+    function buy(id, qty = 1) {
+      const gen      = GEN_DATA.find(g => g.id === id);
+      const costMult = getCostMultiplier();
+      let totalCost  = 0;
+      for (let i = 0; i < qty; i++) {
+        totalCost += Math.floor(gen.cost * Math.pow(1.15, gens[id] + i) * costMult);
+      }
+      if (state.score < totalCost) return;
+      state.score -= totalCost;
+      gens[id]     += qty;
+      state.maxGens[id] = Math.max(state.maxGens[id] || 0, gens[id]);
+      checkAchievements();
+      updateUI();
+    }
+
+    // Attaquer un boss (appelé à chaque clic si un boss est actif et débloqué)
+    function damageBoss(damage) {
+      const nextBoss = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
+      if (!nextBoss) return;
+
+      // Vérifier que le boss est bien débloqué (score + prérequis)
+      const cost = getBossCost(nextBoss.cost);
+      const reqs = getBossRequirements(nextBoss);
+      if (state.score < cost || reqs.length > 0) return;
+
+      // Calculer les PV max en tenant compte du multiplicateur de prestige
+      const maxHp = Math.floor(nextBoss.hp * Math.pow(2, state.prestigeCount));
+
+      // Initialiser les PV si ce n'est pas encore fait (vérif stricte sur undefined)
+      if (state.bossHp[nextBoss.id] === undefined) state.bossHp[nextBoss.id] = maxHp;
+
+      // Infliger les dégâts
+      state.bossHp[nextBoss.id] = Math.max(0, state.bossHp[nextBoss.id] - damage);
+
+      // Flash visuel sur la carte boss
+      const bossCard = document.getElementById('boss-display');
+      bossCard.classList.remove('hit');
+      void bossCard.offsetWidth;
+      bossCard.classList.add('hit');
+
+      // Boss vaincu ?
+      if (state.bossHp[nextBoss.id] <= 0) {
+        delete state.bossHp[nextBoss.id];
+        state.defeatedBosses.push(nextBoss.id);
+        checkAchievements();
+        saveGame();
+        notify(`⚔️ ${nextBoss.name} vaincu !`);
+      }
+    }
+
+    // Changer la quantité d'achat
+    function setBuyQty(n) {
+      buyQty = n;
+      document.getElementById('buyToggle1').classList.toggle('active', n === 1);
+      document.getElementById('buyToggle10').classList.toggle('active', n === 10);
+      updateUI();
+    }
+
+    // Changer d'onglet
+    function setTab(name) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      document.querySelector(`.tab-btn[data-tab="${name}"]`).classList.add('active');
+    }
+
+    // Acheter un upgrade prestige
+    function buyPrestigeUpgrade(id) {
+      const upg      = PRESTIGE_SHOP.find(u => u.id === id);
+      const currentLvl = state.prestigeUpgrades[id] || 0;
+      if (currentLvl >= upg.maxLevel) return;
+      const cost = upg.costPerLevel * (currentLvl + 1);
+      if (state.eclats < cost) return;
+      state.eclats -= cost;
+      state.prestigeUpgrades[id] = currentLvl + 1;
+      saveGame();
+      updateUI();
+    }
+
+
+    // =====================================================
+    //  PRESTIGE
+    // =====================================================
+
+    function doPrestige() {
+      const gain        = getPrestigeEclats();
+      const passiveNext = Math.pow(1.05, state.prestigeCount + 1);
+      const bossMult    = Math.pow(2.5,  state.prestigeCount + 1).toFixed(1);
+      const stories     = ["L'Étoile Mère vous bénit...", "Vous transcendez...", "Deuxième renaissance...", "Troisième cycle...", "Quatrième renaissance...", "Cinquième cycle...", "La légende dépasse l'entendement."];
+
+      document.getElementById('prestige-modal-story').textContent = stories[Math.min(state.prestigeCount, stories.length - 1)];
+      document.getElementById('modal-eclats').textContent         = '+' + gain;
+      document.getElementById('modal-passive').textContent        = '×' + passiveNext.toFixed(2);
+      document.getElementById('modal-boss-mult').textContent      = bossMult;
+      document.getElementById('prestige-modal').classList.add('open');
+    }
+
+    function closePrestigeModal() {
+      document.getElementById('prestige-modal').classList.remove('open');
+    }
+
+    function confirmPrestige() {
+      closePrestigeModal();
+      const gain = getPrestigeEclats();
+
+      state.eclats += gain;
+      state.prestigeCount++;
+      state.score  = 0;
+      state.defeatedBosses = [];
+      state.bossHp = {};
+      state.clicks = 0;
+      Object.keys(gens).forEach(k => gens[k] = 0);
+
+      // Bonus de départ : Héritage Floral
+      const startLvl = state.prestigeUpgrades['head_start'] || 0;
+      if (startLvl > 0) gens.fleur = 25 * startLvl;
+
+      // Bonus de départ : Mémoire des Anciens
+      const genStartLvl = state.prestigeUpgrades['gen_start'] || 0;
+      if (genStartLvl > 0) {
+        Object.keys(gens).forEach(k => {
+          gens[k] = (gens[k] || 0) + 5 * genStartLvl;
+          state.maxGens[k] = Math.max(state.maxGens[k] || 0, gens[k]);
+        });
+      }
+
+      saveGame();
+      updateUI();
+      notify(`🌀 Prestige ! +${gain} Éclat(s).`);
+    }
+
+
+    // =====================================================
+    //  SUCCÈS
+    // =====================================================
+
+    function checkAchievements() {
+      ACHIEVEMENTS_DATA.forEach(ach => {
+        if (!state.unlockedAchievements.includes(ach.id) && ach.check(state, gens)) {
+          state.unlockedAchievements.push(ach.id);
+          notify('🏆 SUCCÈS : ' + ach.name);
+        }
+      });
+    }
+
+
+    // =====================================================
+    //  RENDU DE L'INTERFACE  (découpé en sous-fonctions)
+    // =====================================================
+
+    function updateUI() {
+      renderStats();
+      renderPrestigeButton();
+      renderCentralBoss();
+      renderStory();
+      renderBossList();
+      renderShop();
+      renderPrestigeShop();
+      renderAchievements();
+    }
+
+    function renderStats() {
+      document.getElementById('score').textContent           = fmtCompact(state.score);
+      document.getElementById('perSec').textContent          = fmtCompact(getPS());
+      document.getElementById('clickVal').textContent        = fmtCompact(getClickPower());
+      document.getElementById('eclatsCount').textContent     = state.eclats;
+      document.getElementById('prestigeCount').textContent   = state.prestigeCount + 1;
+      document.getElementById('totalClicks').textContent     = state.clicks.toLocaleString();
+      document.getElementById('achCount').textContent        = state.unlockedAchievements.length;
+      document.getElementById('achCountHeader').textContent  = state.unlockedAchievements.length;
+    }
+
+    function renderPrestigeButton() {
+      const btn = document.getElementById('prestigeBtn');
+      const godDefeated = state.defeatedBosses.includes('Étoile Mère');
+      btn.style.display = godDefeated ? 'block' : 'none';
+      if (godDefeated) {
+        const gain = getPrestigeEclats();
+        btn.textContent = `🌀 PRESTIGE (+${gain} Éclat${gain > 1 ? 's' : ''})`;
+      }
+    }
+
+    function renderCentralBoss() {
+      const container = document.getElementById('centralBossContainer');
+      const nextBoss  = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id));
+
+      if (!nextBoss) {
+        container.innerHTML = "<div style='text-align:center; font-weight:800; color:var(--green); padding:8px 0;'>🌌 UNIVERS CONQUIS</div>";
+        return;
+      }
+
+      const cost     = getBossCost(nextBoss.cost);
+      const reqs     = getBossRequirements(nextBoss);
+      const unlocked = state.score >= cost && reqs.length === 0;
+      const maxHp    = Math.floor(nextBoss.hp * Math.pow(2, state.prestigeCount));
+      const currentHp = unlocked ? (state.bossHp[nextBoss.id] ?? maxHp) : maxHp;
+      const hpPct    = currentHp / maxHp;
+
+      // Couleur de la barre selon les PV restants
+      let barClass = '';
+      if (hpPct <= 0.25) barClass = 'low';
+      else if (hpPct <= 0.55) barClass = 'mid';
+
+      // Label PV
+      const hpLabel = unlocked
+        ? `${fmtCompact(currentHp)} / ${fmtCompact(maxHp)}`
+        : fmtCompact(maxHp);
+
+      // Prérequis manquants
+      const reqsHtml = reqs.length > 0
+        ? `<div style="color:#ef4444; font-size:0.75rem; margin-top:4px;">🔒 Requis : ${reqs.join(' & ')}</div>`
+        : '';
+
+      // Statut du coût
+      const costOk   = state.score >= cost;
+      const costHtml = `<div class="boss-cost-row ${costOk ? 'ok' : ''}">
+        ${costOk ? '✅' : '💰'} Coût : ${fmtCompact(cost)} étoiles ${costOk ? '— Payé !' : '— Insuffisant'}
+      </div>`;
+
+      // Message si pas encore débloqué
+      const infoHtml = !unlocked
+        ? `<div class="boss-locked-msg">Remplissez les conditions pour commencer le combat !</div>`
+        : `<div style="font-size:0.75rem; color:#64748b; text-align:center; margin-top:2px;">⭐ Cliquez sur l'étoile pour attaquer !</div>`;
+
+      container.innerHTML = `
+        <div class="boss-fight-area">
+          <div class="boss-fight-header">
+            <div class="boss-fight-emoji">${nextBoss.emoji}</div>
+            <div class="boss-fight-name">${nextBoss.name}</div>
+            <div class="boss-hp-text">❤️ ${hpLabel}</div>
+          </div>
+          <div class="boss-hp-bar-wrap">
+            <div class="boss-hp-bar ${barClass}" style="width:${(hpPct * 100).toFixed(1)}%;"></div>
+          </div>
+          ${costHtml}
+          ${reqsHtml}
+          ${infoHtml}
+        </div>`;
+    }
+
+    function renderStory() {
+      const lastBoss    = state.defeatedBosses[state.defeatedBosses.length - 1];
+      const prestigeKey = state.prestigeCount > 0 ? `prestige_${Math.min(state.prestigeCount, 5)}` : null;
+
+      let text;
+      if (lastBoss && STORY_DATA[lastBoss]) {
+        // Un boss a été vaincu : on affiche son texte en priorité
+        text = STORY_DATA[lastBoss];
+      } else if (prestigeKey) {
+        // Prestige sans boss vaincu dans ce cycle : texte de cycle
+        text = STORY_DATA[prestigeKey] || STORY_DATA['prestige_5'];
+      } else {
+        // Tout début de partie
+        text = STORY_DATA['start'];
+      }
+
+      document.getElementById('storyText').textContent = text;
+    }
+
+    function renderBossList() {
+      const nextBossId = BOSS_DATA.find(b => !state.defeatedBosses.includes(b.id))?.id;
+      document.getElementById('BossList').innerHTML = BOSS_DATA.map(boss => {
+        const defeated = state.defeatedBosses.includes(boss.id);
+        const cost     = getBossCost(boss.cost);
+        const reqs     = defeated ? [] : getBossRequirements(boss);
+        const canFight = !defeated && state.score >= cost && reqs.length === 0;
+        const isNext   = boss.id === nextBossId;
+        return defeated ? buildBossDefeatedItem(boss) : buildBossItem(boss, cost, reqs, canFight, isNext);
+      }).join('');
+    }
+
+    function renderShop() {
+      const costMult = getCostMultiplier();
+      document.getElementById('genList').innerHTML = GEN_DATA.map(gen => {
+        let totalPrice = 0;
+        for (let i = 0; i < buyQty; i++) totalPrice += Math.floor(gen.cost * Math.pow(1.15, gens[gen.id] + i) * costMult);
+        const price1    = Math.floor(gen.cost * Math.pow(1.15, gens[gen.id]) * costMult);
+        const canAfford = state.score >= totalPrice;
+        const extraInfo = buyQty > 1 ? ` <span style="color:#94a3b8;font-size:0.75rem;">(${fmtCompact(price1)} chacun)</span>` : '';
+        return `
+          <div class="list-item ${canAfford ? '' : 'cant-afford'}" data-buy="${gen.id}">
+            <div class="item-icon">${gen.emoji}</div>
+            <div class="item-info">
+              <div class="item-name">${gen.name}</div>
+              <div class="item-cost">🪙 ${fmtCompact(totalPrice)}${extraInfo}</div>
+            </div>
+            <div class="item-count">${gens[gen.id]}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderPrestigeShop() {
+      const passiveBonus = getPrestigePassiveBonus();
+      let html = state.eclats === 0 && state.prestigeCount === 0
+        ? `<div style="color:#94a3b8;font-size:0.85rem;font-style:italic;">Faites votre premier Prestige pour débloquer des améliorations permanentes !</div>`
+        : `<div style="background:linear-gradient(135deg,#f3e8ff,#ede9fe);border-radius:12px;padding:10px 14px;margin-bottom:12px;font-family:'Baloo 2',cursive;font-size:0.9rem;font-weight:700;">
+             🌀 Bonus passif actuel : <span style="color:var(--purple);">×${passiveBonus.toFixed(2)} production</span>
+             <span style="color:#94a3b8;font-weight:400;font-size:0.8rem;"> (+5% par cycle)</span>
+           </div>`;
+
+      html += PRESTIGE_SHOP.map(upg => {
+        const lvl       = state.prestigeUpgrades[upg.id] || 0;
+        const cost      = upg.costPerLevel * (lvl + 1);
+        const maxed     = lvl >= upg.maxLevel;
+        const canAfford = state.eclats >= cost && !maxed;
+        const extraInfo = upg.id === 'offline_boost' && lvl > 0
+          ? ` <span style="color:#64748b;font-size:0.75rem;">(Cap: ${8 + lvl * 2}h, Efficacité: ${50 + lvl * 10}%)</span>`
+          : '';
+        return `
+          <div class="list-item ${canAfford ? '' : 'cant-afford'}" data-prestige-upg="${upg.id}">
+            <div class="item-icon">${upg.emoji}</div>
+            <div class="item-info">
+              <div class="item-name">${upg.name}</div>
+              <div class="item-cost" style="color:#7c3aed;">${maxed ? '✅ MAX' : `✨ ${cost} Éclat${cost > 1 ? 's' : ''}`} — ${upg.desc}${extraInfo}</div>
+            </div>
+            <div class="item-count" style="color:var(--purple);">${lvl}/${upg.maxLevel}</div>
+          </div>`;
+      }).join('');
+
+      document.getElementById('prestigeShop').innerHTML = html;
+    }
+
+    function renderAchievements() {
+      document.getElementById('SuccesList').innerHTML = ACHIEVEMENTS_DATA.map(ach => {
+        const unlocked = state.unlockedAchievements.includes(ach.id);
+        return `
+          <div class="achievement-item ${unlocked ? 'unlocked' : ''}">
+            <div class="ach-icon">${unlocked ? ach.emoji : '🔒'}</div>
+            <div class="ach-info">
+              <div class="ach-name">${ach.name}</div>
+              <div class="ach-desc">${ach.desc}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+
+    // =====================================================
+    //  CONSTRUCTION HTML DES BOSS
+    // =====================================================
+
+    // Retourne la liste des prérequis non satisfaits pour un boss
+    function getBossRequirements(boss) {
+      const reqs = [];
+      if (boss.prestigeReq && state.prestigeCount < boss.prestigeReq) reqs.push(`Cycle ${boss.prestigeReq + 1}`);
+      if (boss.eclatsReq   && state.eclats < boss.eclatsReq)           reqs.push(`${boss.eclatsReq} Éclats`);
+      if (boss.id.includes('Gardien'))       { if (gens.dragon < 30) reqs.push('30 Dragons');   if (state.clicks < 3000)  reqs.push('3k Clics'); }
+      if (boss.id.includes('Phénix'))        { if (gens.wand   < 50) reqs.push('50 Baguettes'); }
+      if (boss.id.includes('Hydre'))         { if (gens.fairy  < 80) reqs.push('80 Fées'); }
+      if (boss.id.includes('Étoile'))        { if (gens.castle < 50) reqs.push('50 Châteaux');  if (state.clicks < 10000) reqs.push('10k Clics'); }
+      if (boss.id.includes('Ombre'))         { if (gens.castle < 40) reqs.push('40 Châteaux'); }
+      if (boss.id.includes('Titan du Vide')) { if (gens.castle < 60) reqs.push('60 Châteaux');  if (getPS() < 500000)  reqs.push('500k/sec'); }
+      if (boss.id.includes('Infini'))        { if (gens.castle < 80) reqs.push('80 Châteaux');  if (getPS() < 5000000) reqs.push('5M/sec'); if (state.eclats < 15) reqs.push('15 Éclats'); }
+      return reqs;
+    }
+
+    function buildBossItem(boss, cost, reqs, canFight, isNext) {
+      const locked     = !isNext;
+      const cycleLabel = state.prestigeCount > 0 && !state.defeatedBosses.includes(boss.id)
+        ? ` <span style="color:var(--purple);font-size:0.72rem;">[×${Math.pow(2.5, state.prestigeCount).toFixed(1)}]</span>` : '';
+      const badge = boss.eclatsReq
+        ? `<span style="background:linear-gradient(135deg,var(--purple),var(--pink));color:white;border-radius:20px;padding:1px 8px;font-size:0.7rem;margin-left:4px;">✨ POST-PRESTIGE</span>` : '';
+
+      // Barre de vie dans l'onglet Boss
+      const maxHp     = Math.floor(boss.hp * Math.pow(2, state.prestigeCount));
+      const currentHp = state.bossHp[boss.id] ?? maxHp;
+      const hpPct     = currentHp / maxHp;
+      let barClass = '';
+      if (hpPct <= 0.25) barClass = 'low';
+      else if (hpPct <= 0.55) barClass = 'mid';
+
+      const hpBarHtml = isNext && canFight ? `
+        <div style="margin-top:6px;">
+          <div class="boss-hp-bar-wrap" style="height:8px;">
+            <div class="boss-hp-bar ${barClass}" style="width:${(hpPct * 100).toFixed(1)}%;"></div>
+          </div>
+          <div style="font-size:0.72rem; color:#ef4444; font-weight:700; margin-top:2px;">❤️ ${fmtCompact(currentHp)} / ${fmtCompact(maxHp)}</div>
+        </div>` : '';
+
+      return `
+        <div class="list-item ${locked || !canFight ? 'cant-afford' : ''}"
+             style="${locked ? 'filter:grayscale(0.5);' : ''} cursor:default;">
+          <div class="item-icon">${boss.emoji}</div>
+          <div class="item-info">
+            <div class="item-name">${boss.name}${cycleLabel}${badge}</div>
+            <div class="item-cost">⚔️ ${fmtCompact(cost)}
+              ${reqs.length > 0 ? `<br><span style="color:#ef4444;font-size:0.75rem;">Requis: ${reqs.join(' & ')}</span>` : ''}
+              ${locked && !boss.prestigeReq ? `<br><span style="color:#94a3b8;font-size:0.72rem;">🔒 Vaincre le boss précédent</span>` : ''}
+            </div>
+            ${hpBarHtml}
+          </div>
+          <div style="font-size:1.1rem;">${isNext ? '⚔️' : '🔒'}</div>
+        </div>`;
+    }
+
+    function buildBossDefeatedItem(boss) {
+      return `
+        <div class="list-item" style="opacity:0.7; cursor:default; border-color:#bbf7d0; background:#f0fdf4;">
+          <div class="item-icon">${boss.emoji}</div>
+          <div class="item-info">
+            <div class="item-name" style="text-decoration:line-through; color:#86efac;">${boss.name}</div>
+            <div class="item-cost" style="color:var(--green);">✅ Vaincu</div>
+          </div>
+          <div style="font-size:1.4rem;">☑️</div>
+        </div>`;
+    }
+
+
+    // =====================================================
+    //  SYSTÈME COMBO & CLICS CRITIQUES
+    // =====================================================
+
+    // --- Paliers de combo ---
+    // Chaque palier définit : nombre de clics min, multiplicateur, couleur, label
+    const COMBO_TIERS = [
+      { min:  1, mult: 1.0, color: '#94a3b8', label: '😐 Pas de combo' },
+      { min:  5, mult: 1.5, color: '#3b82f6', label: '🔥 COMBO ×1.5'   },
+      { min: 15, mult: 2.0, color: '#22c55e', label: '💥 COMBO ×2'      },
+      { min: 30, mult: 3.0, color: '#f59e0b', label: '⚡ COMBO ×3'      },
+      { min: 60, mult: 5.0, color: '#ff5fa0', label: '🌟 COMBO ×5'      },
+      { min:100, mult:10.0, color: '#a855f7', label: '👑 MEGA COMBO ×10' },
+    ];
+
+    // --- Clics critiques ---
+    // Chaque clic a CRIT_CHANCE (5%) de devenir critique
+    // Le multiplicateur est tiré au sort parmi CRIT_MULTS
+    const CRIT_CHANCE = 0.05;
+    const CRIT_MULTS  = [
+      { mult:   5, label: '×5 CRITIQUE !',   color: '#f59e0b' },
+      { mult:  10, label: '×10 CRITIQUE !!', color: '#ff8c42' },
+      { mult:  50, label: '×50 CRITIQUE !!!',color: '#ff5fa0' },
+      { mult: 100, label: '💀 ×100 ULTIME !!',color: '#a855f7' },
+    ];
+    // Probabilités relatives : 5 → 60%, 10 → 25%, 50 → 12%, 100 → 3%
+    const CRIT_WEIGHTS = [60, 25, 12, 3];
+
+    // --- État du combo ---
+    let comboCount   = 0;     // Nombre de clics dans le combo actuel
+    let comboTimer   = null;  // Timer de reset du combo
+    let barTimer     = null;  // Timer de la barre de progression
+    let barProgress  = 1.0;   // 1.0 = plein, 0.0 = vide
+
+    const COMBO_WINDOW = 1500; // ms entre deux clics pour maintenir le combo
+    const BAR_TICK     = 30;   // ms entre chaque mise à jour de la barre
+
+    // Retourne le palier de combo actuel
+    function getCurrentTier() {
+      let tier = COMBO_TIERS[0];
+      for (const t of COMBO_TIERS) {
+        if (comboCount >= t.min) tier = t;
+      }
+      return tier;
+    }
+
+    // Tire un critique au sort avec pondération
+    function rollCritical() {
+      const totalWeight = CRIT_WEIGHTS.reduce((a, b) => a + b, 0);
+      let roll = Math.random() * totalWeight;
+      for (let i = 0; i < CRIT_MULTS.length; i++) {
+        roll -= CRIT_WEIGHTS[i];
+        if (roll <= 0) return CRIT_MULTS[i];
+      }
+      return CRIT_MULTS[0];
+    }
+
+    // Met à jour visuellement le bloc combo
+    function updateComboDisplay() {
+      const tier  = getCurrentTier();
+      const label = document.getElementById('combo-label');
+      const bar   = document.getElementById('combo-bar');
+
+      // Texte et couleur du palier
+      label.textContent  = comboCount >= 5
+        ? `${tier.label} (${comboCount} clics)`
+        : '😐 Pas de combo';
+      label.style.color  = tier.color;
+
+      // Couleur de la barre selon le palier
+      const barColors = {
+        '#94a3b8': '#94a3b8',
+        '#3b82f6': 'var(--blue)',
+        '#22c55e': 'var(--green)',
+        '#f59e0b': '#f59e0b',
+        '#ff5fa0': 'var(--pink)',
+        '#a855f7': 'var(--purple)',
+      };
+      bar.style.background = barColors[tier.color] || tier.color;
+      bar.style.width      = (barProgress * 100) + '%';
+
+      // Petite animation "bump" du label à chaque clic
+      label.style.transform = 'scale(1.15)';
+      setTimeout(() => label.style.transform = 'scale(1)', 100);
+    }
+
+    // Réinitialise le combo (appelé après timeout ou manuellement)
+    function resetCombo() {
+      comboCount  = 0;
+      barProgress = 1.0;
+      clearTimeout(comboTimer);
+      clearInterval(barTimer);
+      comboTimer = null;
+      barTimer   = null;
+      updateComboDisplay();
+    }
+
+    // Traite un clic : incrémente combo, tire critique, calcule gain total
+    function handleClick() {
+      // 1. Incrémenter le combo
+      comboCount++;
+      barProgress = 1.0; // Recharge la barre à chaque clic
+
+      // 2. Réinitialiser le timer de reset
+      clearTimeout(comboTimer);
+      clearInterval(barTimer);
+
+      comboTimer = setTimeout(resetCombo, COMBO_WINDOW);
+
+      // 3. Faire descendre la barre visuellement
+      barTimer = setInterval(() => {
+        barProgress -= BAR_TICK / COMBO_WINDOW;
+        if (barProgress <= 0) { barProgress = 0; }
+        document.getElementById('combo-bar').style.width = (barProgress * 100) + '%';
+      }, BAR_TICK);
+
+      // 4. Calcul du gain
+      const baseGain   = getClickPower();
+      const comboMult  = getCurrentTier().mult;
+      const isCritical = Math.random() < CRIT_CHANCE;
+      const critData   = isCritical ? rollCritical() : null;
+      const critMult   = critData ? critData.mult : 1;
+      const totalGain  = Math.floor(baseGain * comboMult * critMult);
+
+      state.score += totalGain;
+      state.clicks++;
+
+      // Infliger des dégâts au boss actif — on réutilise totalGain déjà calculé
+      damageBoss(totalGain);
+
+      // 5. Mise à jour visuelle
+      checkAchievements();
+      updateComboDisplay();
+      const scoreEl = document.getElementById('score');
+      scoreEl.classList.remove('pop');
+      void scoreEl.offsetWidth;
+      scoreEl.classList.add('pop');
+      updateUI();
+
+      // 6. Animations
+      spawnClickFX(totalGain, comboMult, isCritical ? critData : null);
+    }
+
+
+    // =====================================================
+    //  ANIMATIONS AU CLIC
+    // =====================================================
+
+    function spawnClickFX(gain, comboMult, critData) {
+      const rect = document.getElementById('clickBtn').getBoundingClientRect();
+      const cx   = rect.left + rect.width  / 2;
+      const cy   = rect.top  + rect.height / 2;
+      const size = rect.width * 1.6;
+
+      // Halo doré (plus grand si critique)
+      const ripple = document.createElement('div');
+      ripple.className = 'click-ripple';
+      const rippleSize = critData ? size * 1.5 : size;
+      ripple.style.cssText = `left:${cx}px; top:${cy}px; width:${rippleSize}px; height:${rippleSize}px;`;
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+
+      // Anneau
+      const ring = document.createElement('div');
+      ring.className = 'click-ring';
+      ring.style.cssText = `left:${cx}px; top:${cy}px; width:${size * 0.8}px; height:${size * 0.8}px;`;
+      document.body.appendChild(ring);
+      setTimeout(() => ring.remove(), 650);
+
+      // Particules — plus nombreuses si combo élevé ou critique
+      const tier   = getCurrentTier();
+      const emojis = critData
+        ? ['💥', '⚡', '🌟', '💫', '✨', '🔥']
+        : ['⭐', '✨', '🌟', '💫', '⚡'];
+      const count  = critData ? 12 : Math.min(5 + Math.floor(comboMult), 10);
+
+      for (let i = 0; i < count; i++) {
+        const p     = document.createElement('div');
+        p.className = 'click-particle';
+        const angle = (i / count) * Math.PI * 2 - Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+        const dist  = (critData ? 90 : 55) + Math.random() * 50;
+        const dur   = 0.55 + Math.random() * 0.35;
+        p.style.cssText = `left:${cx}px; top:${cy}px; --dx:${Math.cos(angle) * dist}px; --dy:${Math.sin(angle) * dist}px; --dur:${dur}s;`;
+        if (critData) p.style.color = critData.color;
+        p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), dur * 1000 + 100);
+      }
+
+      // Gain flottant — couleur selon combo ou critique
+      const gainEl = document.createElement('div');
+      gainEl.className = 'click-particle';
+      const gainColor = critData ? critData.color : tier.color;
+      const gainSize  = critData ? '1.6rem' : (comboMult >= 3 ? '1.3rem' : '1.1rem');
+      gainEl.style.cssText = `left:${cx}px; top:${cy - 20}px; --dx:${(Math.random() - 0.5) * 40}px; --dy:-80px; --dur:0.9s; color:${gainColor}; font-size:${gainSize};`;
+      gainEl.textContent   = '+' + fmtCompact(gain);
+      document.body.appendChild(gainEl);
+      setTimeout(() => gainEl.remove(), 1050);
+
+      // Si critique : texte "CRITIQUE !" spectaculaire
+      if (critData) {
+        const critEl = document.createElement('div');
+        critEl.className   = 'critical-text';
+        critEl.style.left  = cx + 'px';
+        critEl.style.top   = (cy - 40) + 'px';
+        critEl.style.color = critData.color;
+        critEl.textContent = critData.label;
+        document.body.appendChild(critEl);
+        setTimeout(() => critEl.remove(), 1200);
+
+        // Flash sur le bouton
+        const btn = document.getElementById('clickBtn');
+        btn.classList.remove('critical-flash');
+        void btn.offsetWidth;
+        btn.classList.add('critical-flash');
+        setTimeout(() => btn.classList.remove('critical-flash'), 450);
+      }
+    }
+
+
+    // =====================================================
+    //  ÉVÉNEMENTS (tous regroupés ici)
+    // =====================================================
+
+    // Bouton principal de clic
+    document.getElementById('clickBtn').addEventListener('pointerdown', handleClick);
+
+    document.getElementById('prestigeBtn').addEventListener('click', doPrestige);
+    document.getElementById('btn-prestige-cancel').addEventListener('click',  closePrestigeModal);
+    document.getElementById('btn-prestige-confirm').addEventListener('click', confirmPrestige);
+    document.getElementById('btn-collect-offline').addEventListener('click',  collectOffline);
+
+    // Onglets
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => setTab(btn.dataset.tab));
+    });
+
+    // Boutons quantité
+    document.getElementById('buyToggle1').addEventListener('click',  () => setBuyQty(1));
+    document.getElementById('buyToggle10').addEventListener('click', () => setBuyQty(10));
+
+    // Délégation : clics dans les listes (évite de recréer des listeners à chaque rendu)
+    document.getElementById('genList').addEventListener('click', (e) => {
+      const item = e.target.closest('[data-buy]');
+      if (item) buy(item.dataset.buy, buyQty);
+    });
+
+    document.getElementById('prestigeShop').addEventListener('click', (e) => {
+      const item = e.target.closest('[data-prestige-upg]');
+      if (item) buyPrestigeUpgrade(item.dataset.prestigeUpg);
+    });
+
+    document.getElementById('BossList').addEventListener('click', (e) => {
+      // L'onglet boss est maintenant informatif seulement (combat via l'étoile)
+    });
+
+    // Le boss central n'est plus cliquable, le combat se fait via l'étoile
+
+
+    // =====================================================
+    //  COMÈTES ET ÉTOILES VOLANTES
+    // =====================================================
+
+    function spawnComet(isFirstLoad = false) {
+      const now            = Date.now();
+      const savedNextSpawn = parseInt(localStorage.getItem('nextCometTime')) || 0;
+
+      // Si on charge la page et qu'une comète est déjà programmée, on attend
+      if (isFirstLoad && now < savedNextSpawn) {
+        setTimeout(() => spawnComet(), savedNextSpawn - now);
+        return;
+      }
+
+      if (state.score < 1000) { setTimeout(() => spawnComet(), 10000); return; }
+
+      const comet = document.createElement('div');
+      comet.className   = 'comet';
+      comet.textContent = '☄️';
+      comet.addEventListener('click', () => {
+        state.cometsClicked++;
+        const bonus = Math.max(5000, Math.floor(getPS() * 180 * getCometMultiplier()));
+        state.score += bonus;
+        comet.remove();
+        updateUI();
+        notify('☄️ COMÈTE ! +' + fmtCompact(bonus));
+      });
+      document.body.appendChild(comet);
+      setTimeout(() => comet.remove(), 5000);
+
+      const nextDelay = Math.random() * 40000 + 40000;
+      localStorage.setItem('nextCometTime', Date.now() + nextDelay);
+      setTimeout(() => spawnComet(), nextDelay);
+    }
+
+    function spawnPulseStar() {
+      if (state.score < 50000) { setTimeout(spawnPulseStar, 30000); return; }
+
+      const star       = document.createElement('div');
+      star.className   = 'pulse-star';
+      star.textContent = '💫';
+
+      const autoBonus  = Math.max(100, Math.floor(getClickPower() * 8  * getCometMultiplier()));
+      const clickBonus = Math.max(500, Math.floor(getClickPower() * 40 * getCometMultiplier()));
+
+      star.addEventListener('click', () => {
+        state.score  += clickBonus;
+        state.clicks += 10;
+        star.remove();
+        checkAchievements();
+        updateUI();
+        notify('💫 Étoile attrapée ! +' + fmtCompact(clickBonus));
+      });
+      document.body.appendChild(star);
+
+      // Si non cliquée, petit bonus automatique
+      setTimeout(() => {
+        if (star.parentNode) { star.remove(); state.score += autoBonus; state.clicks += 3; }
+      }, 6000);
+
+      setTimeout(spawnPulseStar, Math.random() * 20000 + 25000);
+    }
+
+
+    // =====================================================
+    //  TIMER DE SESSION
+    // =====================================================
+
+    const sessionStart = Date.now();
+    setInterval(() => {
+      const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+      const h = Math.floor(elapsed / 3600);
+      const m = Math.floor((elapsed % 3600) / 60);
+      const s = elapsed % 60;
+      const el = document.getElementById('sessionTimer');
+      if (el) el.textContent = h > 0 ? `${h}h${String(m).padStart(2, '0')}m` : `${m}m${String(s).padStart(2, '0')}s`;
+    }, 1000);
+
+
+    // =====================================================
+    //  BOUCLE PRINCIPALE (toutes les 100ms)
+    // =====================================================
+
+    setInterval(() => {
+      state.score += getPS() / 10; // /10 car l'intervalle est 100ms (10 fois par seconde)
+      checkAchievements();
+      updateUI();
+      saveGame();
+    }, 100);
+
+
+    // =====================================================
+    //  DÉMARRAGE
+    // =====================================================
+
+    loadGame();
+    updateUI();
+    checkOfflineEarnings(); // Popup si le joueur était absent
+    spawnComet(true);
+    setTimeout(spawnPulseStar, 30000);
+
+  </script>
+
+</body>
+</html>

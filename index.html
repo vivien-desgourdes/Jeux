@@ -1015,7 +1015,7 @@
 
     function getPrestigeEclats() {
       const bonus = state.prestigeUpgrades['eclat_bonus'] || 0;
-      return Math.max(1, Math.floor(Math.sqrt(state.score / 5000000))) + bonus;
+      return Math.max(1, Math.floor(Math.sqrt(state.score / 500000000))) + bonus;
     }
 
 

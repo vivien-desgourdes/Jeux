@@ -1588,10 +1588,10 @@
       const reqs = [];
       if (boss.prestigeReq && state.prestigeCount < boss.prestigeReq) reqs.push(`Cycle ${boss.prestigeReq + 1}`);
       if (boss.eclatsReq   && state.eclats < boss.eclatsReq)           reqs.push(`${boss.eclatsReq} Éclats`);
-      if (boss.id.includes('Gardien'))       { if (gens.dragon < 30) reqs.push('30 Dragons');   if (state.clicks < 3000)  reqs.push('3k Clics'); }
+      if (boss.id.includes('Gardien'))       { if (gens.dragon < 30) reqs.push('30 Dragons');   if (state.clicks < 2000)  reqs.push('2k Clics'); }
       if (boss.id.includes('Phénix'))        { if (gens.wand   < 50) reqs.push('50 Baguettes'); }
       if (boss.id.includes('Hydre'))         { if (gens.fairy  < 80) reqs.push('80 Fées'); }
-      if (boss.id.includes('Étoile'))        { if (gens.castle < 50) reqs.push('50 Châteaux');  if (state.clicks < 20000) reqs.push('20k Clics'); }
+      if (boss.id.includes('Étoile'))        { if (gens.castle < 50) reqs.push('50 Châteaux');  if (state.clicks < 5000) reqs.push('5k Clics'); }
       if (boss.id.includes('Ombre'))         { if (gens.castle < 40) reqs.push('40 Châteaux'); }
       if (boss.id.includes('Titan du Vide')) { if (gens.castle < 60) reqs.push('60 Châteaux');  if (getPS() < 500000)  reqs.push('500k/sec'); }
       if (boss.id.includes('Infini'))        { if (gens.castle < 80) reqs.push('80 Châteaux');  if (getPS() < 5000000) reqs.push('5M/sec'); if (state.eclats < 15) reqs.push('15 Éclats'); }

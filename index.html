@@ -1951,8 +1951,8 @@
     //  SYSTÈME AUTO-CLIC (étoile 💫)
     // =====================================================
 
-    const AUTO_CLICK_DURATION = 20;  // secondes de bonus
-    const AUTO_CLICK_RATE     = 5;   // clics par seconde
+    const AUTO_CLICK_DURATION = 60;  // secondes de bonus
+    const AUTO_CLICK_RATE     = 10;   // clics par seconde
 
     let autoClickInterval  = null;
     let autoClickRemaining = 0;
@@ -2033,7 +2033,7 @@
         star.remove();
         state.autoClicksCaught++;
         startAutoClick();
-        notify('💫 AUTO-CLIC ! 5 clics/sec pendant 30 secondes !');
+        notify('💫 AUTO-CLIC ! 10 clics/sec pendant 60 secondes !');
       });
 
       document.body.appendChild(star);

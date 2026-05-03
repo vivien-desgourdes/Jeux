@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🔮 Chiromancie Magique - Bascule caméra</title>
+    <title>🔮 Chiromancie - Analyse réelle des lignes</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -164,7 +164,7 @@
 <body>
 <div class="container">
     <h1>🖐️ CHIROMANCIE MAGIQUE 🧙</h1>
-    <div class="sub">« Montrez votre paume – les vraies lignes révèlent votre destin »</div>
+    <div class="sub">« Montrez votre paume – analyse dynamique des lignes »</div>
     <div class="dual-grid">
         <div class="glass-card webcam-area">
             <h3>📸 Présentez votre main, paume ouverte</h3>
@@ -178,7 +178,7 @@
             </div>
             <div class="instruction">
                 ✨ Astuce : placez votre main à plat, paume bien visible, doigts légèrement écartés.<br>
-                📷 Utilisez le bouton "Basculer" pour passer en caméra arrière si nécessaire.
+                📷 La qualité de l'éclairage améliore la détection.
             </div>
         </div>
         <div class="glass-card" id="resultContainer">
@@ -194,64 +194,35 @@
 
 <script>
     let video, stream, canvas, ctx;
-    let currentFacingMode = "user"; // "user" = selfie, "environment" = arrière
+    let currentFacingMode = "user";
     
-    // 9 archétypes
+    // Archétypes
     const ARCHETYPES = {
-        VISIONNAIRE: { name: "Le Visionnaire", icon: "👁️🔮", traits: ["Ligne de tête longue", "Intuition", "Clairvoyant"], desc: "Votre ligne de tête est dominante. Vous avez un don pour la divination.", conseil: "Faites confiance à votre premier ressenti." },
-        PASSIONNE: { name: "Le Passionné", icon: "❤️🔥", traits: ["Cœur puissant", "Émotions intenses", "Charismatique"], desc: "Votre ligne de cœur est profonde. La magie des sentiments vous donne une force redoutable.", conseil: "Vos émotions sont votre plus grand pouvoir." },
-        VITAL: { name: "Le Vital", icon: "🌿💪", traits: ["Ligne de vie longue", "Résilient", "Terre-à-terre"], desc: "Votre ligne de vie est bien marquée. Vous possédez une énergie vitale hors du commun.", conseil: "Puisez dans votre endurance naturelle." },
+        VISIONNAIRE: { name: "Le Visionnaire", icon: "👁️🔮", traits: ["Tête dominante", "Intuition", "Clairvoyant"], desc: "Votre ligne de tête est très marquée. Vous avez un don pour la divination.", conseil: "Faites confiance à votre premier ressenti." },
+        PASSIONNE: { name: "Le Passionné", icon: "❤️🔥", traits: ["Cœur puissant", "Émotions", "Charismatique"], desc: "Votre ligne de cœur est profonde. La magie des sentiments vous donne une force redoutable.", conseil: "Vos émotions sont votre plus grand pouvoir." },
+        VITAL: { name: "Le Vital", icon: "🌿💪", traits: ["Vie dominante", "Résilient", "Endurant"], desc: "Votre ligne de vie est bien marquée. Vous possédez une énergie vitale hors du commun.", conseil: "Puisez dans votre endurance naturelle." },
         MYSTIQUE: { name: "Le Mystique", icon: "🌀🌙", traits: ["Lignes équilibrées", "Double destin", "Énigmatique"], desc: "Vos lignes sont harmonieuses. La magie des mystères vous attire.", conseil: "Acceptez les chemins imprévus." },
-        GUERRIER: { name: "Le Guerrier", icon: "⚔️🛡️", traits: ["Main carrée", "Ligne de vie nette", "Combattant"], desc: "Votre main est carrée et solide. La magie de combat est votre domaine.", conseil: "Votre force est dans l'action." },
-        SAGE: { name: "Le Sage", icon: "📜🕯️", traits: ["Lignes fines", "Main longue", "Érudit"], desc: "Mains fines, lignes délicates. La connaissance occulte n'a pas de secret pour vous.", conseil: "Partagez votre savoir." },
-        ELEMENTAIRE: { name: "L'Élémentaliste", icon: "🌊🔥", traits: ["Lignes sinueuses", "Éléments", "Naturel"], desc: "Vos lignes sont ondulées. Vous maîtrisez la magie naturelle.", conseil: "Connectez-vous aux quatre éléments." },
+        GUERRIER: { name: "Le Guerrier", icon: "⚔️🛡️", traits: ["Main carrée", "Action", "Combattant"], desc: "Votre main est carrée et solide. La magie de combat est votre domaine.", conseil: "Votre force est dans l'action." },
+        SAGE: { name: "Le Sage", icon: "📜🕯️", traits: ["Main longue", "Érudit", "Calme"], desc: "Mains fines, lignes délicates. La connaissance occulte n'a pas de secret pour vous.", conseil: "Partagez votre savoir." },
+        ELEMENTAIRE: { name: "L'Élémentaliste", icon: "🌊🔥", traits: ["Lignes ondulées", "Naturel", "Équilibre"], desc: "Vos lignes sont sinueuses. Vous maîtrisez la magie naturelle.", conseil: "Connectez-vous aux quatre éléments." },
         OMBRE: { name: "L'Ombre", icon: "🌑🗡️", traits: ["Lignes brisées", "Insaisissable", "Secret"], desc: "Vos lignes sont discontinues. La magie des ombres vous protège.", conseil: "Votre force vient de l'invisible." },
-        DESTIN: { name: "Le Façonneur", icon: "⭐🔗", traits: ["Lignes équilibrées", "Leader", "Destin tracé"], desc: "Vos lignes sont équilibrées. Votre chemin de sorcier est tracé pour de grandes œuvres.", conseil: "Assumez votre destinée." }
+        DESTIN: { name: "Le Façonneur", icon: "⭐🔗", traits: ["Destin tracé", "Leader", "Charismatique"], desc: "Vos lignes montrent un chemin tracé. Vous êtes destiné à de grandes œuvres.", conseil: "Assumez votre destinée." }
     };
     
     async function startCamera() {
-        // Arrêter l'ancien stream si existant
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-        }
-        
-        const constraints = {
-            video: { facingMode: { exact: currentFacingMode } }
-        };
-        
+        if (stream) stream.getTracks().forEach(track => track.stop());
         try {
-            const str = await navigator.mediaDevices.getUserMedia(constraints);
+            const str = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode } });
             stream = str;
             video = document.getElementById('webcam');
             video.srcObject = stream;
             await new Promise(r => { video.onloadedmetadata = r; });
             video.play();
-            
-            // Mettre à jour le label
-            const label = document.getElementById('camLabel');
-            if (currentFacingMode === "user") {
-                label.innerHTML = "📱 Caméra selfie (frontale)";
-                label.style.background = "#2a2355";
-            } else {
-                label.innerHTML = "📷 Caméra arrière";
-                label.style.background = "#3a2a6b";
-            }
+            document.getElementById('camLabel').innerHTML = currentFacingMode === "user" ? "📱 Caméra selfie" : "📷 Caméra arrière";
             return true;
         } catch(e) {
-            console.warn("Mode exact failed, trying default");
-            // Fallback : mode sans exact
-            try {
-                const fallbackConstraints = { video: { facingMode: currentFacingMode } };
-                const str = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
-                stream = str;
-                video.srcObject = stream;
-                await new Promise(r => { video.onloadedmetadata = r; });
-                video.play();
-                return true;
-            } catch(err) {
-                document.getElementById('resultContainer').innerHTML = `<div style="color:#ffa7a7">❌ Caméra inaccessible.</div>`;
-                return false;
-            }
+            document.getElementById('resultContainer').innerHTML = `<div style="color:#ffa7a7">❌ Caméra inaccessible.</div>`;
+            return false;
         }
     }
     
@@ -270,26 +241,27 @@
         return ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
     
-    // Analyse réaliste des lignes
+    // NOUVEL ALGORITHME - analyse dynamique et différenciée
     function analyzeHandLines(imageData, width, height) {
+        // Conversion en niveaux de gris
         const gray = new Array(width * height);
         for(let i = 0; i < width * height; i++) {
-            const r = imageData.data[i*4];
-            const g = imageData.data[i*4+1];
-            const b = imageData.data[i*4+2];
-            gray[i] = (r + g + b) / 3;
+            gray[i] = (imageData.data[i*4] + imageData.data[i*4+1] + imageData.data[i*4+2]) / 3;
         }
         
-        const lineMap = new Array(width * height).fill(0);
+        // Calcul du contraste local amélioré
+        const contrastMap = new Array(width * height).fill(0);
+        let maxContrast = 0;
         
-        for(let y = 15; y < height - 15; y++) {
-            for(let x = 15; x < width - 15; x++) {
+        for(let y = 10; y < height - 10; y++) {
+            for(let x = 10; x < width - 10; x++) {
                 const idx = y * width + x;
                 const center = gray[idx];
+                
+                // Moyenne locale (rayon 5)
                 let sum = 0, count = 0;
-                for(let dy = -7; dy <= 7; dy++) {
-                    for(let dx = -7; dx <= 7; dx++) {
-                        if(dx === 0 && dy === 0) continue;
+                for(let dy = -5; dy <= 5; dy++) {
+                    for(let dx = -5; dx <= 5; dx++) {
                         const nx = x + dx, ny = y + dy;
                         if(nx >= 0 && nx < width && ny >= 0 && ny < height) {
                             sum += gray[ny * width + nx];
@@ -297,92 +269,107 @@
                         }
                     }
                 }
-                const avgSurround = sum / count;
-                const contrast = avgSurround - center;
-                if(contrast > 15 && center < 180) {
-                    lineMap[idx] = Math.min(1, contrast / 60);
-                }
+                const avgLocal = sum / count;
+                let contrast = avgLocal - center;
+                if(contrast < 0) contrast = 0;
+                contrastMap[idx] = contrast;
+                if(contrast > maxContrast) maxContrast = contrast;
             }
         }
         
-        const zoneCoeur = { startY: 0, endY: Math.floor(height * 0.35) };
-        const zoneTete = { startY: Math.floor(height * 0.35), endY: Math.floor(height * 0.65) };
-        const zoneVie = { startY: Math.floor(height * 0.65), endY: height };
+        // Normalisation dynamique
+        if(maxContrast < 1) maxContrast = 1;
+        for(let i = 0; i < width * height; i++) {
+            contrastMap[i] = Math.min(1, contrastMap[i] / maxContrast);
+        }
         
-        function computeZoneStrength(zone) {
-            let totalIntensity = 0;
-            let pixelCount = 0;
-            for(let y = zone.startY; y < zone.endY && y < height; y++) {
-                for(let x = Math.floor(width * 0.2); x < Math.floor(width * 0.8); x++) {
-                    const idx = y * width + x;
-                    totalIntensity += lineMap[idx];
-                    pixelCount++;
+        // Découpage en 3 zones
+        const zoneCoeur = { yMin: 0, yMax: Math.floor(height * 0.35) };
+        const zoneTete = { yMin: Math.floor(height * 0.35), yMax: Math.floor(height * 0.65) };
+        const zoneVie = { yMin: Math.floor(height * 0.65), yMax: height };
+        
+        function computeZoneScore(zone) {
+            let total = 0;
+            let pixels = 0;
+            const xMin = Math.floor(width * 0.25);
+            const xMax = Math.floor(width * 0.75);
+            
+            for(let y = zone.yMin; y < zone.yMax && y < height; y++) {
+                for(let x = xMin; x < xMax && x < width; x++) {
+                    total += contrastMap[y * width + x];
+                    pixels++;
                 }
             }
-            let raw = (totalIntensity / pixelCount) * 100;
-            raw = Math.min(85, Math.max(15, raw * 1.2));
-            return Math.floor(raw);
+            let score = (total / pixels) * 100;
+            // Ajustement pour étaler les valeurs
+            score = 20 + (score * 0.7);
+            return Math.min(85, Math.max(15, Math.floor(score)));
         }
         
-        let coeur = computeZoneStrength(zoneCoeur);
-        let tete = computeZoneStrength(zoneTete);
-        let vie = computeZoneStrength(zoneVie);
+        let coeur = computeZoneScore(zoneCoeur);
+        let tete = computeZoneScore(zoneTete);
+        let vie = computeZoneScore(zoneVie);
         
-        const avg = (coeur + tete + vie) / 3;
-        if(Math.abs(coeur - tete) < 5 && Math.abs(tete - vie) < 5) {
-            coeur = Math.min(85, coeur + (coeur > 50 ? -8 : 8));
-            vie = Math.min(85, vie + (vie > 50 ? 6 : -6));
+        // Ajout d'une différenciation forcée mais basée sur les données réelles
+        // On identifie quelle zone a le plus de contraste
+        const rawCoeur = coeur, rawTete = tete, rawVie = vie;
+        
+        // Ré-étalement pour garantir des écarts significatifs
+        const maxRaw = Math.max(rawCoeur, rawTete, rawVie);
+        const minRaw = Math.min(rawCoeur, rawTete, rawVie);
+        const range = Math.max(20, maxRaw - minRaw);
+        
+        // Ajustement final
+        coeur = 20 + Math.floor(((rawCoeur - minRaw) / range) * 65);
+        tete = 20 + Math.floor(((rawTete - minRaw) / range) * 65);
+        vie = 20 + Math.floor(((rawVie - minRaw) / range) * 65);
+        
+        // Garantir qu'ils ne sont pas tous égaux
+        if(coeur === tete && tete === vie) {
+            vie = Math.min(85, vie + 12);
+            coeur = Math.max(15, coeur - 5);
         }
         
-        coeur = Math.min(85, Math.max(15, coeur));
-        tete = Math.min(85, Math.max(15, tete));
-        vie = Math.min(85, Math.max(15, vie));
-        
+        // Analyse forme de la main
         const ratio = width / height;
-        let handShape = ratio > 0.85 ? "carrée" : "longue";
+        let handShape = ratio > 0.8 ? "carrée" : "longue";
         
-        let fingerDensity = 0;
-        for(let y = 5; y < Math.min(80, height); y++) {
-            for(let x = Math.floor(width*0.3); x < Math.floor(width*0.7); x++) {
-                fingerDensity += lineMap[y * width + x];
-            }
-        }
-        let fingerLength = fingerDensity > 12 ? "longs" : "moyens";
-        
+        // Détermination de l'archétype
         let archetypeKey = "DESTIN";
         const maxLine = Math.max(coeur, tete, vie);
         
-        if(tete === maxLine && tete > coeur + 12) archetypeKey = "VISIONNAIRE";
-        else if(coeur === maxLine && coeur > tete + 10) archetypeKey = "PASSIONNE";
-        else if(vie === maxLine && vie > tete + 8) archetypeKey = "VITAL";
+        if(tete === maxLine && tete > coeur + 8 && tete > vie + 8) archetypeKey = "VISIONNAIRE";
+        else if(coeur === maxLine && coeur > tete + 8 && coeur > vie + 8) archetypeKey = "PASSIONNE";
+        else if(vie === maxLine && vie > tete + 8 && vie > coeur + 8) archetypeKey = "VITAL";
         else if(handShape === "carrée" && vie > 50) archetypeKey = "GUERRIER";
         else if(handShape === "longue" && tete > 45) archetypeKey = "SAGE";
-        else if(Math.abs(coeur - tete) < 10 && Math.abs(tete - vie) < 10) archetypeKey = "MYSTIQUE";
+        else if(Math.abs(coeur - tete) < 12 && Math.abs(tete - vie) < 12) archetypeKey = "MYSTIQUE";
         else if(vie < 35 && coeur < 40) archetypeKey = "OMBRE";
-        else if(tete > 55 && vie > 45) archetypeKey = "ELEMENTAIRE";
         
         return {
             archetype: ARCHETYPES[archetypeKey],
             lines: { coeur, tete, vie },
-            hand: { forme: handShape, doigts: fingerLength }
+            hand: { forme: handShape }
         };
     }
     
     function generatePrediction(lines, hand) {
         let prediction = "";
-        if(lines.coeur > 65) prediction += "❤️ Votre cœur guidera votre magie vers des alliances puissantes. ";
-        else if(lines.coeur < 30) prediction += "❄️ Vous gardez vos émotions secrètes, renforçant votre magie de l'ombre. ";
+        if(lines.coeur > 65) prediction += "❤️ Votre cœur rayonne d'amour et de passion. ";
+        else if(lines.coeur > 50) prediction += "💕 Votre cœur est généreux, mais parfois réservé. ";
+        else prediction += "❄️ Vous gardez vos émotions protégées, ce qui renforce votre mystère. ";
         
-        if(lines.tete > 65) prediction += "🧠 Votre esprit analytique vous rend redoutable en divination. ";
-        else if(lines.tete < 30) prediction += "🌀 Vous agissez par instinct, idéal pour la magie élémentaire. ";
+        if(lines.tete > 65) prediction += "🧠 Votre esprit analytique perce les mystères les plus obscurs. ";
+        else if(lines.tete > 50) prediction += "📚 Votre intelligence est vive, la connaissance vous attire. ";
+        else prediction += "🌀 Vous agissez par instinct, ce qui vous rend imprévisible. ";
         
-        if(lines.vie > 65) prediction += "🌿 Votre résilience rend les sorts de guérison naturels. ";
-        else if(lines.vie < 30) prediction += "⚡ Vous vivez chaque instant avec intensité, la magie de feu vous appelle. ";
+        if(lines.vie > 65) prediction += "🌿 Votre vitalité est exceptionnelle, vous traversez les épreuves avec force. ";
+        else if(lines.vie > 50) prediction += "⚡ Vous avez une bonne énergie, mais pensez à vous ressourcer. ";
+        else prediction += "🕯️ Vous vivez chaque instant pleinement, sans jamais rien regretter. ";
         
-        if(hand.forme === "carrée") prediction += "🛡️ Votre main carrée indique un talent pour les boucliers magiques. ";
-        if(hand.doigts === "longs") prediction += "🖐️ Vos doigts longs suggèrent une affinité avec la magie des runes. ";
+        if(hand.forme === "carrée") prediction += "🛡️ Votre main carrée indique un talent inné pour la protection. ";
+        else prediction += "✨ Votre main longue révèle une sensibilité artistique et magique. ";
         
-        if(prediction === "") prediction = "Votre destin magique est encore à écrire. Lancez les dés !";
         return prediction;
     }
     
@@ -406,7 +393,7 @@
                 <div class="stat-cell"><span>❤️ Ligne de Cœur</span><span>${lines.coeur}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.coeur}%"></div></div><small>Passion, amour, émotions</small></div>
                 <div class="stat-cell"><span>🧠 Ligne de Tête</span><span>${lines.tete}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.tete}%"></div></div><small>Intellect, intuition, décisions</small></div>
                 <div class="stat-cell"><span>🌿 Ligne de Vie</span><span>${lines.vie}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.vie}%"></div></div><small>Énergie, résilience, destinée</small></div>
-                <div class="stat-cell"><span>🖐️ Main</span><span>${hand.forme === "carrée" ? "Carrée ⬛" : "Longue ➖"} | Doigts ${hand.doigts}</span></div>
+                <div class="stat-cell"><span>🖐️ Forme de main</span><span>${hand.forme === "carrée" ? "Carrée ⬛ (action)" : "Longue ➖ (réflexion)"}</span></div>
             </div>
             <div class="line-break"></div>
             <div class="prediction-box">
@@ -415,7 +402,7 @@
                 ✨ Conseil : ${arch.conseil}
             </div>
             <div class="line-break"></div>
-            <div style="font-size:0.7rem; text-align:center;">Analyse basée sur le contraste réel des lignes de la paume.</div>
+            <div style="font-size:0.7rem; text-align:center;">Analyse basée sur le contraste des lignes de la paume.</div>
         `;
     }
     
@@ -433,12 +420,10 @@
         if(navigator.vibrate) navigator.vibrate(100);
     }
     
-    // Initialisation
     window.addEventListener('load', async () => {
         video = document.getElementById('webcam');
         canvas = document.getElementById('previewCanvas');
         await startCamera();
-        
         document.getElementById('captureBtn').addEventListener('click', performReading);
         document.getElementById('switchCamBtn').addEventListener('click', switchCamera);
         document.getElementById('resetBtn').addEventListener('click', () => {

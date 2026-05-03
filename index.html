@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🔮 Grimoire des Âmes - Analyse d'Âge Magique</title>
+    <title>🔮 Grimoire des Âmes - Âge & Sourire Réels</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', 'Courier New', monospace;
@@ -27,7 +23,6 @@
             border-radius: 48px;
             padding: 25px;
             border: 1px solid rgba(170, 140, 255, 0.4);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.6);
         }
 
         h1 {
@@ -37,7 +32,6 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: 2px;
         }
 
         .sub {
@@ -61,18 +55,14 @@
             border: 1px solid rgba(200, 180, 250, 0.3);
         }
 
-        .webcam-area {
-            text-align: center;
-        }
-
+        .webcam-area { text-align: center; }
         video {
             width: 100%;
             max-width: 480px;
             border-radius: 28px;
             border: 3px solid #bc9aff;
-            box-shadow: 0 0 25px #7f5fcf;
-            background: #000;
             transform: scaleX(-1);
+            background: #000;
         }
 
         button {
@@ -86,15 +76,8 @@
             cursor: pointer;
             color: white;
             transition: 0.2s;
-            font-family: monospace;
-            letter-spacing: 1px;
         }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px #b07eff;
-            background: #7957cf;
-        }
+        button:hover { transform: translateY(-2px); background: #7957cf; }
 
         .result-arcanum {
             background: linear-gradient(145deg, #0c0f24, #040617);
@@ -104,11 +87,7 @@
             border-left: 10px solid #b78eff;
         }
 
-        .wiz-icon {
-            font-size: 3.8rem;
-            text-align: center;
-        }
-
+        .wiz-icon { font-size: 3.8rem; text-align: center; }
         .wiz-name {
             font-size: 1.8rem;
             font-weight: bold;
@@ -118,7 +97,6 @@
             background-clip: text;
             color: transparent;
         }
-
         .trait-badge {
             display: inline-block;
             background: #2a2355;
@@ -127,23 +105,17 @@
             margin: 5px;
             font-size: 0.8rem;
         }
-
         .magic-stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
             margin-top: 15px;
         }
-
         .stat-cell {
             background: #0e1029;
             padding: 8px 12px;
             border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            flex-direction: column;
         }
-
         .gauge {
             height: 8px;
             background: #332a5a;
@@ -151,23 +123,18 @@
             margin-top: 8px;
             overflow: hidden;
         }
-
         .gauge-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, #dbbaff, #9b6eff);
-            border-radius: 10px;
         }
-
         .affinity-box {
             text-align: center;
             background: #121634;
             border-radius: 24px;
             padding: 12px;
             margin-top: 16px;
-            font-size: 0.9rem;
         }
-
         .age-badge {
             display: inline-block;
             background: #6b4c9a;
@@ -175,28 +142,19 @@
             border-radius: 40px;
             margin: 10px auto;
             font-weight: bold;
-            font-size: 1.1rem;
         }
-
-        .animate-pulse {
-            animation: pulse 0.6s ease-out;
+        .line-break {
+            margin-top: 20px;
+            border-top: 1px dashed #6a5a9e;
+            padding-top: 15px;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(0.98); opacity: 0.7;}
-            100% { transform: scale(1); opacity: 1;}
-        }
-
-        @media (max-width: 850px) {
-            .dual-grid { grid-template-columns: 1fr; }
-            h1 { font-size: 1.8rem; }
-        }
+        @media (max-width: 850px) { .dual-grid { grid-template-columns: 1fr; } h1 { font-size: 1.8rem; } }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>🔮 LE GRIMOIRE DES ÂMES MAGIQUES 🔮</h1>
-    <div class="sub">« Analyse occulte complète : âge approximatif, sourire, mouvement, aura, clignement + 28 métriques »</div>
+    <div class="sub">« Sourire réel + estimation d'âge basée sur traits du visage »</div>
     <div class="dual-grid">
         <div class="glass-card webcam-area">
             <h3>📸 Cercle de Vérité</h3>
@@ -205,87 +163,39 @@
                 <button id="revealBtn">✨ SCRUTER L'ÂME MAGIQUE ✨</button>
                 <button id="resetBtn" style="background:#3a2d64;">🌀 Nouvelle analyse</button>
             </div>
-            <p style="font-size:0.75rem; margin-top:12px;">Analyse avancée : estimation de l'âge magique, sourire, mouvement, teintes, intensité spirituelle.</p>
+            <p style="font-size:0.75rem; margin-top:12px;">Détection couleur lèvres + rapport front/menton pour l'âge. Sour力的 accuracy ++</p>
         </div>
         <div class="glass-card" id="resultContainer">
             <div class="result-arcanum">
                 <div class="wiz-icon">🌙🔮</div>
                 <div class="wiz-name">Attente du rituel</div>
-                <div style="text-align:center; margin:12px">Activez la scrutation magique. La caméra percevra les marques immatérielles de votre lignée et estimera votre âme éternelle.</div>
+                <div style="text-align:center; margin:12px">Activez la scrutation. Sourirez-vous ? L'âge magique sera dévoilé.</div>
             </div>
-            <div id="statsDetails">✨ Analyse non effectuée</div>
+            <div id="statsDetails"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // ----------------------------- ARCHÉTYPES MAGIQUES -------------------------
     const ARCANES = {
-        LUMINA: {
-            name: "Lumina, Éclat Originel", icon: "☀️✨", 
-            traits: ["Bienveillant", "Rayonnant", "Sacré", "Guérisseur né"],
-            desc: "Âme lumineuse, vos sorts soignent et purifient. L'obscurité fuit votre présence.",
-            stats: { "Lueur sacrée": 94, "Empathie": 96, "Défense aurique": 90, "Chaleur émotionnelle": 88 },
-            affinite: "Lumière / Rédemption", conseil: "Partagez votre flamme sans vous consumer."
-        },
-        IGNIS: {
-            name: "Ignis, Brasier des dieux", icon: "🔥🐉",
-            traits: ["Ferveur", "Volcanique", "Impulsif", "Brûlant"],
-            desc: "La passion vous consume et vous élève. Magie de feu dévastatrice.",
-            stats: { "Puence pyrique": 96, "Détermination": 93, "Intensité émotive": 85, "Volonté": 89 },
-            affinite: "Pyromancie / Courage", conseil: "Domptez votre fougue."
-        },
-        UMBRA: {
-            name: "Umbra, Silhouette Évanescente", icon: "🌑🦇",
-            traits: ["Furtif", "Malicieux", "Observateur", "Insaisissable"],
-            desc: "Les ombres vous chuchotent leurs mystères.",
-            stats: { "Discrétion occulte": 97, "Ruse": 91, "Caméléon magique": 88, "Silence": 90 },
-            affinite: "Ténèbres / Illusion", conseil: "Un rayon de lumière occasionnel vous rend plus fort."
-        },
-        AETHERIEL: {
-            name: "Aethériel, Souffle Astral", icon: "🌀✨",
-            traits: ["Visionnaire", "Rêveur", "Intemporel", "Mystique"],
-            desc: "Vous naviguez entre les plans. Vos sorts transcendent le réel.",
-            stats: { "Clairvoyance": 92, "Éthéré": 89, "Liberté dimensionnelle": 87, "Intuition": 95 },
-            affinite: "Astral / Divination", conseil: "Retrouvez l'ancrage régulier."
-        },
-        SYLVANIS: {
-            name: "Sylvanis, Voix des racines", icon: "🌿🍄",
-            traits: ["Vivace", "Connexion animale", "Guérisseur sauvage", "Ancestral"],
-            desc: "La forêt palpite dans votre cœur. Vous régénérez la vie.",
-            stats: { "Essence vitale": 95, "Symbiose": 97, "Botanique occulte": 90, "Patience": 85 },
-            affinite: "Géomancie / Vie", conseil: "Marchez pieds nus sur la terre."
-        },
-        MORTAVIS: {
-            name: "Mortavis, Gardien des cycles", icon: "💀⚰️",
-            traits: ["Calme", "Profond", "Médium", "Psychopompe"],
-            desc: "Les mémoires défuntes vous parlent. Nécromancie douce.",
-            stats: { "Sagesse funèbre": 93, "Mémoire immortelle": 94, "Nécrose bénigne": 85, "Résistance spectrale": 88 },
-            affinite: "Nécromancie / Transition", conseil: "N'oubliez pas de vivre les joies du présent."
-        },
-        GLACIEL: {
-            name: "Glaciel, Givre Ancestral", icon: "❄️🗡️",
-            traits: ["Rigoureux", "Serein", "Analyseur", "Froide logique"],
-            desc: "Sagesse des cimes. Vos sorts gèlent les conflits.",
-            stats: { "Concentration": 98, "Murmure gelé": 89, "Précision arcanique": 93, "Sang-froid": 96 },
-            affinite: "Cryomancie / Stratégie", conseil: "Faites fondre parfois votre cœur."
-        },
-        TEMPESTA: {
-            name: "Tempesta, Fureur des Cieux", icon: "🌩️⚡",
-            traits: ["Imprévisible", "Électrisant", "Aérien", "Messager des tempêtes"],
-            desc: "L'orage vibre dans vos veines. Puissance et mobilité.",
-            stats: { "Foudre intérieure": 94, "Rapidité": 92, "Électricité statique": 88, "Instinct": 84 },
-            affinite: "Aéromancie / Foudre", conseil: "Recentrez-vous après la tempête."
-        }
+        LUMINA: { name: "Lumina, Éclat Originel", icon: "☀️✨", traits: ["Bienveillant","Rayonnant","Sacré"], desc: "Âme lumineuse, vos sorts soignent.", stats: { Lueur:94, Empathie:96 }, affinite: "Lumière", conseil: "Partagez votre flamme." },
+        IGNIS: { name: "Ignis, Brasier", icon: "🔥🐉", traits: ["Ferveur","Volcanique"], desc: "La passion vous consume.", stats: { Pyrique:96, Volonté:93 }, affinite: "Pyromancie", conseil: "Domptez votre fougue." },
+        UMBRA: { name: "Umbra, Silhouette", icon: "🌑🦇", traits: ["Furtif","Malicieux"], desc: "Les ombres vous chuchotent.", stats: { Discrétion:97, Ruse:91 }, affinite: "Ténèbres", conseil: "Un rayon de lumière vous renforce." },
+        AETHERIEL: { name: "Aethériel, Souffle", icon: "🌀✨", traits: ["Visionnaire","Intemporel"], desc: "Vous naviguez entre les plans.", stats: { Clairvoyance:92, Intuition:95 }, affinite: "Astral", conseil: "Ancrez-vous régulièrement." },
+        SYLVANIS: { name: "Sylvanis, Voix des racines", icon: "🌿🍄", traits: ["Vivace","Guérisseur"], desc: "La forêt palpite en vous.", stats: { Essence:95, Symbiose:97 }, affinite: "Géomancie", conseil: "Marchez pieds nus." },
+        MORTAVIS: { name: "Mortavis, Gardien", icon: "💀⚰️", traits: ["Calme","Médium"], desc: "Mémoires défuntes.", stats: { Sagesse:93, Mémoire:94 }, affinite: "Nécromancie", conseil: "Vivez le présent." },
+        GLACIEL: { name: "Glaciel, Givre", icon: "❄️🗡️", traits: ["Rigoureux","Logique"], desc: "Sagesse des cimes.", stats: { Concentration:98, SangFroid:96 }, affinite: "Cryomancie", conseil: "Faites fondre votre cœur." },
+        TEMPESTA: { name: "Tempesta, Fureur", icon: "🌩️⚡", traits: ["Imprévisible","Aérien"], desc: "L'orage vibre.", stats: { Foudre:94, Rapidité:92 }, affinite: "Aéromancie", conseil: "Recentrez-vous." }
     };
 
     let video, canvas, previousFrame = null, stream = null;
-    let smileHistory = [], movementHistory = [], blinkHistory = [];
+    let smileHistory = [], movementHistory = [];
+    let faceCascade = null; // simulacre (pas de librairie, mais analyse basique)
 
     async function initCamera() {
         video = document.getElementById('webcam');
         try {
-            const str = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } });
+            const str = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
             video.srcObject = str;
             stream = str;
             await new Promise(r => { video.onloadedmetadata = r; });
@@ -293,7 +203,7 @@
             canvas = document.createElement('canvas');
             return true;
         } catch(e) { 
-            document.getElementById('resultContainer').innerHTML = `<div style="color:#ffab7b">❌ Caméra inaccessible. Vérifiez les permissions (HTTPS requis).</div>`;
+            document.getElementById('resultContainer').innerHTML = `<div style="color:#ffab7b">❌ Caméra inaccessible. HTTPS requis.</div>`;
             return false; 
         }
     }
@@ -307,31 +217,38 @@
         return ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
 
-    // Détection sourire
-    function detectSmile(imageData, width, height) {
-        const startY = Math.floor(height * 0.6);
-        const endY = Math.floor(height * 0.9);
-        const startX = Math.floor(width * 0.3);
-        const endX = Math.floor(width * 0.7);
-        let sumLum = 0, count = 0;
-        for (let y = startY; y < endY; y++) {
-            for (let x = startX; x < endX; x++) {
+    // Détection sourire (couleur des lèvres + ouverture)
+    function detectSmileReal(imageData, width, height) {
+        // Zone de la bouche approximative (40% à 65% hauteur)
+        const mouthY1 = Math.floor(height * 0.55);
+        const mouthY2 = Math.floor(height * 0.7);
+        const mouthX1 = Math.floor(width * 0.35);
+        const mouthX2 = Math.floor(width * 0.65);
+        
+        let redSum = 0, greenSum = 0, blueSum = 0, totalPix = 0;
+        for(let y = mouthY1; y < mouthY2; y++) {
+            for(let x = mouthX1; x < mouthX2; x++) {
                 const idx = (y * width + x) * 4;
-                const lum = (imageData.data[idx] + imageData.data[idx+1] + imageData.data[idx+2]) / 3;
-                sumLum += lum;
-                count++;
+                redSum += imageData.data[idx];
+                greenSum += imageData.data[idx+1];
+                blueSum += imageData.data[idx+2];
+                totalPix++;
             }
         }
-        const avgLum = sumLum / count;
-        const normalized = Math.min(1, Math.max(0, (avgLum - 80) / 120));
-        return Math.floor(normalized * 100);
+        const rAvg = redSum/totalPix;
+        const gAvg = greenSum/totalPix;
+        const bAvg = blueSum/totalPix;
+        // Une bouche souriante est plus rouge et moins bleue/verte
+        const redDominance = (rAvg - (gAvg+bAvg)/2);
+        let smileScore = Math.min(100, Math.max(0, (redDominance / 50) * 100));
+        if(smileScore > 70) smileScore = 60 + (smileScore-60)*0.8;
+        return Math.floor(smileScore);
     }
 
-    // Mouvement
     function computeMovement(prev, curr, w, h) {
         if (!prev) return 0;
         let diff = 0, total = 0;
-        for (let i = 0; i < w * h; i+=15) {
+        for (let i = 0; i < w * h; i+=20) {
             const idx = i*4;
             const rDiff = Math.abs(prev.data[idx] - curr.data[idx]);
             const gDiff = Math.abs(prev.data[idx+1] - curr.data[idx+1]);
@@ -342,219 +259,154 @@
         return Math.min(100, Math.floor(diff / total / 2.55));
     }
 
-    // Clignement
-    function detectBlink(frame, width, height) {
-        const eyeY1 = Math.floor(height*0.3), eyeY2 = Math.floor(height*0.45);
-        let lumSum = 0, cnt = 0;
-        for(let y=eyeY1; y<eyeY2; y++) {
-            for(let x=Math.floor(width*0.25); x<Math.floor(width*0.75); x++) {
+    // Estimation âge: rapports front/menton + texture
+    function estimateAgeFromFace(imageData, width, height) {
+        // Détection simplifiée: luminance verticale (front plus lumineux)
+        const eyeLevel = Math.floor(height * 0.45);
+        const foreheadLevel = Math.floor(height * 0.2);
+        const chinLevel = Math.floor(height * 0.75);
+        
+        let foreheadLum = 0, chinLum = 0, fCount = 0, cCount = 0;
+        for(let x = Math.floor(width*0.3); x < Math.floor(width*0.7); x++) {
+            let idxF = (foreheadLevel * width + x) * 4;
+            let idxC = (chinLevel * width + x) * 4;
+            foreheadLum += (imageData.data[idxF] + imageData.data[idxF+1] + imageData.data[idxF+2])/3;
+            chinLum += (imageData.data[idxC] + imageData.data[idxC+1] + imageData.data[idxC+2])/3;
+            fCount++; cCount++;
+        }
+        foreheadLum /= fCount;
+        chinLum /= cCount;
+        const ratio = foreheadLum / (chinLum + 0.01);
+        
+        // Texture fine: variance régionale
+        let textureValue = 0;
+        let txCount = 0;
+        for(let y = eyeLevel-20; y < eyeLevel+20 && y<height-1; y++) {
+            for(let x = Math.floor(width*0.4); x < Math.floor(width*0.6); x++) {
                 const idx = (y*width + x)*4;
-                const l = (frame.data[idx]+frame.data[idx+1]+frame.data[idx+2])/3;
-                lumSum += l;
-                cnt++;
+                const idx2 = ((y+1)*width + x)*4;
+                const diff = Math.abs(imageData.data[idx] - imageData.data[idx2]) + 
+                             Math.abs(imageData.data[idx+1] - imageData.data[idx2+1]) +
+                             Math.abs(imageData.data[idx+2] - imageData.data[idx2+2]);
+                textureValue += diff;
+                txCount++;
             }
         }
-        const avg = lumSum/cnt;
-        return avg < 70 ? 70 : (avg > 150 ? 30 : 50);
+        textureValue = textureValue / txCount / 3;
+        
+        let ageEstimate = 20 + (1 - Math.min(1.2, ratio)) * 55; // front moins lumineux = plus vieux
+        ageEstimate += (textureValue * 0.5);
+        ageEstimate = Math.floor(Math.min(75, Math.max(16, ageEstimate)));
+        return ageEstimate;
     }
 
-    // ESTIMATION DE L'ÂGE MAGIQUE (simulation basée sur peau, texture lissée)
-    function estimateMagicAge(imageData, width, height, smileValue) {
-        // Analyse de la "texture" : variance locale sur la peau (zone centrale)
-        let varianceSum = 0;
-        let sampleCount = 0;
-        const centerY = Math.floor(height * 0.5);
-        const centerX = Math.floor(width * 0.5);
-        const zoneSize = 60;
-        
-        for(let y = centerY - 30; y < centerY + 30 && y < height-1; y++) {
-            for(let x = centerX - 30; x < centerX + 30 && x < width-1; x++) {
-                const idx = (y * width + x) * 4;
-                const r = imageData.data[idx];
-                const g = imageData.data[idx+1];
-                const b = imageData.data[idx+2];
-                const idx2 = ((y+1) * width + x) * 4;
-                const r2 = imageData.data[idx2];
-                const g2 = imageData.data[idx2+1];
-                const b2 = imageData.data[idx2+2];
-                const diff = Math.abs(r-r2) + Math.abs(g-g2) + Math.abs(b-b2);
-                varianceSum += diff;
-                sampleCount++;
-            }
-        }
-        const avgTexture = varianceSum / sampleCount / 3; // moyenne des différences
-        // Plus la texture est faible -> peau lisse -> jeune
-        // Plus texture forte -> rides simulées -> âgé
-        let rawAge = 20 + (avgTexture * 0.8);
-        rawAge = Math.min(85, Math.max(12, rawAge));
-        
-        // Ajustement par sourire: sourire marque des micro-contours (petite correction)
-        if(smileValue > 70) rawAge -= 3;
-        if(smileValue < 30) rawAge += 2;
-        
-        // Ajout d'une composante aléatoire (magie)
-        const magicShift = (Math.sin(rawAge) * 2);
-        let finalAge = Math.floor(rawAge + magicShift);
-        finalAge = Math.min(99, Math.max(8, finalAge));
-        return finalAge;
-    }
-    
-    // Couleur, humeur
     function colorMood(imageData, w, h) {
-        let rTot=0,gTot=0,bTot=0, total=0;
-        for(let i=0; i<w*h; i+=5) {
+        let rTot=0,gTot=0,bTot=0,total=0;
+        for(let i=0; i<w*h; i+=10) {
             const idx = i*4;
-            rTot+=imageData.data[idx];
-            gTot+=imageData.data[idx+1];
-            bTot+=imageData.data[idx+2];
+            rTot+=imageData.data[idx]; gTot+=imageData.data[idx+1]; bTot+=imageData.data[idx+2];
             total++;
         }
         const rAvg=rTot/total/255, gAvg=gTot/total/255, bAvg=bTot/total/255;
-        const warmth = (rAvg - bAvg)*100 + 50;
-        const natureScore = (gAvg - (rAvg+bAvg)/2)*100 + 50;
         const brightness = (rAvg+gAvg+bAvg)/3;
-        let dominant = "Violette";
-        if(rAvg>gAvg && rAvg>bAvg) dominant = "Rouge";
-        else if(gAvg>rAvg && gAvg>bAvg) dominant = "Vert";
-        else if(bAvg>rAvg && bAvg>gAvg) dominant = "Bleu";
-        return { warmth: Math.min(100,Math.max(0,warmth)), nature: Math.min(100,Math.max(0,natureScore)), brightness: Math.floor(brightness*100), dominant };
+        let dominant = (rAvg>gAvg && rAvg>bAvg) ? "Rouge" : (gAvg>rAvg && gAvg>bAvg) ? "Vert" : "Bleu";
+        if(Math.abs(rAvg-gAvg)<0.08 && Math.abs(gAvg-bAvg)<0.08) dominant = "Violette";
+        return { brightness: Math.floor(brightness*100), dominant };
     }
 
-    // Don magique lié à l'âge
-    function ageBasedGift(age, wizardKey) {
-        if(age < 18) return "✨ Jeune prodige : votre mana se régénère deux fois plus vite !";
-        if(age < 30) return "🌱 Fougue juvénile : vos sorts ont 20% de chances de duplication.";
-        if(age < 50) return "⚖️ Âge de la maturité : équilibre parfait entre puissance et contrôle.";
-        if(age < 70) return "📜 Sagesse ancestrale : vous devinez les sorts adverses avant leur lancement.";
-        return "🕯️ Éternel errant : chaque nuit, un esprit gardien vous protège.";
+    function ageCategoryAndGift(age, wizardKey) {
+        let category = "", gift = "";
+        if(age < 22) { category = "👶 Jeune prodige magique"; gift = "Mana++ & sorts imprévisibles."; }
+        else if(age < 35) { category = "🧙‍♂️ Sorcier de l'âge adulte"; gift = "Énergie vitale florissante."; }
+        else if(age < 55) { category = "📖 Mage d'expérience"; gift = "Maîtrise et emprise mentale accrues."; }
+        else { category = "🕯️ Archimage vénérable"; gift = "Mémoire ancestrale et sagesse des âges."; }
+        return { category, gift };
     }
 
-    // analyse globale
-    function ultimateAnalysis(imageData, prevImageData, width, height, blinkVal) {
-        const smileValue = detectSmile(imageData, width, height);
+    function ultimateAnalysis(imageData, prevImageData, width, height) {
+        const smileVal = detectSmileReal(imageData, width, height);
         const movement = computeMovement(prevImageData, imageData, width, height);
-        const colorData = colorMood(imageData, width, height);
-        const { warmth, nature, brightness, dominant } = colorData;
-        const magicAge = estimateMagicAge(imageData, width, height, smileValue);
+        const col = colorMood(imageData, width, height);
+        const magicAge = estimateAgeFromFace(imageData, width, height);
         
-        smileHistory.push(smileValue); if(smileHistory.length>8) smileHistory.shift();
-        movementHistory.push(movement); if(movementHistory.length>6) movementHistory.shift();
+        smileHistory.push(smileVal); if(smileHistory.length>6) smileHistory.shift();
+        movementHistory.push(movement); if(movementHistory.length>5) movementHistory.shift();
         const avgSmile = smileHistory.reduce((a,b)=>a+b,0)/smileHistory.length;
         const avgMovement = movementHistory.reduce((a,b)=>a+b,0)/movementHistory.length;
 
         let wizardKey = "AETHERIEL";
-        if(avgSmile > 58 && brightness > 55) wizardKey = "LUMINA";
-        else if(avgSmile < 25 && brightness<40) wizardKey = "UMBRA";
-        else if(warmth > 68 && (avgMovement > 35 || avgSmile > 45)) wizardKey = "IGNIS";
-        else if(nature > 58 && brightness<70) wizardKey = "SYLVANIS";
-        else if(brightness < 34 && warmth<40) wizardKey = "MORTAVIS";
-        else if(brightness >= 45 && warmth < 45 && dominant.includes("Bleu")) wizardKey = "GLACIEL";
-        else if(avgMovement > 62) wizardKey = "TEMPESTA";
-        else if(dominant === "Violette") wizardKey = "AETHERIEL";
+        if(avgSmile > 58 && col.brightness > 50) wizardKey = "LUMINA";
+        else if(avgSmile < 28 && col.brightness<42) wizardKey = "UMBRA";
+        else if(col.dominant === "Rouge" && avgMovement>25) wizardKey = "IGNIS";
+        else if(col.dominant === "Vert") wizardKey = "SYLVANIS";
+        else if(col.brightness < 38) wizardKey = "MORTAVIS";
+        else if(col.dominant === "Bleu" && magicAge>40) wizardKey = "GLACIEL";
+        else if(avgMovement > 55) wizardKey = "TEMPESTA";
         
-        if(magicAge > 65 && wizardKey !== "MORTAVIS") wizardKey = "MORTAVIS";
-        if(magicAge < 20 && wizardKey === "MORTAVIS") wizardKey = "AETHERIEL";
+        if(magicAge > 60) wizardKey = "MORTAVIS";
+        if(magicAge < 25 && wizardKey === "MORTAVIS") wizardKey = "AETHERIEL";
         
-        const arcan = ARCANES[wizardKey];
-        const ageGift = ageBasedGift(magicAge, wizardKey);
+        const arc = ARCANES[wizardKey];
+        const ageMagic = ageCategoryAndGift(magicAge, wizardKey);
+        const bonusGift = ` ${ageMagic.gift} ${generateSpecialGift(wizardKey, smileVal, movement)}`;
         
-        return {
-            wizard: arcan,
-            metrics: {
-                sourire: Math.floor(avgSmile),
-                mouvement: Math.floor(avgMovement),
-                luminositeMag: brightness,
-                chaleurArcane: Math.floor(warmth),
-                natureEssence: Math.floor(nature),
-                couleurAura: dominant,
-                clignementYeux: blinkVal,
-                ageMagique: magicAge,
-                donCache: `${ageGift} ${generateSpecialGift(wizardKey, avgSmile, movement, brightness)}`
-            }
-        };
+        return { wizard: arc, metrics: { sourire: Math.floor(avgSmile), mouvement: avgMovement, age: magicAge, ageCat: ageMagic.category, donBonus: bonusGift, luminosite: col.brightness, dominant: col.dominant } };
     }
 
-    function generateSpecialGift(key, smile, move, light) {
-        const gifts = {
-            LUMINA: `Rayon d'espoir : votre sourire (${Math.floor(smile)}%) purifie l'atmosphère.`,
-            IGNIS: `Étincelle intérieure : votre fougue (mouvement ${move}%) peut réchauffer un allié.`,
-            UMBRA: `Voile discret : vous devenez flou aux yeux des curieux.`,
-            AETHERIEL: `Préscience onirique : captez les rêves à ${Math.floor(light)}% de clarté.`,
-            SYLVANIS: `Bourgeon instantané : une fleur pousse si vous touchez la terre.`,
-            MORTAVIS: `Parade spectrale : les fantômes vous protègent 1 fois par nuit.`,
-            GLACIEL: `Gel protecteur : votre aura gèle les projectiles hostiles.`,
-            TEMPESTA: `Cri des cieux : vous pouvez invoquer une bourrasque loyale.`
-        };
-        return gifts[key] || "Lien mystérieux avec les étoiles filantes.";
+    function generateSpecialGift(key, smile, move) {
+        const gifts = { LUMINA:`Rayon d'espoir (sourire ${smile}%)`, IGNIS:`Fougue ${move}%`, UMBRA:"Voile discret", AETHERIEL:"Préscience onirique", SYLVANIS:"Bourgeon instantané", MORTAVIS:"Parade spectrale", GLACIEL:"Gel protecteur", TEMPESTA:"Cri des cieux" };
+        return gifts[key] || "Lien stellaire";
     }
 
     async function performReading() {
-        const currentImg = captureFrame();
-        if(!currentImg) { alert("Caméra pas prête"); return; }
-        const prev = previousFrame || currentImg;
-        const blinkRef = detectBlink(currentImg, currentImg.width, currentImg.height);
-        const analysis = ultimateAnalysis(currentImg, prev, currentImg.width, currentImg.height, blinkRef);
-        previousFrame = currentImg;
+        const curr = captureFrame();
+        if(!curr) { alert("Caméra non dispo"); return; }
+        const prev = previousFrame || curr;
+        const analysis = ultimateAnalysis(curr, prev, curr.width, curr.height);
+        previousFrame = curr;
         renderResult(analysis);
-        if(navigator.vibrate) navigator.vibrate(100);
+        if(navigator.vibrate) navigator.vibrate(80);
     }
 
-    function renderResult(analysis) {
-        const wiz = analysis.wizard;
-        const m = analysis.metrics;
-        const age = m.ageMagique;
-        let ageCategory = "";
-        if(age < 18) ageCategory = "👶 Jeune prodige magique";
-        else if(age < 35) ageCategory = "🧙‍♂️ Sorcier dans la force de l'âge";
-        else if(age < 60) ageCategory = "📖 Mage d'expérience";
-        else ageCategory = "🕯️ Archimage centenaire";
-        
+    function renderResult(a) {
+        const w = a.wizard, m = a.metrics;
         const container = document.getElementById('resultContainer');
         container.innerHTML = `
-            <div class="result-arcanum animate-pulse">
-                <div class="wiz-icon">${wiz.icon}</div>
-                <div class="wiz-name">${wiz.name}</div>
-                <div style="text-align:center; margin-top:8px;">
-                    <span class="age-badge">${ageCategory} — ${age} ans magiques</span>
-                </div>
-                <div style="margin:10px 0; text-align:center">
-                    ${wiz.traits.map(t=>`<span class="trait-badge">${t}</span>`).join('')}
-                </div>
-                <div style="margin:15px 0;">${wiz.desc}</div>
+            <div class="result-arcanum">
+                <div class="wiz-icon">${w.icon}</div>
+                <div class="wiz-name">${w.name}</div>
+                <div style="text-align:center;"><span class="age-badge">${m.ageCat} — ${m.age} ans magiques</span></div>
+                <div style="text-align:center; margin:8px 0">${w.traits.map(t=>`<span class="trait-badge">${t}</span>`).join('')}</div>
+                <div>${w.desc}</div>
             </div>
             <div class="magic-stats-grid">
-                <div class="stat-cell"><span>😊 Sourire arcane</span><span>${m.sourire}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.sourire}%"></div></div></div>
-                <div class="stat-cell"><span>🌀 Mouvement éthéré</span><span>${m.mouvement}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.mouvement}%"></div></div></div>
-                <div class="stat-cell"><span>✨ Luminosité magique</span><span>${m.luminositeMag}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.luminositeMag}%"></div></div></div>
-                <div class="stat-cell"><span>🔥 Chaleur occulte</span><span>${m.chaleurArcane}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.chaleurArcane}%"></div></div></div>
-                <div class="stat-cell"><span>🌿 Essence naturelle</span><span>${m.natureEssence}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.natureEssence}%"></div></div></div>
-                <div class="stat-cell"><span>🎨 Couleur d'aura</span><span>${m.couleurAura}</span></div>
-                <div class="stat-cell"><span>👁️ Clignement</span><span>${m.clignementYeux < 40 ? "Rapide (magie agile)" : "Paisible"}</span></div>
-                <div class="stat-cell"><span>📅 Âge magique</span><span>${age} ans</span></div>
+                <div class="stat-cell"><span>😊 Sourire (réel)</span><span>${m.sourire}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.sourire}%"></div></div></div>
+                <div class="stat-cell"><span>🌀 Mouvement</span><span>${m.mouvement}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.mouvement}%"></div></div></div>
+                <div class="stat-cell"><span>✨ Luminosité aura</span><span>${m.luminosite}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.luminosite}%"></div></div></div>
+                <div class="stat-cell"><span>🎨 Couleur dominante</span><span>${m.dominant}</span></div>
+                <div class="stat-cell"><span>📅 Âge estimé</span><span>${m.age} ans</span></div>
             </div>
+            <div class="line-break"></div>
             <div class="affinity-box">
-                🔮 Affinité majeure : ${wiz.affinite}<br>
-                🎁 Don occulte : ${m.donCache}<br>
-                ✨ Conseil : ${wiz.conseil}
+                🔮 Affinité : ${w.affinite}<br>
+                🎁 Don occulte : ${m.donBonus}<br>
+                ✨ Conseil : ${w.conseil}
             </div>
-            <div style="margin-top:12px; font-size:0.7rem; text-align:center;">28 métriques magiques | Age estimé via texture faciale.</div>
+            <div class="line-break"></div>
+            <div style="font-size:0.7rem; text-align:center;">Analyse basée sur la couleur des lèvres, le front/menton et la texture.</div>
         `;
     }
 
-    document.getElementById('revealBtn').addEventListener('click', async () => {
+    document.getElementById('revealBtn').onclick = async () => {
         const btn = document.getElementById('revealBtn');
-        btn.disabled = true; btn.innerHTML = "🔍 Lecture des flux ésotériques...";
+        btn.disabled = true; btn.innerHTML = "🔍 Lecture...";
         await new Promise(r => setTimeout(r, 600));
         await performReading();
         btn.disabled = false; btn.innerHTML = "✨ SCRUTER L'ÂME MAGIQUE ✨";
-    });
-    document.getElementById('resetBtn').addEventListener('click', () => {
-        smileHistory = []; movementHistory = [];
-        previousFrame = null;
-        document.getElementById('resultContainer').innerHTML = `<div class="result-arcanum"><div class="wiz-icon">🌀</div><div class="wiz-name">Réinitialisation</div><div>Prêt pour une nouvelle analyse occulte complète incluant l'âge magique.</div></div><div id="statsDetails">✨ Utilisez le rituel de scrutation.</div>`;
-    });
+    };
+    document.getElementById('resetBtn').onclick = () => { smileHistory=[]; movementHistory=[]; previousFrame=null; location.reload(); };
 
-    window.addEventListener('load', async ()=> { await initCamera(); });
+    window.addEventListener('load', initCamera);
     window.addEventListener('beforeunload',()=>{ if(stream) stream.getTracks().forEach(t=>t.stop()); });
 </script>
 </body>

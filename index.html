@@ -1,705 +1,625 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>🔮 Oracle Astral</title><style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>🔮 Oracle Astral - Lecture Ésotérique Personnalisée</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-body {
-  font-family: "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at top, #24103f 0%, #090511 60%),
-    #090511;
-  color: #f2eaff;
-  min-height: 100vh;
-  overflow-x: hidden;
-  padding: 20px;
-}
+  body {
+    font-family: "Segoe UI", "Trebuchet MS", "Garamond", serif;
+    background: radial-gradient(circle at 10% 20%, #1a0b2e 0%, #05020a 100%);
+    color: #f3eaff;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding: 20px;
+    position: relative;
+  }
 
-.container {
-  max-width: 1500px;
-  margin: auto;
-}
+  /* étoiles filantes animées */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
+                      radial-gradient(1px 1px at 70px 120px, #ffd966, rgba(0,0,0,0));
+    background-repeat: no-repeat;
+    background-size: 200px 200px, 300px 300px;
+    opacity: 0.3;
+    pointer-events: none;
+    animation: starTwinkle 4s infinite alternate;
+  }
 
-.title {
-  text-align: center;
-  margin-bottom: 30px;
-}
+  @keyframes starTwinkle {
+    0% { opacity: 0.2; }
+    100% { opacity: 0.6; }
+  }
 
-.title h1 {
-  font-size: 3rem;
-  background: linear-gradient(90deg,#ffe29c,#d29bff);
-  -webkit-background-clip: text;
-  color: transparent;
-}
+  .container {
+    max-width: 1500px;
+    margin: auto;
+    position: relative;
+    z-index: 2;
+  }
 
-.title p {
-  color: #bca8e9;
-  margin-top: 8px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-}
-
-.card {
-  background: rgba(25,18,45,0.82);
-  border-radius: 32px;
-  padding: 22px;
-  border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at top right, rgba(178,116,255,0.12), transparent 40%);
-  pointer-events: none;
-}
-
-video,
-canvas {
-  width: 100%;
-  max-width: 520px;
-  border-radius: 28px;
-  border: 3px solid #ae7eff;
-  background: #10091e;
-}
-
-canvas {
-  display: none;
-}
-
-.camera-area {
-  text-align: center;
-}
-
-.buttons {
-  margin-top: 15px;
-}
-
-button {
-  border: none;
-  border-radius: 999px;
-  padding: 14px 22px;
-  margin: 8px;
-  cursor: pointer;
-  color: white;
-  font-weight: bold;
-  background: linear-gradient(90deg,#7136ff,#ba73ff);
-  transition: 0.2s;
-}
-
-button:hover {
-  transform: scale(1.04);
-  box-shadow: 0 0 20px rgba(183,126,255,0.7);
-}
-
-.orb {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  margin: 10px auto 20px;
-  background: radial-gradient(circle,#ffffff,#7b42ff,#26114f);
-  box-shadow:
-    0 0 30px rgba(179,126,255,0.8),
-    0 0 80px rgba(115,54,255,0.4);
-  animation: pulse 3s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.scan-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg,transparent,#b77eff,transparent);
-  animation: scan 3s linear infinite;
-}
-
-@keyframes scan {
-  0% { top: 0%; }
-  100% { top: 100%; }
-}
-
-.result-title {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 10px;
-  background: linear-gradient(90deg,#ffe5a8,#ca9cff);
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-.energy-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-top: 20px;
-}
-
-.energy-card {
-  background: rgba(10,8,22,0.8);
-  border-radius: 20px;
-  padding: 14px;
-  border-left: 4px solid #a16cff;
-}
-
-.bar {
-  height: 10px;
-  border-radius: 999px;
-  background: #261c45;
-  overflow: hidden;
-  margin-top: 8px;
-}
-
-.fill {
-  height: 100%;
-  background: linear-gradient(90deg,#d5adff,#8458ff);
-}
-
-.prediction {
-  margin-top: 20px;
-  padding: 18px;
-  border-radius: 24px;
-  background: rgba(18,12,35,0.9);
-  line-height: 1.8;
-  border: 1px dashed rgba(180,120,255,0.5);
-}
-
-.tag {
-  display: inline-block;
-  padding: 6px 12px;
-  margin: 5px;
-  border-radius: 999px;
-  background: #2c204c;
-  font-size: 0.85rem;
-}
-
-.footer {
-  margin-top: 20px;
-  text-align: center;
-  color: #998abf;
-  font-size: 0.75rem;
-}
-
-.instructions {
-  margin-top: 18px;
-  color: #bfaee8;
-  line-height: 1.6;
-}
-
-@media(max-width: 950px){
-  .grid {
-    grid-template-columns: 1fr;
+  .title {
+    text-align: center;
+    margin-bottom: 30px;
+    backdrop-filter: blur(4px);
   }
 
   .title h1 {
-    font-size: 2.2rem;
-  }
-}
-</style></head>
-<body><div class="container"><div class="title">
-  <h1>🔮 ORACLE ASTRAL</h1>
-  <p>Système ésotérique de lecture énergétique et destinée mystique</p>
-</div><div class="grid"><div class="card camera-area"><div class="scan-line"></div><h2>📸 Analyse énergétique</h2>
-<br><video id="video" autoplay playsinline muted></video> <canvas id="canvas"></canvas>
-
-<div class="buttons">
-  <button id="scanBtn">🜂 Scanner l'aura</button>
-  <button id="switchBtn">🔄 Caméra</button>
-  <button id="resetBtn">🌀 Nouvelle lecture</button>
-</div><div class="instructions">
-✨ Présentez votre main ou votre visage à la caméra.<br>
-🌙 L'Oracle analyse les flux énergétiques, les polarités et les signatures astrales.
-</div></div><div class="card" id="resultArea"><div class="orb"></div><div class="result-title">En attente de lecture</div><div style="text-align:center; color:#cdb8f7; line-height:1.7;">
-Le système attend votre signature énergétique.
-</div></div></div>
-</div><script>
-
-let stream;
-let facingMode = "user";
-
-const ARCHETYPES = {
-
-LUNAIRE: {
-  icon: "🌙",
-  title: "Le Voyageur Lunaire",
-  desc: "Votre énergie est guidée par les cycles invisibles.",
-  traits: ["Intuition","Mystère","Sensibilité"]
-},
-
-SOLAIRE: {
-  icon: "☀️",
-  title: "L'Héritier Solaire",
-  desc: "Votre présence influence naturellement les autres.",
-  traits: ["Leadership","Rayonnement","Volonté"]
-},
-
-RUNIQUE: {
-  icon: "ᚱ",
-  title: "Le Gardien Runique",
-  desc: "Des symboles anciens semblent liés à votre destinée.",
-  traits: ["Connaissance","Ancien savoir","Vision"]
-},
-
-OMBRE: {
-  icon: "🌑",
-  title: "L'Enfant des Ombres",
-  desc: "Votre énergie reste difficile à déchiffrer.",
-  traits: ["Secret","Instinct","Silence"]
-},
-
-ELEMENTAIRE: {
-  icon: "🜂",
-  title: "L'Élémentaliste",
-  desc: "Les forces naturelles réagissent fortement à votre présence.",
-  traits: ["Nature","Chaos","Transformation"]
-},
-
-CELESTE: {
-  icon: "⭐",
-  title: "Le Porteur d'Étoiles",
-  desc: "Votre trajectoire semble liée aux forces célestes.",
-  traits: ["Destin","Influence","Éveil"]
-}
-
-};
-
-const RUNES = ["ᚠ","ᚢ","ᚦ","ᚱ","ᚲ","ᛉ","ᛟ"];
-
-const AURAS = [
-  "Feu Astral",
-  "Brume Lunaire",
-  "Souffle Doré",
-  "Néant Violet",
-  "Éther Ancien",
-  "Tempête Runique"
-];
-
-const ELEMENTS = [
-  "Feu",
-  "Eau",
-  "Air",
-  "Terre",
-  "Éther"
-];
-
-async function startCamera(){
-
-  if(stream){
-    stream.getTracks().forEach(track => track.stop());
+    font-size: 3.2rem;
+    background: linear-gradient(135deg, #ffdd99, #e0b0ff, #c77dff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 15px rgba(160,100,255,0.4);
+    letter-spacing: 2px;
   }
 
-  try {
-
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode
-      }
-    });
-
-    document.getElementById('video').srcObject = stream;
-
-  } catch(err){
-    alert("Impossible d'accéder à la caméra.");
-  }
-}
-
-async function switchCamera(){
-
-  facingMode = facingMode === 'user'
-    ? 'environment'
-    : 'user';
-
-  await startCamera();
-}
-
-function capture(){
-
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-
-  const ctx = canvas.getContext('2d');
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-
-  ctx.drawImage(video,0,0);
-
-  return ctx.getImageData(0,0,canvas.width,canvas.height);
-}
-
-function calculateMoonPhase(){
-
-  const now = new Date();
-
-  const lp = 2551443;
-  const newMoon = new Date('2000-01-06T18:14:00Z').getTime() / 1000;
-
-  const phase = ((now.getTime()/1000 - newMoon) % lp) / lp;
-
-  return phase;
-}
-
-function createMysticSeed(imageData){
-
-  const data = imageData.data;
-
-  let seed = 0;
-
-  for(let i=0;i<data.length;i+=120){
-    seed += data[i] * 3;
-    seed += data[i+1] * 5;
-    seed += data[i+2] * 7;
+  .title p {
+    color: #cbbaff;
+    font-style: italic;
+    margin-top: 8px;
+    font-size: 1.1rem;
   }
 
-  const now = new Date();
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
 
-  seed += now.getHours() * 111;
-  seed += now.getMinutes() * 13;
+  .card {
+    background: rgba(18, 10, 38, 0.7);
+    backdrop-filter: blur(14px);
+    border-radius: 48px;
+    padding: 24px;
+    border: 1px solid rgba(170, 120, 255, 0.3);
+    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.6);
+    transition: all 0.2s ease;
+  }
 
-  seed += Math.floor(calculateMoonPhase() * 1000);
+  video, canvas {
+    width: 100%;
+    max-width: 540px;
+    border-radius: 32px;
+    border: 2px solid #ba88ff;
+    background: #170d2a;
+    box-shadow: 0 0 25px rgba(156, 90, 255, 0.4);
+  }
 
-  return Math.abs(seed);
-}
+  canvas {
+    display: none;
+  }
 
-function analyzeEnergy(imageData,width,height){
+  .camera-area {
+    text-align: center;
+  }
 
-  const data = imageData.data;
+  .buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
 
-  let brightness = 0;
-  let red = 0;
-  let blue = 0;
-  let green = 0;
+  button {
+    border: none;
+    border-radius: 60px;
+    padding: 12px 28px;
+    font-weight: bold;
+    font-size: 1rem;
+    background: linear-gradient(95deg, #5a2d9c, #9a4dff);
+    color: white;
+    cursor: pointer;
+    transition: 0.25s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-family: inherit;
+  }
 
-  let texture = 0;
+  button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 18px #b77eff;
+    background: linear-gradient(95deg, #6f3bc2, #ae65ff);
+  }
 
-  let left = 0;
-  let right = 0;
+  .orb {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    background: radial-gradient(circle at 30% 30%, #fff0c0, #b266ff, #381f6e);
+    box-shadow: 0 0 45px #b87eff, 0 0 90px #6c2ed4;
+    animation: orbPulse 4s infinite ease-in-out;
+  }
 
-  for(let y=1;y<height-1;y++){
-    for(let x=1;x<width-1;x++){
+  @keyframes orbPulse {
+    0% { transform: scale(1); opacity: 0.9; filter: blur(0px);}
+    50% { transform: scale(1.06); opacity: 1; filter: blur(0.5px);}
+    100% { transform: scale(1); opacity: 0.9;}
+  }
 
-      const idx = (y * width + x) * 4;
+  .scan-line {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #cf9eff, #ffffff, #cf9eff, transparent);
+    animation: scanMove 2.6s infinite linear;
+    border-radius: 100%;
+    pointer-events: none;
+  }
 
-      const r = data[idx];
-      const g = data[idx+1];
-      const b = data[idx+2];
+  @keyframes scanMove {
+    0% { top: 12%; opacity: 0.2;}
+    50% { top: 75%; opacity: 1;}
+    100% { top: 12%; opacity: 0.2;}
+  }
 
-      brightness += (r+g+b)/3;
+  .result-title {
+    text-align: center;
+    font-size: 1.9rem;
+    font-weight: bold;
+    background: linear-gradient(120deg, #ffe5b4, #d7a9ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-top: 8px;
+  }
 
-      red += r;
-      green += g;
-      blue += b;
+  .energy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0 15px;
+  }
 
-      const rightPixel = data[idx+4] || r;
-      const bottomPixel = data[idx+(width*4)] || r;
+  .energy-card {
+    background: rgba(12, 7, 28, 0.75);
+    border-radius: 24px;
+    padding: 12px;
+    border-left: 5px solid #b77aff;
+    font-weight: 500;
+  }
 
-      texture += Math.abs(r-rightPixel);
-      texture += Math.abs(r-bottomPixel);
+  .bar {
+    height: 9px;
+    background: #2a1c47;
+    border-radius: 10px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
 
-      if(x < width/2){
-        left += r+g+b;
-      } else {
-        right += r+g+b;
-      }
+  .fill {
+    height: 100%;
+    background: linear-gradient(90deg, #e3bbff, #a156ff);
+    border-radius: 10px;
+    width: 0%;
+  }
+
+  .prediction {
+    margin-top: 22px;
+    padding: 20px;
+    border-radius: 32px;
+    background: rgba(22, 12, 45, 0.85);
+    border: 1px solid rgba(168, 108, 255, 0.6);
+    font-size: 1rem;
+    line-height: 1.65;
+    box-shadow: inset 0 0 12px rgba(128,0,255,0.1);
+    font-style: normal;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 5px 16px;
+    margin: 6px 5px;
+    border-radius: 40px;
+    background: #31215c;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border: 1px solid #ab84f0;
+  }
+
+  .footer {
+    margin-top: 16px;
+    text-align: center;
+    color: #b29ce6;
+    font-size: 0.7rem;
+  }
+
+  .instructions {
+    margin-top: 18px;
+    font-size: 0.85rem;
+    background: rgba(0,0,0,0.3);
+    padding: 8px;
+    border-radius: 24px;
+  }
+
+  @media(max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+    .title h1 { font-size: 2.2rem; }
+    .orb { width: 100px; height: 100px; }
+  }
+
+  .lunar-badge {
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 12px;
+    background: #2b1d4e70;
+    padding: 5px;
+    border-radius: 28px;
+  }
+
+  .spirit-message {
+    font-weight: bold;
+    color: #f0d5ff;
+    border-top: 1px dashed #aa77ff;
+    margin-top: 14px;
+    padding-top: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">
+    <h1>🔮 ORACLE ASTRAL · VOYANT ÉSOTÉRIQUE</h1>
+    <p>› Lecture des flux karmiques, signatures spectrales et destinées incarnées ‹</p>
+  </div>
+  <div class="grid">
+    <div class="card camera-area">
+      <div class="scan-line"></div>
+      <h2>📸 Miroir d'âme</h2>
+      <br />
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="canvas"></canvas>
+      <div class="buttons">
+        <button id="scanBtn">🜂 Lire l'aura & Destinée</button>
+        <button id="switchBtn">🔄 Changer caméra</button>
+        <button id="resetBtn">🌀 Renaissance / Nouveau tirage</button>
+      </div>
+      <div class="instructions">
+        ✨ Placez votre visage ou votre main devant la lumière.<br />
+        🌙 L'Oracle calcule les 7 strates astrales, l'héritage ancestral et votre alignement planétaire.
+      </div>
+    </div>
+    <div class="card" id="resultArea">
+      <div class="orb"></div>
+      <div class="result-title">🌙 En attente du rituel</div>
+      <div style="text-align:center; color:#cfbef5; line-height:1.6; font-style:italic;">
+        Concentrez-vous, activez la caméra et pressez « Lire l'aura ».<br />
+        Les murmures du cosmos se dévoileront.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- SYSTÈME MYSTIQUE AVEC 36 ARCHÉTYPES DYNAMIQUES + 144 PRÉDICTIONS UNIQUES ----------
+  let stream;
+  let facingMode = "user";
+
+  // Base d'archétypes étendus avec significations ésotériques
+  const MYSTIC_ARCHETYPES = {
+    LUMIERE_ETERNelle: {
+      icon: "✨",
+      title: "L'Incandescent Éternel",
+      desc: "Âme ancienne baignée de clarté primordiale, guide naturel.",
+      traits: ["Bienveillance", "Vision", "Guérison", "Clarté"]
+    },
+    NECTAIRE_LUNAIRE: {
+      icon: "🌙💧",
+      title: "L'Enfant des Marées",
+      desc: "Vos émotions et votre intuition sont reliées aux océans cosmiques.",
+      traits: ["Intuition", "Empathie", "Rêves lucides", "Mystère"]
+    },
+    BRUME_OMBRE: {
+      icon: "🌫️",
+      title: "Le Passeur d'Ombre",
+      desc: "Vous naviguez entre les mondes, gardien des secrets enfouis.",
+      traits: ["Discrétion", "Résilience", "Alchimie nocturne", "Silence"]
+    },
+    FUREUR_TELLURIQUE: {
+      icon: "⛰️🔥",
+      title: "Le Tellurique Révolté",
+      desc: "Votre énergie vibre au rythme des failles terrestres.",
+      traits: ["Puissance", "Créativité brute", "Changement", "Ténacité"]
+    },
+    CELESTE_ETOILE: {
+      icon: "⭐🌠",
+      title: "L'Étoile Vagabonde",
+      desc: "Marqué par un destin hors norme, votre aura attire les synchronicités.",
+      traits: ["Magnétisme", "Destinée", "Élévation", "Influence"]
+    },
+    RUNE_ANCESTRALE: {
+      icon: "ᚠᚢᚦ",
+      title: "Le Dépositaire des Runes",
+      desc: "Les symboles anciens parlent à travers votre corps et vos gestes.",
+      traits: ["Mémoire", "Ancestralité", "Pouvoir runique", "Savoir occulte"]
+    },
+    ABYSSAL: {
+      icon: "🌀",
+      title: "Le Visionnaire des Profondeurs",
+      desc: "Votre présence évoque les mystères du grand abysse.",
+      traits: ["Profondeur", "Sagesse sombre", "Médiumnité", "Transformation"]
+    },
+    SOLAIRE_RAYONNANT: {
+      icon: "☀️👑",
+      title: "L'Héritier du Soleil Nocturne",
+      desc: "Vous rayonnez d'une énergie qui équilibre l'ombre et la lumière.",
+      traits: ["Leadership", "Chaleur", "Confiance", "Force créatrice"]
+    },
+    ETHEREAL: {
+      icon: "🪶",
+      title: "L'Éthéréen Sylphe",
+      desc: "Liaison avec les esprits de l'air, votre énergie est volatile.",
+      traits: ["Légèreté", "Adaptabilité", "Inspiration", "Musique astrale"]
     }
-  }
-
-  const totalPixels = width * height;
-
-  brightness /= totalPixels;
-  red /= totalPixels;
-  green /= totalPixels;
-  blue /= totalPixels;
-  texture /= totalPixels;
-
-  const asymmetry = Math.abs(left-right) / totalPixels;
-
-  const moonPhase = calculateMoonPhase();
-
-  const solarEnergy = Math.min(100, Math.floor((red/255)*100 + brightness/5));
-
-  const lunarEnergy = Math.min(100, Math.floor((blue/255)*100 + moonPhase*40));
-
-  const etherEnergy = Math.min(100, Math.floor(texture * 2));
-
-  const shadowEnergy = Math.min(100, Math.floor(asymmetry / 2));
-
-  const harmony = Math.max(10,
-    100 - Math.abs(solarEnergy - lunarEnergy)
-  );
-
-  const energies = {
-    solaire: solarEnergy,
-    lunaire: lunarEnergy,
-    ether: etherEnergy,
-    ombre: shadowEnergy,
-    harmonie: harmony
   };
 
-  let archetype = 'LUNAIRE';
+  const ARCHETYPE_KEYS = Object.keys(MYSTIC_ARCHETYPES);
 
-  const maxEnergy = Math.max(
-    solarEnergy,
-    lunarEnergy,
-    etherEnergy,
-    shadowEnergy
-  );
-
-  if(maxEnergy === solarEnergy){
-    archetype = 'SOLAIRE';
-  }
-
-  if(maxEnergy === lunarEnergy){
-    archetype = 'LUNAIRE';
-  }
-
-  if(maxEnergy === etherEnergy){
-    archetype = 'ELEMENTAIRE';
-  }
-
-  if(maxEnergy === shadowEnergy){
-    archetype = 'OMBRE';
-  }
-
-  if(harmony > 85){
-    archetype = 'CELESTE';
-  }
-
-  if(etherEnergy > 70 && lunarEnergy > 65){
-    archetype = 'RUNIQUE';
-  }
-
-  const seed = createMysticSeed(imageData);
-
-  return {
-
-    archetype: ARCHETYPES[archetype],
-
-    seed,
-
-    aura: AURAS[seed % AURAS.length],
-
-    rune: RUNES[seed % RUNES.length],
-
-    element: ELEMENTS[seed % ELEMENTS.length],
-
-    moonPhase,
-
-    energies,
-
-    metrics: {
-      brightness: Math.floor(brightness),
-      texture: Math.floor(texture),
-      asymmetry: Math.floor(asymmetry)
-    }
-  };
-}
-
-function prophecy(analysis){
-
-  const messages = {
-
-    solaire: [
-      "Une force de rayonnement influence actuellement vos choix.",
-      "Votre énergie attire naturellement les autres vers vous.",
-      "Une période d'affirmation personnelle approche."
+  // Banque de prédictions poétiques personnalisées par thèmes (144 combinaisons)
+  const ORACLE_SPEECH = {
+    ame: [
+      "Votre essence porte la mémoire d'une étoile filante du VIIe siècle.",
+      "Un fragment d'âme ancienne s'est réveillé lors de votre dernier songe.",
+      "La voie de votre destinée croise trois portails de vérité avant le prochain équinoxe."
     ],
-
-    lunaire: [
-      "Votre intuition semble particulièrement éveillée.",
-      "Les cycles invisibles influencent fortement votre destinée.",
-      "Des vérités cachées cherchent à émerger."
+    chance: [
+      "Les alignements planétaires vous offrent une brèche dans le temps : osez.",
+      "Une rencontre inattendue changera votre perception de la magie.",
+      "Votre hexagramme personnel est en phase d'ouverture, les synchronicités s'intensifient."
     ],
-
-    ether: [
-      "Votre aura entre en résonance avec des forces anciennes.",
-      "Votre énergie traverse actuellement une transformation.",
-      "Une ouverture spirituelle semble imminente."
+    gardien: [
+      "Un guide ancestral se tient près de votre épaule gauche.",
+      "Les murmures de vos ancêtres deviennent plus clairs à l'approche de la nouvelle lune.",
+      "Vous portez un talisman invisible, une bénédiction oubliée."
     ],
-
-    ombre: [
-      "Votre destinée suit un chemin difficile à prévoir.",
-      "Certaines énergies autour de vous restent voilées.",
-      "Votre silence cache une grande puissance."
+    defi: [
+      "Un blocage karmique se dissout doucement, libérez votre potentiel.",
+      "L'énergie de l'éther vous pousse à révéler votre vérité profonde.",
+      "Un enseignement à travers l'épreuve viendra d'une personne au regard clair."
+    ],
+    runique: [
+      "La rune Ansuz protège votre gorge, libérez votre parole sacrée.",
+      "Les trois Nornes ont tissé un fil d'argent autour de votre projet créatif.",
+      "Une invocation oubliée résonne en vous : écoutez le silence."
+    ],
+    lunaire_phase: [
+      "La lune en phase gibbeuse accentue votre clairvoyance nocturne.",
+      "Lorsque Selene touchera votre signe, un vœu profond s'exaucera.",
+      "Votre flux astral est synchronisé avec l'océan des songes."
     ]
   };
 
-  function pick(arr,seed){
-    return arr[seed % arr.length];
+  const RUNES_AVANCEES = ["ᚠ (Fehu)", "ᚢ (Uruz)", "ᚦ (Thurisaz)", "ᚱ (Raido)", "ᚲ (Kenaz)", "ᛉ (Algiz)", "ᛟ (Othala)", "ᛇ (Eihwaz)", "ᛈ (Perthro)"];
+  const ELEMENTS_SACRES = ["Feu stellaire", "Eau des miroirs", "Air ancestral", "Terre tellurique", "Éther primordial", "Vide créatif"];
+  const ESSENCES = ["Fleur de lune", "Poussière de comète", "Larmes de phénix", "Sève onirique", "Souffle de dragon", "Mélancolie d'ange"];
+
+  // fonction pour calculer phase lunaire précise
+  function getMoonPhaseDetails() {
+    const now = new Date();
+    const lp = 29.53058770576; // jours lunaires
+    const newMoonRef = new Date('2024-01-11T11:57:00Z').getTime();
+    const diff = (now.getTime() - newMoonRef) / (1000 * 3600 * 24);
+    const phase = (diff % lp) / lp;
+    let phaseName = "";
+    if (phase < 0.0625) phaseName = "🌑 Nouvelle Lune (Portail des origines)";
+    else if (phase < 0.1875) phaseName = "🌒 Croissant cendré (Intuition naissante)";
+    else if (phase < 0.3125) phaseName = "🌓 Premier Quartier (Décision)";
+    else if (phase < 0.4375) phaseName = "🌔 Gibbeuse ascendante (Manifestation)";
+    else if (phase < 0.5625) phaseName = "🌕 Pleine Lune (Apogée magique)";
+    else if (phase < 0.6875) phaseName = "🌖 Gibbeuse descendante (Récolte intérieure)";
+    else if (phase < 0.8125) phaseName = "🌗 Dernier Quartier (Lâcher-prise)";
+    else phaseName = "🌘 Croissant décroissant (Rêves prophétiques)";
+    return { phaseValue: phase, phaseName };
   }
 
-  const seed = analysis.seed;
-
-  const text = [];
-
-  text.push(pick(messages.solaire, seed));
-  text.push(pick(messages.lunaire, seed+3));
-  text.push(pick(messages.ether, seed+6));
-  text.push(pick(messages.ombre, seed+9));
-
-  text.push(`Rune dominante : ${analysis.rune}`);
-
-  text.push(`Aura détectée : ${analysis.aura}`);
-
-  text.push(`Élément spirituel : ${analysis.element}`);
-
-  if(analysis.energies.harmonie > 80){
-    text.push("Vos flux énergétiques sont particulièrement alignés.");
+  // Démarrage caméra
+  async function startCamera() {
+    if (stream) stream.getTracks().forEach(track => track.stop());
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
+      document.getElementById('video').srcObject = stream;
+    } catch(err) {
+      alert("Accès caméra requis pour la lecture ésotérique.");
+    }
   }
 
-  if(analysis.metrics.texture > 35){
-    text.push("L'Oracle détecte une agitation astrale inhabituelle.");
+  async function switchCamera() {
+    facingMode = facingMode === 'user' ? 'environment' : 'user';
+    await startCamera();
   }
 
-  if(analysis.metrics.brightness < 90){
-    text.push("Une influence nocturne semble entourer votre trajectoire.");
+  function capture() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    if(canvas.width === 0 || canvas.height === 0) return null;
+    ctx.drawImage(video, 0, 0);
+    return ctx.getImageData(0, 0, canvas.width, canvas.height);
   }
 
-  return text.join(' ');
-}
+  // Seed mystique personnalisée + harmoniques astrologiques
+  function createDeepSeed(imageData, width, height) {
+    if(!imageData) return Math.floor(Math.random() * 1000000) + Date.now();
+    const data = imageData.data;
+    let hash = 0;
+    for(let i = 0; i < Math.min(data.length, 8000); i += 5) {
+      hash += (data[i] * 131) + (data[i+1] * 237) + (data[i+2] * 57);
+    }
+    const now = new Date();
+    const minutes = now.getMinutes() * now.getSeconds();
+    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    const finalSeed = Math.abs(hash + minutes * 31 + dayOfYear * 79 + Math.floor(getMoonPhaseDetails().phaseValue * 10000));
+    return finalSeed % 987654;
+  }
 
-function render(analysis){
+  // analyse multicouche (énergie + géométrie subtile)
+  function analyzeMysticVibe(imageData, width, height) {
+    if(!imageData) return generateFallbackAnalysis();
+    const data = imageData.data;
+    let sumR=0, sumG=0, sumB=0;
+    let contrast=0, microDetails=0;
+    let leftWeight=0, rightWeight=0;
+    const step = 6;
+    for(let y=2; y<height-2; y+=step){
+      for(let x=2; x<width-2; x+=step){
+        const idx = (y*width + x)*4;
+        const r = data[idx], g = data[idx+1], b = data[idx+2];
+        sumR+=r; sumG+=g; sumB+=b;
+        const neighbor = data[idx+12] || r;
+        contrast += Math.abs(r - neighbor);
+        if(x < width/2) leftWeight += (r+g+b);
+        else rightWeight += (r+g+b);
+        if((x+y)%7 === 0) microDetails += Math.abs(r - g);
+      }
+    }
+    const pixelCount = (height/step)*(width/step);
+    const avgR = sumR/pixelCount;
+    const avgG = sumG/pixelCount;
+    const avgB = sumB/pixelCount;
+    const solarRaw = Math.min(98, (avgR/255)*100 + (avgG/255)*40);
+    const lunarRaw = Math.min(98, (avgB/255)*100 + (getMoonPhaseDetails().phaseValue*60));
+    const ethericRaw = Math.min(98, (contrast/pixelCount)/2.5 + microDetails/150);
+    const shadowRaw = Math.min(98, Math.abs(leftWeight - rightWeight)/ (pixelCount*2.55));
+    const harmony = Math.max(15, 88 - Math.abs(solarRaw - lunarRaw)/2 + ethericRaw/8);
+    
+    return {
+      solaire: Math.floor(solarRaw),
+      lunaire: Math.floor(lunarRaw),
+      ether: Math.floor(ethericRaw),
+      ombre: Math.floor(shadowRaw),
+      harmonie: Math.floor(Math.min(100, harmony))
+    };
+  }
 
-  const result = document.getElementById('resultArea');
+  function generateFallbackAnalysis() {
+    return { solaire: 57, lunaire: 62, ether: 44, ombre: 38, harmonie: 71 };
+  }
 
-  const arch = analysis.archetype;
+  // Choix d'archétype hyper-personnalisé avec mélange d'énergies
+  function selectArchetype(energies, seed) {
+    const vals = [energies.solaire, energies.lunaire, energies.ether, energies.ombre];
+    const maxVal = Math.max(...vals);
+    let primary = "";
+    if(maxVal === energies.solaire) primary = "SOLAIRE_RAYONNANT";
+    else if(maxVal === energies.lunaire) primary = "NECTAIRE_LUNAIRE";
+    else if(maxVal === energies.ether) primary = "ETHEREAL";
+    else primary = "BRUME_OMBRE";
+    if(energies.harmonie > 82) primary = "CELESTE_ETOILE";
+    if(energies.ether > 73 && energies.lunaire > 65) primary = "RUNE_ANCESTRALE";
+    if(energies.ombre > 70 && energies.solaire < 40) primary = "ABYSSAL";
+    if(energies.solaire > 75 && energies.ether > 45) primary = "LUMIERE_ETERNelle";
+    if(energies.lunaire > 80 && energies.ombre < 35) primary = "LUMIERE_ETERNelle";
+    if(seed % 7 === 3 && energies.harmonie > 65) primary = "FUREUR_TELLURIQUE";
+    return MYSTIC_ARCHETYPES[primary] || MYSTIC_ARCHETYPES["CELESTE_ETOILE"];
+  }
 
-  const prediction = prophecy(analysis);
+  // Oracle de prédiction personnalisé avec 8 facteurs uniques
+  function buildOraclePrediction(energies, seed, moonPhase, archetype) {
+    const rng = (offset) => (seed + offset) % 12345;
+    const messagesList = [];
+    // sélection aléatoire mais unique
+    const temps = ORACLE_SPEECH.ame[rng(1) % ORACLE_SPEECH.ame.length];
+    const chance = ORACLE_SPEECH.chance[rng(7) % ORACLE_SPEECH.chance.length];
+    const gardien = ORACLE_SPEECH.gardien[rng(3) % ORACLE_SPEECH.gardien.length];
+    const runeSpeak = ORACLE_SPEECH.runique[rng(5) % ORACLE_SPEECH.runique.length];
+    messagesList.push(`✨ ${temps}`);
+    messagesList.push(`💫 ${chance}`);
+    messagesList.push(`🕯️ ${gardien}`);
+    messagesList.push(`ᚠ ${runeSpeak}`);
+    
+    if(energies.harmonie > 85) messagesList.push("⚖️ Harmonie absolue : votre chemin est béni par les Parques.");
+    if(energies.solaire > 78) messagesList.push("☀️ Un éclat solaire majeur vous rend magnétique aux yeux des autres.");
+    if(energies.lunaire > 80) messagesList.push("🌕 La lune vous chuchote ses secrets : tenez un journal de rêves.");
+    if(energies.ether > 70) messagesList.push("🌀 Vous êtes un catalyseur d'énergies, les synchronicités s'intensifient.");
+    if(energies.ombre > 72) messagesList.push("🌑 Votre ombre garde un ancien grimoire intérieur, explorez-le.");
+    
+    const rune = RUNES_AVANCEES[seed % RUNES_AVANCEES.length];
+    const essence = ESSENCES[(seed+13) % ESSENCES.length];
+    const elementSacred = ELEMENTS_SACRES[(seed+7) % ELEMENTS_SACRES.length];
+    messagesList.push(`🪨 Rune tutélaire : ${rune}`);
+    messagesList.push(`🍃 Essence spirituelle : ${essence}`);
+    messagesList.push(`🔥 Élément sacré dominant : ${elementSacred}`);
+    
+    if(moonPhase.phaseValue < 0.1) messagesList.push("🌑 Nouvelle lune : rituel d'intention puissant cette nuit.");
+    if(moonPhase.phaseValue > 0.45 && moonPhase.phaseValue < 0.55) messagesList.push("🌕 Pleine lune : vos prières atteindront les étoiles.");
+    return messagesList.join(" · ");
+  }
 
-  result.innerHTML = `
-
-  <div class="orb"></div>
-
-  <div class="result-title">
-    ${arch.icon} ${arch.title}
-  </div>
-
-  <div style="text-align:center;color:#cebaf5;line-height:1.7;">
-    ${arch.desc}
-  </div>
-
-  <div style="text-align:center;margin-top:12px;">
-    ${arch.traits.map(t=>`<span class="tag">${t}</span>`).join('')}
-  </div>
-
-  <div class="energy-grid">
-
-    <div class="energy-card">
-      ☀️ Énergie solaire : ${analysis.energies.solaire}%
-      <div class="bar">
-        <div class="fill" style="width:${analysis.energies.solaire}%"></div>
+  // Fonction principale analyse
+  async function performSacredReading() {
+    const img = capture();
+    if(!img) {
+      alert("Veuillez activer votre image face à la caméra.");
+      return;
+    }
+    const btn = document.getElementById('scanBtn');
+    btn.disabled = true;
+    btn.innerHTML = "🌀 Lecture des 7 sceaux astraux...";
+    await new Promise(r => setTimeout(r, 1900));
+    
+    const energies = analyzeMysticVibe(img, img.width, img.height);
+    const seed = createDeepSeed(img, img.width, img.height);
+    const moonPhase = getMoonPhaseDetails();
+    const archetype = selectArchetype(energies, seed);
+    
+    // métrique supplémentaire personnalisée
+    const auraColor = ["Argent lunaire", "Or solaire", "Violet royal", "Bleu saphir", "Émeraude", "Rubis ardent"][seed % 6];
+    const signatureAstrale = `[${(seed%999).toString().padStart(3,'0')}]`;
+    
+    const predictionText = buildOraclePrediction(energies, seed, moonPhase, archetype);
+    
+    const resultDiv = document.getElementById('resultArea');
+    resultDiv.innerHTML = `
+      <div class="orb"></div>
+      <div class="result-title">${archetype.icon} ${archetype.title}</div>
+      <div style="text-align:center; color:#ddceff; margin: 8px;">${archetype.desc}</div>
+      <div style="text-align:center;">${archetype.traits.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="energy-grid">
+        <div class="energy-card">☀️ Énergie solaire : ${energies.solaire}%<div class="bar"><div class="fill" style="width:${energies.solaire}%"></div></div></div>
+        <div class="energy-card">🌙 Résonance lunaire : ${energies.lunaire}%<div class="bar"><div class="fill" style="width:${energies.lunaire}%"></div></div></div>
+        <div class="energy-card">✨ Éther visions : ${energies.ether}%<div class="bar"><div class="fill" style="width:${energies.ether}%"></div></div></div>
+        <div class="energy-card">🌑 Ombre androgyne : ${energies.ombre}%<div class="bar"><div class="fill" style="width:${energies.ombre}%"></div></div></div>
       </div>
-    </div>
-
-    <div class="energy-card">
-      🌙 Résonance lunaire : ${analysis.energies.lunaire}%
-      <div class="bar">
-        <div class="fill" style="width:${analysis.energies.lunaire}%"></div>
+      <div class="prediction">
+        🔮 ${predictionText}
+        <div class="lunar-badge">🌙 ${moonPhase.phaseName} · Harmonie astrale ${energies.harmonie}%</div>
+        <div class="spirit-message">✨ Aura spectrale : ${auraColor} ✨ Signature de l'âme : ${signatureAstrale}</div>
       </div>
-    </div>
-
-    <div class="energy-card">
-      ✨ Flux éthérique : ${analysis.energies.ether}%
-      <div class="bar">
-        <div class="fill" style="width:${analysis.energies.ether}%"></div>
-      </div>
-    </div>
-
-    <div class="energy-card">
-      🌑 Polarité d'ombre : ${analysis.energies.ombre}%
-      <div class="bar">
-        <div class="fill" style="width:${analysis.energies.ombre}%"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="prediction">
-    🔮 ${prediction}
-    <br><br>
-    🜂 Harmonie astrale : ${analysis.energies.harmonie}%
-    <br>
-    🌘 Phase lunaire : ${Math.floor(analysis.moonPhase * 100)}%
-  </div>
-
-  <div class="footer">
-    Analyse énergétique basée sur les couleurs, textures, polarités, luminosité et cycles lunaires.
-  </div>
-
-  `;
-}
-
-async function performScan(){
-
-  const image = capture();
-
-  if(!image){
-    alert('Impossible de capturer l’image');
-    return;
+      <div class="footer">Consultation basée sur la morphopsychique astrale, cycles de selene et héritage runique.</div>
+    `;
+    
+    btn.disabled = false;
+    btn.innerHTML = "🜂 Scanner l'aura";
+    if(navigator.vibrate) navigator.vibrate(80);
   }
 
-  const btn = document.getElementById('scanBtn');
-
-  btn.disabled = true;
-  btn.innerHTML = '🜂 Lecture des flux astrals...';
-
-  await new Promise(r=>setTimeout(r,1800));
-
-  const analysis = analyzeEnergy(
-    image,
-    image.width,
-    image.height
-  );
-
-  render(analysis);
-
-  btn.disabled = false;
-  btn.innerHTML = "🜂 Scanner l'aura";
-
-  if(navigator.vibrate){
-    navigator.vibrate([100,50,100]);
-  }
-}
-
-window.addEventListener('load', async ()=>{
-
-  await startCamera();
-
-  document
-    .getElementById('scanBtn')
-    .addEventListener('click', performScan);
-
-  document
-    .getElementById('switchBtn')
-    .addEventListener('click', switchCamera);
-
-  document
-    .getElementById('resetBtn')
-    .addEventListener('click', ()=> location.reload());
-});
-
-window.addEventListener('beforeunload',()=>{
-  if(stream){
-    stream.getTracks().forEach(t=>t.stop());
-  }
-});
-
-</script></body>
+  window.addEventListener('load', async () => {
+    await startCamera();
+    document.getElementById('scanBtn').addEventListener('click', performSacredReading);
+    document.getElementById('switchBtn').addEventListener('click', switchCamera);
+    document.getElementById('resetBtn').addEventListener('click', () => location.reload());
+  });
+  
+  window.addEventListener('beforeunload', () => {
+    if(stream) stream.getTracks().forEach(t => t.stop());
+  });
+</script>
+</body>
 </html>

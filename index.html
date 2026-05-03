@@ -361,8 +361,8 @@ function analyzeHandLines(imageData,width,height){
 
         const values = [];
 
-        for(let y=yStart;y<yEnd;y++){
-            for(let x=width*0.2;x<width*0.8;x++){
+        for(let y=Math.floor(yStart); y<Math.floor(yEnd); y++){
+            for(let x=Math.floor(width*0.2); x<Math.floor(width*0.8); x++){“
 
                 const idx = Math.floor(y * width + x);
 
@@ -404,12 +404,17 @@ function analyzeHandLines(imageData,width,height){
 
         let score = 0;
 
-        score += zone.energy / zone.count * 0.4;
-        score += zone.strongLines * 0.08;
-        score += zone.darkPixels * 0.015;
-        score += zone.variance * 0.6;
+        score += (zone.energy / Math.max(1, zone.count)) * 0.4;
+        score += zone.strongLines * 0.002;
+        score += zone.darkPixels * 0.0008;
+        score += zone.variance * 0.5;
 
         score = Math.floor(score);
+
+        // Évite les valeurs infinies ou NaN
+        if(isNaN(score) || !isFinite(score)){
+            score = 50;
+        }
 
         return Math.max(10, Math.min(95, score));
     }
@@ -424,7 +429,7 @@ function analyzeHandLines(imageData,width,height){
         brightness += gray[i];
     }
 
-    brightness /= (gray.length / 50);
+    brightness /= Math.max(1, (gray.length / 50));
 
     const texture = avgEdges;
 
@@ -443,9 +448,9 @@ function analyzeHandLines(imageData,width,height){
 
     const asymmetry = Math.abs(leftEnergy - rightEnergy);
 
-    coeur += Math.floor((brightness - 120) / 12);
-    tete += Math.floor(texture / 18);
-    vie += Math.floor(asymmetry / 50000);
+    coeur += Math.floor((brightness - 120) / 20);
+    tete += Math.floor(texture / 30);
+    vie += Math.floor(asymmetry / 120000);
 
     coeur = Math.max(10, Math.min(95, coeur));
     tete = Math.max(10, Math.min(95, tete));

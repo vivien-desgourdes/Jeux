@@ -3,46 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🔮 Grimoire des Âmes Magiques - Analyse Ultime</title>
+    <title>🔮 Chiromancie Magique - Lisez vos lignes de main</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', 'Courier New', monospace;
-            background: radial-gradient(circle at 10% 20%, #0a0b1a, #02010a);
+            background: radial-gradient(circle at 10% 20%, #1a0f2e, #0a0515);
             min-height: 100vh;
             padding: 20px;
-            color: #e8e2ff;
+            color: #f0e6ff;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: rgba(8, 10, 25, 0.75);
+            background: rgba(15, 12, 30, 0.85);
             backdrop-filter: blur(4px);
             border-radius: 48px;
             padding: 25px;
-            border: 1px solid rgba(170, 140, 255, 0.4);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.6);
+            border: 1px solid rgba(200, 170, 255, 0.5);
         }
 
         h1 {
             text-align: center;
             font-size: 2.5rem;
-            background: linear-gradient(135deg, #f9efb2, #c394ff);
+            background: linear-gradient(135deg, #ffdf8c, #c77dff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: 2px;
         }
 
         .sub {
             text-align: center;
-            color: #baacff;
+            color: #c9b3ff;
             margin-bottom: 30px;
             font-style: italic;
         }
@@ -54,29 +48,25 @@
         }
 
         .glass-card {
-            background: rgba(20, 22, 45, 0.65);
+            background: rgba(25, 20, 50, 0.7);
             backdrop-filter: blur(5px);
             border-radius: 32px;
             padding: 20px;
-            border: 1px solid rgba(200, 180, 250, 0.3);
+            border: 1px solid rgba(200, 180, 250, 0.4);
         }
 
-        .webcam-area {
-            text-align: center;
-        }
-
-        video {
+        .webcam-area { text-align: center; }
+        video, canvas {
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             border-radius: 28px;
-            border: 3px solid #bc9aff;
-            box-shadow: 0 0 25px #7f5fcf;
-            background: #000;
-            transform: scaleX(-1);
+            border: 3px solid #b77eff;
+            background: #1a142f;
         }
+        canvas { display: none; }
 
         button {
-            background: linear-gradient(105deg, #6541b3, #8d6ad8);
+            background: linear-gradient(105deg, #7b3fe4, #a06eff);
             border: none;
             font-weight: bold;
             font-size: 1.2rem;
@@ -86,415 +76,374 @@
             cursor: pointer;
             color: white;
             transition: 0.2s;
-            font-family: monospace;
-            letter-spacing: 1px;
         }
+        button:hover { transform: scale(1.02); background: #8e5ae6; box-shadow: 0 0 12px #b77eff; }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px #b07eff;
-            background: #7957cf;
-        }
-
-        .result-arcanum {
-            background: linear-gradient(145deg, #0c0f24, #040617);
+        .result-card {
+            background: linear-gradient(145deg, #14112e, #0a081c);
             border-radius: 28px;
             padding: 20px;
             margin-bottom: 20px;
-            border-left: 10px solid #b78eff;
+            border-left: 10px solid #d4a5ff;
         }
 
-        .wiz-icon {
-            font-size: 3.8rem;
-            text-align: center;
-        }
-
-        .wiz-name {
+        .hand-icon { font-size: 4rem; text-align: center; }
+        .wizard-name {
             font-size: 1.8rem;
             font-weight: bold;
             text-align: center;
-            background: linear-gradient(135deg, #ffecb3, #d0b3ff);
+            background: linear-gradient(135deg, #ffecb3, #d9b3ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
-
-        .trait-badge {
+        .line-badge {
             display: inline-block;
-            background: #2a2355;
+            background: #2d2355;
             padding: 5px 15px;
             border-radius: 30px;
             margin: 5px;
             font-size: 0.8rem;
         }
-
-        .magic-stats-grid {
+        .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 15px;
+            margin: 15px 0;
         }
-
         .stat-cell {
-            background: #0e1029;
-            padding: 8px 12px;
+            background: #0e0c25;
+            padding: 10px 12px;
             border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
+            border-left: 3px solid #a27eff;
         }
-
         .gauge {
             height: 8px;
-            background: #332a5a;
+            background: #2e2555;
             border-radius: 10px;
             margin-top: 8px;
             overflow: hidden;
         }
-
         .gauge-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #dbbaff, #9b6eff);
-            border-radius: 10px;
+            background: linear-gradient(90deg, #c9a3ff, #9b6eff);
         }
-
-        .affinity-box {
-            text-align: center;
-            background: #121634;
+        .prediction-box {
+            background: #1b153f;
             border-radius: 24px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            border: 1px dashed #b77eff;
+        }
+        .line-break {
+            margin-top: 20px;
+            border-top: 1px dashed #6a5a9e;
+            padding-top: 15px;
+        }
+        @media (max-width: 850px) { .dual-grid { grid-template-columns: 1fr; } h1 { font-size: 1.8rem; } }
+        .instruction {
+            background: #1e1836;
+            border-radius: 20px;
             padding: 12px;
-            margin-top: 16px;
-            font-size: 0.9rem;
-        }
-
-        .animate-pulse {
-            animation: pulse 0.6s ease-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.98); opacity: 0.7;}
-            100% { transform: scale(1); opacity: 1;}
-        }
-
-        @media (max-width: 850px) {
-            .dual-grid { grid-template-columns: 1fr; }
-            h1 { font-size: 1.8rem; }
-        }
-        .loader-overlay {
-            display: inline-block;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🔮 LE GRIMOIRE DES ÂMES MAGIQUES 🔮</h1>
-    <div class="sub">« Analyse occulte maximale : sourire, mouvement, aura chromatique, clignement, essences oubliées »</div>
+    <h1>🖐️ CHIROMANCIE MAGIQUE 🧙</h1>
+    <div class="sub">« Montrez votre paume, les lignes révéleront votre destinée de sorcier »</div>
     <div class="dual-grid">
         <div class="glass-card webcam-area">
-            <h3>📸 Cercle de Vérité</h3>
+            <h3>📸 Présentez votre main, paume ouverte</h3>
             <video id="webcam" autoplay playsinline muted></video>
+            <canvas id="previewCanvas"></canvas>
             <div>
-                <button id="revealBtn">✨ SCRUTER L'ÂME MAGIQUE ✨</button>
-                <button id="resetBtn" style="background:#3a2d64;">🌀 Nouvelle analyse</button>
+                <button id="captureBtn">🔮 CAPTURER & ANALYSER LA MAIN 🔮</button>
+                <button id="resetBtn" style="background:#4a337a;">🌀 Nouvelle lecture</button>
             </div>
-            <p style="font-size:0.75rem; margin-top:12px;">Analyse du sourire, mouvement, luminosité, teinte, fraîcheur éthérée + 24 métriques secrètes</p>
+            <div class="instruction">
+                ✨ Astuce : placez votre main à plat, paume bien visible, doigts légèrement écartés.<br>
+                La magie analysera les 3 lignes principales : Cœur ❤️, Tête 🧠, Vie 🌿
+            </div>
         </div>
         <div class="glass-card" id="resultContainer">
-            <div class="result-arcanum">
-                <div class="wiz-icon">🌙🔮</div>
-                <div class="wiz-name">Attente du rituel</div>
-                <div style="text-align:center; margin:12px">Activez la scrutation magique. La caméra percevra les marques immatérielles de votre lignée.</div>
+            <div class="result-card">
+                <div class="hand-icon">🖐️❓</div>
+                <div class="wizard-name">En attente de lecture</div>
+                <div style="text-align:center; margin:12px">Capturez votre paume pour que les lignes révèlent votre archétype sorcier.</div>
             </div>
-            <div id="statsDetails">✨ Analyse non effectuée</div>
+            <div id="detailsArea">✨ Aucune analyse pour l'instant</div>
         </div>
     </div>
 </div>
 
 <script>
-    // ----------------------------- 8 ARCHÉTYPES AVANCÉS -------------------------
-    const ARCANES = {
-        LUMINA: {
-            name: "Lumina, Éclat Originel", icon: "☀️✨", 
-            traits: ["Bienveillant", "Rayonnant", "Sacré", "Guérisseur né"],
-            desc: "Âme lumineuse, vos sorts soignent et purifient. L'obscurité fuit votre présence. Votre sourire désamorce les haines.",
-            stats: { "Lueur sacrée": 94, "Empathie": 96, "Défense aurique": 90, "Chaleur émotionnelle": 88 },
-            affinite: "Lumière / Rédemption", conseil: "Partagez votre flamme sans vous consumer."
+    let video, stream, canvas, ctx;
+    let capturedImageData = null;
+    
+    // Les 9 archétypes basés sur les lignes de main
+    const ARCHETYPES = {
+        VISIONNAIRE: {
+            name: "Le Visionnaire", icon: "👁️🔮", 
+            traits: ["Ligne de tête longue", "Intuition", "Clairvoyant"],
+            desc: "Votre ligne de tête traverse toute la paume. Vous avez un don pour la divination et l'intuition magique.",
+            conseil: "Faites confiance à votre premier ressenti."
         },
-        IGNIS: {
-            name: "Ignis, Brasier des dieux", icon: "🔥🐉",
-            traits: ["Ferveur", "Volcanique", "Impulsif", "Brûlant"],
-            desc: "La passion vous consume et vous élève. Magie de feu dévastatrice, mais aussi force de renaissance.",
-            stats: { "Puence pyrique": 96, "Détermination": 93, "Intensité émotive": 85, "Volonté": 89 },
-            affinite: "Pyromancie / Courage", conseil: "Domptez votre fougue, utilisez la braise plutôt que l'incendie."
+        PASSIONNE: {
+            name: "Le Passionné", icon: "❤️🔥",
+            traits: ["Cœur puissant", "Émotions intenses", "Charismatique"],
+            desc: "Votre ligne de cœur est profonde et bien marquée. La magie des sentiments vous donne une force redoutable.",
+            conseil: "Vos émotions sont votre plus grand pouvoir."
         },
-        UMBRA: {
-            name: "Umbra, Silhouette Évanescente", icon: "🌑🦇",
-            traits: ["Furtif", "Malicieux", "Observateur", "Insaisissable"],
-            desc: "Les ombres vous chuchotent leurs mystères. Votre magie se faufile dans les interstices de la réalité.",
-            stats: { "Discrétion occulte": 97, "Ruse": 91, "Caméléon magique": 88, "Silence": 90 },
-            affinite: "Ténèbres / Illusion", conseil: "Un rayon de lumière occasionnel vous rend plus fort."
+        VITAL: {
+            name: "Le Vital", icon: "🌿💪",
+            traits: ["Ligne de vie longue", "Résilient", "Terre-à-terre"],
+            desc: "Votre ligne de vie descend bas dans la paume. Vous possédez une énergie vitale hors du commun.",
+            conseil: "Puisez dans votre endurance naturelle."
         },
-        AETHERIEL: {
-            name: "Aethériel, Souffle Astral", icon: "🌀✨",
-            traits: ["Visionnaire", "Rêveur", "Intemporel", "Mystique"],
-            desc: "Vous naviguez entre les plans. Vos sorts d'illusion, déplacement et prophétie dépassent l'entendement.",
-            stats: { "Clairvoyance": 92, "Éthéré": 89, "Liberté dimensionnelle": 87, "Intuition": 95 },
-            affinite: "Astral / Divination", conseil: "Retrouvez l'ancrage régulier pour ne pas vous éparpiller."
+        MYSTIQUE: {
+            name: "Le Mystique", icon: "🌀🌙",
+            traits: ["Lignes entrecroisées", "Double vie", "Énigmatique"],
+            desc: "Vos lignes s'entrecroisent étrangement. Votre destin n'est pas linéaire, la magie des mystères vous attire.",
+            conseil: "Acceptez les chemins imprévus."
         },
-        SYLVANIS: {
-            name: "Sylvanis, Voix des racines", icon: "🌿🍄",
-            traits: ["Vivace", "Connexion animale", "Guérisseur sauvage", "Ancestral"],
-            desc: "La forêt palpite dans votre cœur. Vous régénérez, enracinez, faites éclore la vie.",
-            stats: { "Essence vitale": 95, "Symbiose": 97, "Botanique occulte": 90, "Patience": 85 },
-            affinite: "Géomancie / Vie", conseil: "Marchez pieds nus sur la terre pour recharger vos runes."
+        GUERRIER: {
+            name: "Le Guerrier", icon: "⚔️🛡️",
+            traits: ["Ligne de vie carrée", "Doigts longs", "Combattant"],
+            desc: "Main carrée, doigts longs. La magie de combat et la protection sont vos domaines.",
+            conseil: "Votre force est dans l'action."
         },
-        MORTAVIS: {
-            name: "Mortavis, Gardien des cycles", icon: "💀⚰️",
-            traits: ["Calme", "Profond", "Médium", "Psychopompe"],
-            desc: "Les mémoires défuntes vous parlent. Votre nécromancie douce apaise les fantômes et protège les vivants.",
-            stats: { "Sagesse funèbre": 93, "Mémoire immortelle": 94, "Nécrose bénigne": 85, "Résistance spectrale": 88 },
-            affinite: "Nécromancie / Transition", conseil: "N'oubliez pas de vivre les joies du présent."
+        SAGE: {
+            name: "Le Sage", icon: "📜🕯️",
+            traits: ["Lignes fines", "Main pointue", "Érudit"],
+            desc: "Mains fines, lignes délicates. La connaissance occulte et les rituels complexes n'ont pas de secret pour vous.",
+            conseil: "Partagez votre savoir avec les jeunes sorciers."
         },
-        GLACIEL: {
-            name: "Glaciel, Givre Ancestral", icon: "❄️🗡️",
-            traits: ["Rigoureux", "Serein", "Analyseur", "Froide logique"],
-            desc: "Votre sang porte la sagesse des cimes. Vos sorts gèlent les conflits et apportent la clarté.",
-            stats: { "Concentration": 98, "Murmure gelé": 89, "Précision arcanique": 93, "Sang-froid": 96 },
-            affinite: "Cryomancie / Stratégie", conseil: "Faites fondre parfois votre cœur de glace."
+        ELEMENTAIRE: {
+            name: "L'Élémentaliste", icon: "🌊🔥",
+            traits: ["Lignes ondulées", "Doigts noueux", "Éléments"],
+            desc: "Vos lignes sont sinueuses comme les éléments. Vous maîtrisez la magie naturelle.",
+            conseil: "Connectez-vous aux quatre éléments."
         },
-        TEMPESTA: {
-            name: "Tempesta, Fureur des Cieux", icon: "🌩️⚡",
-            traits: ["Imprévisible", "Électrisant", "Aérien", "Messager des tempêtes"],
-            desc: "L'orage vibre dans vos veines. Puissance brute, mobilité et chaos maîtrisé.",
-            stats: { "Foudre intérieure": 94, "Rapidité": 92, "Électricité statique": 88, "Instinct": 84 },
-            affinite: "Aéromancie / Foudre", conseil: "Apprenez à vous recentrer après la tempête."
+        OMBRE: {
+            name: "L'Ombre", icon: "🌑🗡️",
+            traits: ["Lignes discontinues", "Secrètes", "Insaisissable"],
+            desc: "Vos lignes sont brisées, comme un destin à recomposer. La magie des ombres vous protège.",
+            conseil: "Votre force vient de l'invisible."
+        },
+        DESTIN: {
+            name: "Le Façonneur", icon: "⭐🔗",
+            traits: ["Ligne du destin nette", "Carrière magique", "Leader"],
+            desc: "Une ligne du destin bien marquée. Votre chemin de sorcier est tracé pour de grandes œuvres.",
+            conseil: "Assumez votre destinée."
         }
     };
-
-    let video, canvas, previousFrame = null, stream = null;
-    let smileHistory = [], movementHistory = [], blinkHistory = [];
-
-    // initialisation
+    
     async function initCamera() {
         video = document.getElementById('webcam');
+        canvas = document.getElementById('previewCanvas');
+        ctx = canvas.getContext('2d');
         try {
-            const str = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } });
+            const str = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
             video.srcObject = str;
             stream = str;
             await new Promise(r => { video.onloadedmetadata = r; });
             video.play();
-            canvas = document.createElement('canvas');
             return true;
-        } catch(e) { 
-            document.getElementById('resultContainer').innerHTML = `<div style="color:#ffab7b">❌ Caméra inaccessible. Vérifiez les permissions (HTTPS requis).</div>`;
-            return false; 
+        } catch(e) {
+            document.getElementById('resultContainer').innerHTML = `<div style="color:#ffa7a7">❌ Caméra inaccessible (HTTPS requis).</div>`;
+            return false;
         }
     }
-
-    // capture une frame ImageData
-    function captureFrame() {
+    
+    function captureHand() {
         if (!video || video.readyState < 2) return null;
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         return ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
-
-    // Détection sourire (analyse zone basse du visage simulée par contraste zone inferieure Y)
-    function detectSmile(imageData, width, height) {
-        // zone basse du visage : approx 60% à 90% de la hauteur, et zone horizontale 30-70%
-        const startY = Math.floor(height * 0.6);
-        const endY = Math.floor(height * 0.9);
-        const startX = Math.floor(width * 0.3);
-        const endX = Math.floor(width * 0.7);
-        let sumLum = 0, count = 0;
-        for (let y = startY; y < endY; y++) {
-            for (let x = startX; x < endX; x++) {
-                const idx = (y * width + x) * 4;
-                const lum = (imageData.data[idx] + imageData.data[idx+1] + imageData.data[idx+2]) / 3;
-                sumLum += lum;
-                count++;
+    
+    // Analyse des lignes de la main par détection de contraste
+    function analyzeHandLines(imageData, width, height) {
+        // Conversion en niveaux de gris + recherche des zones de contraste (lignes)
+        const gray = new Array(width * height);
+        for(let i=0; i<width*height; i++) {
+            const r = imageData.data[i*4];
+            const g = imageData.data[i*4+1];
+            const b = imageData.data[i*4+2];
+            gray[i] = (r+g+b)/3;
+        }
+        
+        // Détection de contraste local (les lignes sont plus sombres)
+        let contrasts = [];
+        for(let y = 20; y < height-20; y++) {
+            for(let x = 20; x < width-20; x++) {
+                const idx = y*width + x;
+                const center = gray[idx];
+                let surround = 0;
+                for(let dy = -5; dy <=5; dy++) {
+                    for(let dx = -5; dx <=5; dx++) {
+                        if(dx !== 0 || dy !== 0) surround += gray[(y+dy)*width + (x+dx)];
+                    }
+                }
+                surround /= 24;
+                const contrast = surround - center;
+                if(contrast > 25) { // zone plus sombre = ligne probable
+                    contrasts.push({x,y,val:contrast});
+                }
             }
         }
-        const avgLum = sumLum / count;
-        // plus la zone est claire = contraste bouche ouverte / dents? simplifié : luminosité zone bouche haute = sourire possible
-        const normalized = Math.min(1, Math.max(0, (avgLum - 80) / 120));
-        return Math.floor(normalized * 100);
-    }
-
-    // mouvement frame diff
-    function computeMovement(prev, curr, w, h) {
-        if (!prev) return 0;
-        let diff = 0, total = 0;
-        for (let i = 0; i < w * h; i+=15) { // échantillonage
-            const idx = i*4;
-            const rDiff = Math.abs(prev.data[idx] - curr.data[idx]);
-            const gDiff = Math.abs(prev.data[idx+1] - curr.data[idx+1]);
-            const bDiff = Math.abs(prev.data[idx+2] - curr.data[idx+2]);
-            diff += (rDiff+gDiff+bDiff)/3;
-            total++;
-        }
-        const movement = Math.min(100, diff / total / 2.55);
-        return Math.floor(movement);
-    }
-
-    // clignement: variation luminance sur zone yeux (approx 25-45% hauteur)
-    function detectBlink(frame, width, height) {
-        const eyeY1 = Math.floor(height*0.3), eyeY2 = Math.floor(height*0.45);
-        let lumSum = 0, cnt = 0;
-        for(let y=eyeY1; y<eyeY2; y++) {
-            for(let x=Math.floor(width*0.25); x<Math.floor(width*0.75); x++) {
-                const idx = (y*width + x)*4;
-                const l = (frame.data[idx]+frame.data[idx+1]+frame.data[idx+2])/3;
-                lumSum += l;
-                cnt++;
-            }
-        }
-        const avg = lumSum/cnt;
-        return avg < 70 ? 70 : (avg > 150 ? 30 : 50); // plus la luminosité est basse (paupière fermée)
-    }
-
-    // extraire dominantes couleur HSL qualitatives
-    function colorMood(imageData, w, h) {
-        let rTot=0,gTot=0,bTot=0, total=0;
-        for(let i=0; i<w*h; i+=5) {
-            const idx = i*4;
-            rTot+=imageData.data[idx];
-            gTot+=imageData.data[idx+1];
-            bTot+=imageData.data[idx+2];
-            total++;
-        }
-        const rAvg=rTot/total/255, gAvg=gTot/total/255, bAvg=bTot/total/255;
-        const warmth = (rAvg - bAvg)*100 + 50;
-        const natureScore = (gAvg - (rAvg+bAvg)/2)*100 + 50;
-        const brightness = (rAvg+gAvg+bAvg)/3;
-        return { warmth: Math.min(100,Math.max(0,warmth)), nature: Math.min(100,Math.max(0,natureScore)), brightness: Math.floor(brightness*100), 
-                 dominant: rAvg>gAvg && rAvg>bAvg ? "Rouge" : (gAvg>rAvg && gAvg>bAvg ? "Vert" : (bAvg>rAvg && bAvg>gAvg ? "Bleu" : "Violette")) };
-    }
-
-    // Analyse ultime => renvoie objet complet + archétype
-    function ultimateAnalysis(imageData, prevImageData, width, height, blinkVal) {
-        const smileValue = detectSmile(imageData, width, height);
-        const movement = computeMovement(prevImageData, imageData, width, height);
-        const colorData = colorMood(imageData, width, height);
-        const { warmth, nature, brightness, dominant } = colorData;
         
-        // historiques pour moyenne émotion
-        smileHistory.push(smileValue); if(smileHistory.length>8) smileHistory.shift();
-        movementHistory.push(movement); if(movementHistory.length>6) movementHistory.shift();
-        const avgSmile = smileHistory.reduce((a,b)=>a+b,0)/smileHistory.length;
-        const avgMovement = movementHistory.reduce((a,b)=>a+b,0)/movementHistory.length;
-
-        let wizardKey = "AETHERIEL";
-        // Règles fines associant émotion + couleur + mouvement + luminosité
-        if(avgSmile > 58 && brightness > 55) wizardKey = "LUMINA";
-        else if(avgSmile < 25 && brightness<40) wizardKey = "UMBRA";
-        else if(warmth > 68 && (avgMovement > 35 || avgSmile > 45)) wizardKey = "IGNIS";
-        else if(nature > 58 && brightness<70) wizardKey = "SYLVANIS";
-        else if(brightness < 34 && warmth<40) wizardKey = "MORTAVIS";
-        else if(brightness >= 45 && warmth < 45 && dominant.includes("Bleu")) wizardKey = "GLACIEL";
-        else if(avgMovement > 62) wizardKey = "TEMPESTA";
-        else if(dominant === "Violette") wizardKey = "AETHERIEL";
-        else wizardKey = "SYLVANIS"; 
-
-        // légère randomisation basée sur blink
-        if(blinkVal<45 && wizardKey==="IGNIS") wizardKey = "TEMPESTA";
-        if(avgSmile>70 && wizardKey==="UMBRA") wizardKey = "LUMINA";
+        // Simuler les 3 lignes principales via distribution verticale/horizontale
+        let topLines = contrasts.filter(c => c.y < height*0.4);
+        let midLines = contrasts.filter(c => c.y >= height*0.4 && c.y < height*0.65);
+        let bottomLines = contrasts.filter(c => c.y >= height*0.65);
         
-        const arcan = ARCANES[wizardKey];
+        let coeurStrength = Math.min(100, Math.floor(topLines.length / 30));
+        let teteStrength = Math.min(100, Math.floor(midLines.length / 35));
+        let vieStrength = Math.min(100, Math.floor(bottomLines.length / 40));
+        
+        // Ajustements avec des seuils plus réalistes
+        coeurStrength = Math.max(15, Math.min(95, coeurStrength));
+        teteStrength = Math.max(20, Math.min(95, teteStrength));
+        vieStrength = Math.max(10, Math.min(95, vieStrength));
+        
+        // Analyse de la forme de la main via rapport largeur/hauteur
+        const handWidth = width;
+        const handHeight = height;
+        const ratio = handWidth / handHeight;
+        let handShape = (ratio > 0.85) ? "carrée" : "longue";
+        
+        // estimation doigts (basée sur les pics de contraste en haut)
+        let fingerLength = (topLines.length > 150) ? "longs" : "moyens";
+        
+        // détermination de l'archétype
+        let archetypeKey = "VISIONNAIRE";
+        if(teteStrength > 70 && teteStrength > coeurStrength+15) archetypeKey = "VISIONNAIRE";
+        else if(coeurStrength > 70 && coeurStrength > vieStrength+10) archetypeKey = "PASSIONNE";
+        else if(vieStrength > 70 && vieStrength > teteStrength+5) archetypeKey = "VITAL";
+        else if(handShape === "longue" && fingerLength === "longs") archetypeKey = "SAGE";
+        else if(handShape === "carrée") archetypeKey = "GUERRIER";
+        else if(coeurStrength > 55 && teteStrength > 55 && vieStrength < 40) archetypeKey = "MYSTIQUE";
+        else if(vieStrength < 30 && coeurStrength < 45) archetypeKey = "OMBRE";
+        else if(teteStrength > 55 && vieStrength > 55) archetypeKey = "ELEMENTAIRE";
+        else archetypeKey = "DESTIN";
+        
+        // petite variabilité magique
+        const seed = (coeurStrength + teteStrength*2 + vieStrength*3) % 100;
+        if(seed > 85 && archetypeKey === "VISIONNAIRE") archetypeKey = "MYSTIQUE";
+        if(seed < 15 && archetypeKey === "GUERRIER") archetypeKey = "VITAL";
+        
         return {
-            wizard: arcan,
-            metrics: {
-                sourire: Math.floor(avgSmile),
-                mouvement: Math.floor(avgMovement),
-                luminositeMag: brightness,
-                chaleurArcane: Math.floor(warmth),
-                natureEssence: Math.floor(nature),
-                couleurAura: dominant,
-                clignementYeux: blinkVal,
-                donCache: generateSpecialGift(wizardKey, avgSmile, movement, brightness)
-            }
+            archetype: ARCHETYPES[archetypeKey],
+            lines: { coeur: coeurStrength, tete: teteStrength, vie: vieStrength },
+            hand: { forme: handShape, doigts: fingerLength },
+            seed: seed
         };
     }
-
-    function generateSpecialGift(key, smile, move, light) {
-        const gifts = {
-            LUMINA: `Rayon d'espoir : votre sourire (${Math.floor(smile)}%) purifie l'atmosphère.`,
-            IGNIS: `Étincelle intérieure : votre fougue (mouvement ${move}%) peut réchauffer un allié.`,
-            UMBRA: `Voile discret : vous devenez flou aux yeux des curieux (sourcillement magique).`,
-            AETHERIEL: `Préscience onirique : vous captez les rêves à ${Math.floor(light)}% de clarté.`,
-            SYLVANIS: `Bourgeon instantané : une fleur pousse si vous touchez la terre.`,
-            MORTAVIS: `Parade spectrale : les fantômes vous protègent 1 fois par nuit.`,
-            GLACIEL: `Gel protecteur : votre aura gèle les projectiles hostiles.`,
-            TEMPESTA: `Cri des cieux : vous pouvez invoquer une bourrasque loyale.`
-        };
-        return gifts[key] || "Lien mystérieux avec les étoiles filantes.";
-    }
-
-    async function performReading() {
-        const currentImg = captureFrame();
-        if(!currentImg) { alert("Camera pas prête, réessayez"); return; }
-        const prev = previousFrame || currentImg;
-        const blinkRef = detectBlink(currentImg, currentImg.width, currentImg.height);
-        const analysis = ultimateAnalysis(currentImg, prev, currentImg.width, currentImg.height, blinkRef);
-        previousFrame = currentImg;
+    
+    function generatePrediction(lines, hand, archetype) {
+        let prediction = "";
+        if(lines.coeur > 70) prediction += "❤️ Votre cœur guidera votre magie vers des alliances puissantes. ";
+        else if(lines.coeur < 35) prediction += "❄️ Vous gardez vos émotions secrètes, ce qui renforce votre magie de l'ombre. ";
         
-        renderResult(analysis);
-        if(navigator.vibrate) navigator.vibrate(100);
+        if(lines.tete > 70) prediction += "🧠 Votre esprit analytique vous rend redoutable en nécromancie et divination. ";
+        else if(lines.tete < 35) prediction += "🌀 Vous agissez par instinct, idéal pour la magie élémentaire sauvage. ";
+        
+        if(lines.vie > 70) prediction += "🌿 Vous êtes incroyablement résilient, les sorts de guérison vous sont naturels. ";
+        else if(lines.vie < 30) prediction += "⚡ Vous vivez chaque instant avec intensité, la magie de feu vous appelle. ";
+        
+        if(hand.forme === "carrée") prediction += "🛡️ Votre main carrée indique un talent pour les boucliers magiques. ";
+        if(hand.doigts === "longs") prediction += "🖐️ Vos doigts longs suggèrent une affinité avec la magie des runes. ";
+        
+        return prediction || "Votre destin magique est encore à écrire. Lancez une pièce !";
     }
-
-    function renderResult(analysis) {
-        const wiz = analysis.wizard;
-        const m = analysis.metrics;
+    
+    function renderAnalysis(analysis) {
+        const arch = analysis.archetype;
+        const lines = analysis.lines;
+        const hand = analysis.hand;
+        const prediction = generatePrediction(lines, hand, arch);
+        
         const container = document.getElementById('resultContainer');
         container.innerHTML = `
-            <div class="result-arcanum animate-pulse">
-                <div class="wiz-icon">${wiz.icon}</div>
-                <div class="wiz-name">${wiz.name}</div>
-                <div style="margin:10px 0; text-align:center">
-                    ${wiz.traits.map(t=>`<span class="trait-badge">${t}</span>`).join('')}
+            <div class="result-card">
+                <div class="hand-icon">${arch.icon}</div>
+                <div class="wizard-name">${arch.name}</div>
+                <div style="text-align:center; margin:5px 0">
+                    ${arch.traits.map(t => `<span class="line-badge">${t}</span>`).join('')}
                 </div>
-                <div style="margin:15px 0;">${wiz.desc}</div>
+                <div style="margin:12px 0">${arch.desc}</div>
             </div>
-            <div class="magic-stats-grid">
-                <div class="stat-cell"><span>😊 Sourire arcane</span><span>${m.sourire}%</span></div><div class="stat-cell"><span>🌀 Mouvement éthéré</span><span>${m.mouvement}%</span></div>
-                <div class="stat-cell"><span>✨ Luminosité magique</span><span>${m.luminositeMag}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.luminositeMag}%"></div></div></div>
-                <div class="stat-cell"><span>🔥 Chaleur occulte</span><span>${m.chaleurArcane}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.chaleurArcane}%"></div></div></div>
-                <div class="stat-cell"><span>🌿 Essence naturelle</span><span>${m.natureEssence}%</span><div class="gauge"><div class="gauge-fill" style="width:${m.natureEssence}%"></div></div></div>
-                <div class="stat-cell"><span>🎨 Couleur d'aura</span><span>${m.couleurAura}</span></div>
-                <div class="stat-cell"><span>👁️ Clignement/vision</span><span>${m.clignementYeux < 40 ? "Fréquent" : "Stable"}</span></div>
+            <div class="stats-grid">
+                <div class="stat-cell">
+                    <span>❤️ Ligne de Cœur</span>
+                    <span>${lines.coeur}%</span>
+                    <div class="gauge"><div class="gauge-fill" style="width:${lines.coeur}%"></div></div>
+                    <small>Passion, amour, émotions</small>
+                </div>
+                <div class="stat-cell">
+                    <span>🧠 Ligne de Tête</span>
+                    <span>${lines.tete}%</span>
+                    <div class="gauge"><div class="gauge-fill" style="width:${lines.tete}%"></div></div>
+                    <small>Intellect, intuition, décisions</small>
+                </div>
+                <div class="stat-cell">
+                    <span>🌿 Ligne de Vie</span>
+                    <span>${lines.vie}%</span>
+                    <div class="gauge"><div class="gauge-fill" style="width:${lines.vie}%"></div></div>
+                    <small>Énergie, résilience, destinée</small>
+                </div>
+                <div class="stat-cell">
+                    <span>🖐️ Main</span>
+                    <span>${hand.forme === "carrée" ? "Carrée ⬛" : "Longue ➖"} | Doigts ${hand.doigts}</span>
+                </div>
             </div>
-            <div class="affinity-box">
-                🔮 Affinité majeure : ${wiz.affinite}<br>
-                🎁 Don occulte : ${m.donCache}<br>
-                ✨ Conseil : ${wiz.conseil}
+            <div class="line-break"></div>
+            <div class="prediction-box">
+                🔮 Prédiction magique :<br>
+                ${prediction}<br>
+                ✨ Conseil : ${arch.conseil}
             </div>
-            <div style="margin-top:14px; font-size:0.7rem; text-align:center;">Analyse basée sur 24 métriques magiques : luminosité, mouvement, sourire, teintes, clignement.</div>
+            <div class="line-break"></div>
+            <div style="font-size:0.7rem; text-align:center;">Analyse basée sur le contraste des lignes de la paume.</div>
         `;
-        // Ajoute jauge dynamique
-        document.querySelectorAll('.gauge-fill').forEach(g => {});
     }
-
-    // Lancer analyse + accumulateur
-    let analysisTimeout = null;
-    document.getElementById('revealBtn').addEventListener('click', async () => {
-        const btn = document.getElementById('revealBtn');
-        btn.disabled = true; btn.innerHTML = "🔍 Lecture des flux ésotériques...";
-        await new Promise(r => setTimeout(r, 500));
-        await performReading();
-        btn.disabled = false; btn.innerHTML = "✨ SCRUTER L'ÂME MAGIQUE ✨";
-    });
+    
+    async function performReading() {
+        const imgData = captureHand();
+        if(!imgData) { alert("Veuillez activer la caméra et montrer votre paume"); return; }
+        const btn = document.getElementById('captureBtn');
+        btn.disabled = true;
+        btn.innerHTML = "🔍 Lecture des lignes magiques...";
+        await new Promise(r => setTimeout(r, 800));
+        const analysis = analyzeHandLines(imgData, imgData.width, imgData.height);
+        renderAnalysis(analysis);
+        btn.disabled = false;
+        btn.innerHTML = "🔮 CAPTURER & ANALYSER LA MAIN 🔮";
+        if(navigator.vibrate) navigator.vibrate(100);
+    }
+    
+    document.getElementById('captureBtn').addEventListener('click', performReading);
     document.getElementById('resetBtn').addEventListener('click', () => {
-        smileHistory = []; movementHistory = [];
-        previousFrame = null;
-        document.getElementById('resultContainer').innerHTML = `<div class="result-arcanum"><div class="wiz-icon">🌀</div><div class="wiz-name">Réinitialisation</div><div>Prêt pour une nouvelle analyse occulte complète.</div></div><div id="statsDetails">✨ Utilisez le rituel de scrutation.</div>`;
+        document.getElementById('resultContainer').innerHTML = `
+            <div class="result-card">
+                <div class="hand-icon">🖐️❓</div>
+                <div class="wizard-name">Nouvelle lecture</div>
+                <div style="text-align:center; margin:12px">Capturez une nouvelle photo de votre paume.</div>
+            </div>
+            <div id="detailsArea">✨ Prêt pour l'analyse</div>
+        `;
     });
-
-    window.addEventListener('load', async ()=> {
-        await initCamera();
-    });
-    window.addEventListener('beforeunload',()=>{ if(stream) stream.getTracks().forEach(t=>t.stop()); });
+    
+    window.addEventListener('load', initCamera);
+    window.addEventListener('beforeunload', () => { if(stream) stream.getTracks().forEach(t => t.stop()); });
 </script>
 </body>
 </html>

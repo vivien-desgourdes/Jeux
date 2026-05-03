@@ -1,444 +1,710 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!DOCTYPE html><html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🔮 Chiromancie - Analyse réelle des lignes</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🔮 Chiromancie Magique</title><style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Segoe UI', 'Courier New', monospace;
-            background: radial-gradient(circle at 10% 20%, #1a0f2e, #0a0515);
-            min-height: 100vh;
-            padding: 20px;
-            color: #f0e6ff;
-        }
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top, #22103c, #090510);
+    color: #f3e8ff;
+    min-height: 100vh;
+    padding: 20px;
+}
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(15, 12, 30, 0.85);
-            backdrop-filter: blur(4px);
-            border-radius: 48px;
-            padding: 25px;
-            border: 1px solid rgba(200, 170, 255, 0.5);
-        }
+.container {
+    max-width: 1400px;
+    margin: auto;
+    background: rgba(20, 15, 40, 0.88);
+    border-radius: 40px;
+    padding: 25px;
+    border: 1px solid rgba(200,160,255,0.4);
+    backdrop-filter: blur(8px);
+}
 
-        h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #ffdf8c, #c77dff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+h1 {
+    text-align: center;
+    font-size: 2.7rem;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg,#ffe39d,#d09cff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
 
-        .sub {
-            text-align: center;
-            color: #c9b3ff;
-            margin-bottom: 30px;
-            font-style: italic;
-        }
+.sub {
+    text-align: center;
+    color: #c9b6ff;
+    margin-bottom: 30px;
+}
 
-        .dual-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
 
-        .glass-card {
-            background: rgba(25, 20, 50, 0.7);
-            backdrop-filter: blur(5px);
-            border-radius: 32px;
-            padding: 20px;
-            border: 1px solid rgba(200, 180, 250, 0.4);
-        }
+.card {
+    background: rgba(35,25,60,0.7);
+    border-radius: 30px;
+    padding: 20px;
+    border: 1px solid rgba(200,180,255,0.2);
+}
 
-        .webcam-area { text-align: center; }
-        video, canvas {
-            width: 100%;
-            max-width: 450px;
-            border-radius: 28px;
-            border: 3px solid #b77eff;
-            background: #1a142f;
-        }
-        canvas { display: none; }
+video,
+canvas {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 25px;
+    border: 3px solid #b77eff;
+    background: #10091f;
+}
 
-        button {
-            background: linear-gradient(105deg, #7b3fe4, #a06eff);
-            border: none;
-            font-weight: bold;
-            font-size: 1rem;
-            padding: 12px 20px;
-            margin: 10px 6px;
-            border-radius: 60px;
-            cursor: pointer;
-            color: white;
-            transition: 0.2s;
-        }
-        button:hover { transform: scale(1.02); background: #8e5ae6; box-shadow: 0 0 12px #b77eff; }
+canvas {
+    display: none;
+}
 
-        .result-card {
-            background: linear-gradient(145deg, #14112e, #0a081c);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 10px solid #d4a5ff;
-        }
+button {
+    border: none;
+    border-radius: 999px;
+    padding: 14px 22px;
+    margin: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(90deg,#7a3cff,#b26dff);
+    transition: 0.2s;
+}
 
-        .hand-icon { font-size: 4rem; text-align: center; }
-        .wizard-name {
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-align: center;
-            background: linear-gradient(135deg, #ffecb3, #d9b3ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .line-badge {
-            display: inline-block;
-            background: #2d2355;
-            padding: 5px 15px;
-            border-radius: 30px;
-            margin: 5px;
-            font-size: 0.8rem;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 15px 0;
-        }
-        .stat-cell {
-            background: #0e0c25;
-            padding: 10px 12px;
-            border-radius: 20px;
-            border-left: 3px solid #a27eff;
-        }
-        .gauge {
-            height: 8px;
-            background: #2e2555;
-            border-radius: 10px;
-            margin-top: 8px;
-            overflow: hidden;
-        }
-        .gauge-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #c9a3ff, #9b6eff);
-        }
-        .prediction-box {
-            background: #1b153f;
-            border-radius: 24px;
-            padding: 15px;
-            margin-top: 15px;
-            text-align: center;
-            border: 1px dashed #b77eff;
-        }
-        .line-break {
-            margin-top: 20px;
-            border-top: 1px dashed #6a5a9e;
-            padding-top: 15px;
-        }
-        .cam-badge {
-            background: #2a2355;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        @media (max-width: 850px) { .dual-grid { grid-template-columns: 1fr; } h1 { font-size: 1.8rem; } }
-        .instruction {
-            background: #1e1836;
-            border-radius: 20px;
-            padding: 12px;
-            margin-top: 15px;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h1>🖐️ CHIROMANCIE MAGIQUE 🧙</h1>
-    <div class="sub">« Montrez votre paume – analyse dynamique des lignes »</div>
-    <div class="dual-grid">
-        <div class="glass-card webcam-area">
-            <h3>📸 Présentez votre main, paume ouverte</h3>
-            <div><span class="cam-badge" id="camLabel">📱 Caméra selfie</span></div>
-            <video id="webcam" autoplay playsinline muted></video>
-            <canvas id="previewCanvas"></canvas>
-            <div>
-                <button id="captureBtn">🔮 CAPTURER & ANALYSER 🔮</button>
-                <button id="switchCamBtn">🔄 Basculer caméra</button>
-                <button id="resetBtn" style="background:#4a337a;">🌀 Nouvelle lecture</button>
-            </div>
-            <div class="instruction">
-                ✨ Astuce : placez votre main à plat, paume bien visible, doigts légèrement écartés.<br>
-                📷 La qualité de l'éclairage améliore la détection.
-            </div>
-        </div>
-        <div class="glass-card" id="resultContainer">
-            <div class="result-card">
-                <div class="hand-icon">🖐️❓</div>
-                <div class="wizard-name">En attente de lecture</div>
-                <div style="text-align:center; margin:12px">Capturez votre paume pour que les lignes révèlent votre archétype sorcier.</div>
-            </div>
-            <div id="detailsArea">✨ Aucune analyse pour l'instant</div>
-        </div>
-    </div>
+button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px #b77eff;
+}
+
+.result-card {
+    background: linear-gradient(145deg,#151028,#0c0819);
+    border-radius: 28px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 8px solid #cb9eff;
+}
+
+.hand-icon {
+    font-size: 4rem;
+    text-align: center;
+}
+
+.wizard-name {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 10px;
+    background: linear-gradient(90deg,#fff0b2,#d8b3ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.badge {
+    display: inline-block;
+    background: #2d2250;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin: 5px;
+    font-size: 0.85rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.stat {
+    background: #100c21;
+    padding: 14px;
+    border-radius: 20px;
+    border-left: 3px solid #9d72ff;
+}
+
+.gauge {
+    height: 10px;
+    background: #2a2044;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg,#d5adff,#8f5dff);
+}
+
+.prediction {
+    margin-top: 20px;
+    background: #1b1434;
+    border-radius: 24px;
+    padding: 18px;
+    border: 1px dashed #b57cff;
+    line-height: 1.7;
+}
+
+.instruction {
+    margin-top: 18px;
+    text-align: center;
+    color: #c9b6ff;
+    font-size: 0.9rem;
+}
+
+.small {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #9d8ec4;
+}
+
+@media(max-width: 900px){
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style></head>
+<body><div class="container"><h1>🖐️ CHIROMANCIE MAGIQUE</h1>
+<div class="sub">Analyse mystique dynamique de la paume</div><div class="grid"><div class="card" style="text-align:center;"><h2>📸 Présentez votre main</h2>
+<br><video id="webcam" autoplay playsinline muted></video> <canvas id="canvas"></canvas>
+
+<div>
+<button id="captureBtn">🔮 Capturer & Analyser</button>
+<button id="switchBtn">🔄 Caméra</button>
+<button id="resetBtn">🌀 Reset</button>
+</div><div class="instruction">
+✨ Placez votre paume bien ouverte<br>
+💡 Une bonne lumière améliore la lecture magique
+</div></div><div class="card" id="resultContainer"><div class="result-card">
+<div class="hand-icon">🖐️❓</div>
+<div class="wizard-name">En attente</div>
+<div style="text-align:center;margin-top:10px;">
+Capturez votre main pour révéler votre destinée.
 </div>
+</div></div></div>
+</div><script>
 
-<script>
-    let video, stream, canvas, ctx;
-    let currentFacingMode = "user";
-    
-    // Archétypes
-    const ARCHETYPES = {
-        VISIONNAIRE: { name: "Le Visionnaire", icon: "👁️🔮", traits: ["Tête dominante", "Intuition", "Clairvoyant"], desc: "Votre ligne de tête est très marquée. Vous avez un don pour la divination.", conseil: "Faites confiance à votre premier ressenti." },
-        PASSIONNE: { name: "Le Passionné", icon: "❤️🔥", traits: ["Cœur puissant", "Émotions", "Charismatique"], desc: "Votre ligne de cœur est profonde. La magie des sentiments vous donne une force redoutable.", conseil: "Vos émotions sont votre plus grand pouvoir." },
-        VITAL: { name: "Le Vital", icon: "🌿💪", traits: ["Vie dominante", "Résilient", "Endurant"], desc: "Votre ligne de vie est bien marquée. Vous possédez une énergie vitale hors du commun.", conseil: "Puisez dans votre endurance naturelle." },
-        MYSTIQUE: { name: "Le Mystique", icon: "🌀🌙", traits: ["Lignes équilibrées", "Double destin", "Énigmatique"], desc: "Vos lignes sont harmonieuses. La magie des mystères vous attire.", conseil: "Acceptez les chemins imprévus." },
-        GUERRIER: { name: "Le Guerrier", icon: "⚔️🛡️", traits: ["Main carrée", "Action", "Combattant"], desc: "Votre main est carrée et solide. La magie de combat est votre domaine.", conseil: "Votre force est dans l'action." },
-        SAGE: { name: "Le Sage", icon: "📜🕯️", traits: ["Main longue", "Érudit", "Calme"], desc: "Mains fines, lignes délicates. La connaissance occulte n'a pas de secret pour vous.", conseil: "Partagez votre savoir." },
-        ELEMENTAIRE: { name: "L'Élémentaliste", icon: "🌊🔥", traits: ["Lignes ondulées", "Naturel", "Équilibre"], desc: "Vos lignes sont sinueuses. Vous maîtrisez la magie naturelle.", conseil: "Connectez-vous aux quatre éléments." },
-        OMBRE: { name: "L'Ombre", icon: "🌑🗡️", traits: ["Lignes brisées", "Insaisissable", "Secret"], desc: "Vos lignes sont discontinues. La magie des ombres vous protège.", conseil: "Votre force vient de l'invisible." },
-        DESTIN: { name: "Le Façonneur", icon: "⭐🔗", traits: ["Destin tracé", "Leader", "Charismatique"], desc: "Vos lignes montrent un chemin tracé. Vous êtes destiné à de grandes œuvres.", conseil: "Assumez votre destinée." }
-    };
-    
-    async function startCamera() {
-        if (stream) stream.getTracks().forEach(track => track.stop());
-        try {
-            const str = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode } });
-            stream = str;
-            video = document.getElementById('webcam');
-            video.srcObject = stream;
-            await new Promise(r => { video.onloadedmetadata = r; });
-            video.play();
-            document.getElementById('camLabel').innerHTML = currentFacingMode === "user" ? "📱 Caméra selfie" : "📷 Caméra arrière";
-            return true;
-        } catch(e) {
-            document.getElementById('resultContainer').innerHTML = `<div style="color:#ffa7a7">❌ Caméra inaccessible.</div>`;
-            return false;
+let stream;
+let currentFacingMode = "user";
+
+const ARCHETYPES = {
+
+VISIONNAIRE: {
+    name: "Le Visionnaire",
+    icon: "👁️🔮",
+    traits: ["Intuition", "Clairvoyance", "Esprit"],
+    desc: "Votre esprit perçoit des choses invisibles aux autres.",
+    conseil: "Suivez vos intuitions profondes."
+},
+
+PASSIONNE: {
+    name: "Le Passionné",
+    icon: "❤️🔥",
+    traits: ["Émotions", "Charisme", "Feu intérieur"],
+    desc: "Vos émotions alimentent une puissance rare.",
+    conseil: "Vos sentiments sont votre force."
+},
+
+VITAL: {
+    name: "Le Vital",
+    icon: "🌿💪",
+    traits: ["Résistance", "Vitalité", "Énergie"],
+    desc: "Votre énergie vitale semble inépuisable.",
+    conseil: "Canalisez votre force naturelle."
+},
+
+MYSTIQUE: {
+    name: "Le Mystique",
+    icon: "🌙🌀",
+    traits: ["Mystère", "Équilibre", "Secrets"],
+    desc: "Votre paume cache des symboles anciens.",
+    conseil: "Acceptez l'inconnu."
+},
+
+GUERRIER: {
+    name: "Le Guerrier",
+    icon: "⚔️🛡️",
+    traits: ["Action", "Protection", "Force"],
+    desc: "Votre énergie évoque les anciens protecteurs.",
+    conseil: "Agissez avec détermination."
+},
+
+SAGE: {
+    name: "Le Sage",
+    icon: "📜✨",
+    traits: ["Connaissance", "Réflexion", "Savoir"],
+    desc: "Votre esprit cherche sans cesse la vérité.",
+    conseil: "Partagez votre sagesse."
+},
+
+ELEMENTAIRE: {
+    name: "L'Élémentaliste",
+    icon: "🌊🔥",
+    traits: ["Nature", "Chaos", "Éléments"],
+    desc: "Votre paume réagit fortement aux forces naturelles.",
+    conseil: "Écoutez les éléments autour de vous."
+},
+
+OMBRE: {
+    name: "L'Ombre",
+    icon: "🌑🗡️",
+    traits: ["Secret", "Nuit", "Silence"],
+    desc: "Votre énergie demeure difficile à lire.",
+    conseil: "Votre discrétion est un pouvoir."
+},
+
+DESTIN: {
+    name: "Le Façonneur",
+    icon: "⭐🔗",
+    traits: ["Destin", "Leadership", "Influence"],
+    desc: "Votre paume révèle une destinée exceptionnelle.",
+    conseil: "Assumez votre rôle."
+}
+
+};
+
+async function startCamera(){
+
+    if(stream){
+        stream.getTracks().forEach(track => track.stop());
+    }
+
+    try {
+
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: currentFacingMode
+            }
+        });
+
+        const video = document.getElementById('webcam');
+        video.srcObject = stream;
+
+    } catch(e){
+        alert('Impossible d’accéder à la caméra');
+    }
+}
+
+async function switchCamera(){
+    currentFacingMode = currentFacingMode === 'user'
+        ? 'environment'
+        : 'user';
+
+    await startCamera();
+}
+
+function captureHand(){
+
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video,0,0);
+
+    return ctx.getImageData(0,0,canvas.width,canvas.height);
+}
+
+function analyzeHandLines(imageData,width,height){
+
+    const data = imageData.data;
+
+    const gray = new Array(width * height);
+
+    for(let i=0;i<width*height;i++){
+        gray[i] = (
+            data[i*4] +
+            data[i*4+1] +
+            data[i*4+2]
+        ) / 3;
+    }
+
+    const edges = new Array(width * height).fill(0);
+
+    let totalEdges = 0;
+
+    for(let y=1;y<height-1;y++){
+        for(let x=1;x<width-1;x++){
+
+            const idx = y * width + x;
+
+            const gx = gray[idx+1] - gray[idx-1];
+            const gy = gray[idx+width] - gray[idx-width];
+
+            const magnitude = Math.sqrt(gx*gx + gy*gy);
+
+            edges[idx] = magnitude;
+            totalEdges += magnitude;
         }
     }
-    
-    async function switchCamera() {
-        currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
-        await startCamera();
-    }
-    
-    function captureHand() {
-        if (!video || video.readyState < 2) return null;
-        canvas = document.getElementById('previewCanvas');
-        ctx = canvas.getContext('2d');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        return ctx.getImageData(0, 0, canvas.width, canvas.height);
-    }
-    
-    // NOUVEL ALGORITHME - analyse dynamique et différenciée
-    function analyzeHandLines(imageData, width, height) {
-        // Conversion en niveaux de gris
-        const gray = new Array(width * height);
-        for(let i = 0; i < width * height; i++) {
-            gray[i] = (imageData.data[i*4] + imageData.data[i*4+1] + imageData.data[i*4+2]) / 3;
-        }
-        
-        // Calcul du contraste local amélioré
-        const contrastMap = new Array(width * height).fill(0);
-        let maxContrast = 0;
-        
-        for(let y = 10; y < height - 10; y++) {
-            for(let x = 10; x < width - 10; x++) {
-                const idx = y * width + x;
-                const center = gray[idx];
-                
-                // Moyenne locale (rayon 5)
-                let sum = 0, count = 0;
-                for(let dy = -5; dy <= 5; dy++) {
-                    for(let dx = -5; dx <= 5; dx++) {
-                        const nx = x + dx, ny = y + dy;
-                        if(nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                            sum += gray[ny * width + nx];
-                            count++;
-                        }
-                    }
-                }
-                const avgLocal = sum / count;
-                let contrast = avgLocal - center;
-                if(contrast < 0) contrast = 0;
-                contrastMap[idx] = contrast;
-                if(contrast > maxContrast) maxContrast = contrast;
+
+    const avgEdges = totalEdges / (width * height);
+
+    function zoneStats(yStart,yEnd){
+
+        let energy = 0;
+        let strongLines = 0;
+        let darkPixels = 0;
+        let variance = 0;
+        let count = 0;
+
+        const values = [];
+
+        for(let y=yStart;y<yEnd;y++){
+            for(let x=width*0.2;x<width*0.8;x++){
+
+                const idx = Math.floor(y * width + x);
+
+                const e = edges[idx];
+                const g = gray[idx];
+
+                energy += e;
+
+                if(e > avgEdges * 1.4) strongLines++;
+                if(g < 110) darkPixels++;
+
+                values.push(e);
+                count++;
             }
         }
-        
-        // Normalisation dynamique
-        if(maxContrast < 1) maxContrast = 1;
-        for(let i = 0; i < width * height; i++) {
-            contrastMap[i] = Math.min(1, contrastMap[i] / maxContrast);
+
+        const mean = energy / count;
+
+        for(const v of values){
+            variance += Math.abs(v - mean);
         }
-        
-        // Découpage en 3 zones
-        const zoneCoeur = { yMin: 0, yMax: Math.floor(height * 0.35) };
-        const zoneTete = { yMin: Math.floor(height * 0.35), yMax: Math.floor(height * 0.65) };
-        const zoneVie = { yMin: Math.floor(height * 0.65), yMax: height };
-        
-        function computeZoneScore(zone) {
-            let total = 0;
-            let pixels = 0;
-            const xMin = Math.floor(width * 0.25);
-            const xMax = Math.floor(width * 0.75);
-            
-            for(let y = zone.yMin; y < zone.yMax && y < height; y++) {
-                for(let x = xMin; x < xMax && x < width; x++) {
-                    total += contrastMap[y * width + x];
-                    pixels++;
-                }
-            }
-            let score = (total / pixels) * 100;
-            // Ajustement pour étaler les valeurs
-            score = 20 + (score * 0.7);
-            return Math.min(85, Math.max(15, Math.floor(score)));
-        }
-        
-        let coeur = computeZoneScore(zoneCoeur);
-        let tete = computeZoneScore(zoneTete);
-        let vie = computeZoneScore(zoneVie);
-        
-        // Ajout d'une différenciation forcée mais basée sur les données réelles
-        // On identifie quelle zone a le plus de contraste
-        const rawCoeur = coeur, rawTete = tete, rawVie = vie;
-        
-        // Ré-étalement pour garantir des écarts significatifs
-        const maxRaw = Math.max(rawCoeur, rawTete, rawVie);
-        const minRaw = Math.min(rawCoeur, rawTete, rawVie);
-        const range = Math.max(20, maxRaw - minRaw);
-        
-        // Ajustement final
-        coeur = 20 + Math.floor(((rawCoeur - minRaw) / range) * 65);
-        tete = 20 + Math.floor(((rawTete - minRaw) / range) * 65);
-        vie = 20 + Math.floor(((rawVie - minRaw) / range) * 65);
-        
-        // Garantir qu'ils ne sont pas tous égaux
-        if(coeur === tete && tete === vie) {
-            vie = Math.min(85, vie + 12);
-            coeur = Math.max(15, coeur - 5);
-        }
-        
-        // Analyse forme de la main
-        const ratio = width / height;
-        let handShape = ratio > 0.8 ? "carrée" : "longue";
-        
-        // Détermination de l'archétype
-        let archetypeKey = "DESTIN";
-        const maxLine = Math.max(coeur, tete, vie);
-        
-        if(tete === maxLine && tete > coeur + 8 && tete > vie + 8) archetypeKey = "VISIONNAIRE";
-        else if(coeur === maxLine && coeur > tete + 8 && coeur > vie + 8) archetypeKey = "PASSIONNE";
-        else if(vie === maxLine && vie > tete + 8 && vie > coeur + 8) archetypeKey = "VITAL";
-        else if(handShape === "carrée" && vie > 50) archetypeKey = "GUERRIER";
-        else if(handShape === "longue" && tete > 45) archetypeKey = "SAGE";
-        else if(Math.abs(coeur - tete) < 12 && Math.abs(tete - vie) < 12) archetypeKey = "MYSTIQUE";
-        else if(vie < 35 && coeur < 40) archetypeKey = "OMBRE";
-        
+
+        variance /= count;
+
         return {
-            archetype: ARCHETYPES[archetypeKey],
-            lines: { coeur, tete, vie },
-            hand: { forme: handShape }
+            energy,
+            strongLines,
+            darkPixels,
+            variance,
+            count
         };
     }
-    
-    function generatePrediction(lines, hand) {
-        let prediction = "";
-        if(lines.coeur > 65) prediction += "❤️ Votre cœur rayonne d'amour et de passion. ";
-        else if(lines.coeur > 50) prediction += "💕 Votre cœur est généreux, mais parfois réservé. ";
-        else prediction += "❄️ Vous gardez vos émotions protégées, ce qui renforce votre mystère. ";
-        
-        if(lines.tete > 65) prediction += "🧠 Votre esprit analytique perce les mystères les plus obscurs. ";
-        else if(lines.tete > 50) prediction += "📚 Votre intelligence est vive, la connaissance vous attire. ";
-        else prediction += "🌀 Vous agissez par instinct, ce qui vous rend imprévisible. ";
-        
-        if(lines.vie > 65) prediction += "🌿 Votre vitalité est exceptionnelle, vous traversez les épreuves avec force. ";
-        else if(lines.vie > 50) prediction += "⚡ Vous avez une bonne énergie, mais pensez à vous ressourcer. ";
-        else prediction += "🕯️ Vous vivez chaque instant pleinement, sans jamais rien regretter. ";
-        
-        if(hand.forme === "carrée") prediction += "🛡️ Votre main carrée indique un talent inné pour la protection. ";
-        else prediction += "✨ Votre main longue révèle une sensibilité artistique et magique. ";
-        
-        return prediction;
+
+    const coeurZone = zoneStats(0,height*0.33);
+    const teteZone = zoneStats(height*0.33,height*0.66);
+    const vieZone = zoneStats(height*0.66,height);
+
+    function computeScore(zone){
+
+        let score = 0;
+
+        score += zone.energy / zone.count * 0.4;
+        score += zone.strongLines * 0.08;
+        score += zone.darkPixels * 0.015;
+        score += zone.variance * 0.6;
+
+        score = Math.floor(score);
+
+        return Math.max(10, Math.min(95, score));
     }
-    
-    function renderAnalysis(analysis) {
-        const arch = analysis.archetype;
-        const lines = analysis.lines;
-        const hand = analysis.hand;
-        const prediction = generatePrediction(lines, hand);
-        
-        const container = document.getElementById('resultContainer');
-        container.innerHTML = `
-            <div class="result-card">
-                <div class="hand-icon">${arch.icon}</div>
-                <div class="wizard-name">${arch.name}</div>
-                <div style="text-align:center; margin:5px 0">
-                    ${arch.traits.map(t => `<span class="line-badge">${t}</span>`).join('')}
-                </div>
-                <div style="margin:12px 0">${arch.desc}</div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-cell"><span>❤️ Ligne de Cœur</span><span>${lines.coeur}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.coeur}%"></div></div><small>Passion, amour, émotions</small></div>
-                <div class="stat-cell"><span>🧠 Ligne de Tête</span><span>${lines.tete}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.tete}%"></div></div><small>Intellect, intuition, décisions</small></div>
-                <div class="stat-cell"><span>🌿 Ligne de Vie</span><span>${lines.vie}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.vie}%"></div></div><small>Énergie, résilience, destinée</small></div>
-                <div class="stat-cell"><span>🖐️ Forme de main</span><span>${hand.forme === "carrée" ? "Carrée ⬛ (action)" : "Longue ➖ (réflexion)"}</span></div>
-            </div>
-            <div class="line-break"></div>
-            <div class="prediction-box">
-                🔮 Prédiction magique :<br>
-                ${prediction}<br>
-                ✨ Conseil : ${arch.conseil}
-            </div>
-            <div class="line-break"></div>
-            <div style="font-size:0.7rem; text-align:center;">Analyse basée sur le contraste des lignes de la paume.</div>
-        `;
+
+    let coeur = computeScore(coeurZone);
+    let tete = computeScore(teteZone);
+    let vie = computeScore(vieZone);
+
+    let brightness = 0;
+
+    for(let i=0;i<gray.length;i+=50){
+        brightness += gray[i];
     }
-    
-    async function performReading() {
-        const imgData = captureHand();
-        if(!imgData) { alert("Activez la caméra et montrez votre paume"); return; }
-        const btn = document.getElementById('captureBtn');
-        btn.disabled = true;
-        btn.innerHTML = "🔍 Lecture des lignes magiques...";
-        await new Promise(r => setTimeout(r, 700));
-        const analysis = analyzeHandLines(imgData, imgData.width, imgData.height);
-        renderAnalysis(analysis);
-        btn.disabled = false;
-        btn.innerHTML = "🔮 CAPTURER & ANALYSER 🔮";
-        if(navigator.vibrate) navigator.vibrate(100);
+
+    brightness /= (gray.length / 50);
+
+    const texture = avgEdges;
+
+    let leftEnergy = 0;
+    let rightEnergy = 0;
+
+    for(let y=0;y<height;y++){
+        for(let x=0;x<width;x++){
+
+            const idx = y * width + x;
+
+            if(x < width/2) leftEnergy += edges[idx];
+            else rightEnergy += edges[idx];
+        }
     }
-    
-    window.addEventListener('load', async () => {
-        video = document.getElementById('webcam');
-        canvas = document.getElementById('previewCanvas');
-        await startCamera();
-        document.getElementById('captureBtn').addEventListener('click', performReading);
-        document.getElementById('switchCamBtn').addEventListener('click', switchCamera);
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            document.getElementById('resultContainer').innerHTML = `
-                <div class="result-card">
-                    <div class="hand-icon">🖐️❓</div>
-                    <div class="wizard-name">Nouvelle lecture</div>
-                    <div style="text-align:center; margin:12px">Capturez une nouvelle photo de votre paume.</div>
-                </div>
-                <div id="detailsArea">✨ Prêt pour l'analyse</div>
-            `;
-        });
-    });
-    
-    window.addEventListener('beforeunload', () => { if(stream) stream.getTracks().forEach(t => t.stop()); });
-</script>
-</body>
+
+    const asymmetry = Math.abs(leftEnergy - rightEnergy);
+
+    coeur += Math.floor((brightness - 120) / 12);
+    tete += Math.floor(texture / 18);
+    vie += Math.floor(asymmetry / 50000);
+
+    coeur = Math.max(10, Math.min(95, coeur));
+    tete = Math.max(10, Math.min(95, tete));
+    vie = Math.max(10, Math.min(95, vie));
+
+    const ratio = width / height;
+
+    let handShape;
+
+    if(ratio > 0.9) handShape = 'carrée';
+    else if(ratio > 0.75) handShape = 'équilibrée';
+    else handShape = 'longue';
+
+    const scores = [
+        {key:'PASSIONNE', value: coeur},
+        {key:'VISIONNAIRE', value: tete},
+        {key:'VITAL', value: vie}
+    ];
+
+    scores.sort((a,b)=>b.value-a.value);
+
+    let archetypeKey = scores[0].key;
+
+    if(Math.abs(coeur-tete)<8 && Math.abs(tete-vie)<8){
+        archetypeKey = 'MYSTIQUE';
+    }
+
+    if(handShape === 'carrée' && vie > 60){
+        archetypeKey = 'GUERRIER';
+    }
+
+    if(handShape === 'longue' && tete > 65){
+        archetypeKey = 'SAGE';
+    }
+
+    if(texture > 40 && coeur > 55 && vie > 55){
+        archetypeKey = 'ELEMENTAIRE';
+    }
+
+    if(asymmetry > 2500000){
+        archetypeKey = 'OMBRE';
+    }
+
+    if(vie > 80 && tete > 75){
+        archetypeKey = 'DESTIN';
+    }
+
+    const aura = [
+        'Feu Astral',
+        'Brume Lunaire',
+        'Éther Doré',
+        'Néant Violet',
+        'Souffle Solaire',
+        'Tempête Runique'
+    ];
+
+    const rune = ['ᚠ','ᚢ','ᚦ','ᚱ','ᚲ','ᛉ','ᛟ'];
+
+    return {
+
+        archetype: ARCHETYPES[archetypeKey],
+
+        lines: {
+            coeur,
+            tete,
+            vie
+        },
+
+        hand: {
+            forme: handShape
+        },
+
+        aura: aura[Math.floor(texture) % aura.length],
+
+        rune: rune[Math.floor(brightness) % rune.length],
+
+        metrics: {
+            texture: Math.floor(texture),
+            asymmetry: Math.floor(asymmetry / 1000),
+            brightness: Math.floor(brightness)
+        }
+    };
+}
+
+function generatePrediction(lines,hand,analysis){
+
+    const coeurText = [
+        'Votre aura émotionnelle attire les âmes perdues.',
+        'Les émotions guident vos décisions secrètes.',
+        'Votre cœur agit avant votre esprit.',
+        'Vous cachez une puissance affective rare.'
+    ];
+
+    const teteText = [
+        'Votre esprit voit ce que les autres ignorent.',
+        'Les symboles anciens vous parlent naturellement.',
+        'Votre intuition dépasse souvent la logique.',
+        'Vous percevez les motifs cachés du destin.'
+    ];
+
+    const vieText = [
+        'Votre énergie semble inépuisable.',
+        'Vous traversez les épreuves avec une force étrange.',
+        'Votre présence influence votre entourage.',
+        'Votre vitalité possède quelque chose d’anormal.'
+    ];
+
+    function pick(arr,seed){
+        return arr[seed % arr.length];
+    }
+
+    const text = [];
+
+    text.push(pick(coeurText,lines.coeur));
+    text.push(pick(teteText,lines.tete));
+    text.push(pick(vieText,lines.vie));
+
+    text.push(`Aura détectée : ${analysis.aura}`);
+    text.push(`Rune dominante : ${analysis.rune}`);
+
+    if(analysis.metrics.texture > 45){
+        text.push('Les lignes de votre paume semblent particulièrement agitées.');
+    }
+
+    if(analysis.metrics.brightness < 100){
+        text.push('Une énergie nocturne entoure votre destinée.');
+    }
+
+    if(analysis.metrics.asymmetry > 1500){
+        text.push('Votre chemin de vie semble imprévisible.');
+    }
+
+    return text.join(' ');
+}
+
+function renderAnalysis(analysis){
+
+    const arch = analysis.archetype;
+    const lines = analysis.lines;
+    const hand = analysis.hand;
+
+    const prediction = generatePrediction(lines,hand,analysis);
+
+    const container = document.getElementById('resultContainer');
+
+    container.innerHTML = `
+
+    <div class="result-card">
+
+        <div class="hand-icon">${arch.icon}</div>
+
+        <div class="wizard-name">${arch.name}</div>
+
+        <div style="text-align:center;margin-top:10px;">
+            ${arch.traits.map(t=>`<span class="badge">${t}</span>`).join('')}
+        </div>
+
+        <div style="margin-top:15px;line-height:1.6;">
+            ${arch.desc}
+        </div>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat">
+            ❤️ Ligne de cœur : ${lines.coeur}%
+            <div class="gauge">
+                <div class="gauge-fill" style="width:${lines.coeur}%"></div>
+            </div>
+        </div>
+
+        <div class="stat">
+            🧠 Ligne de tête : ${lines.tete}%
+            <div class="gauge">
+                <div class="gauge-fill" style="width:${lines.tete}%"></div>
+            </div>
+        </div>
+
+        <div class="stat">
+            🌿 Ligne de vie : ${lines.vie}%
+            <div class="gauge">
+                <div class="gauge-fill" style="width:${lines.vie}%"></div>
+            </div>
+        </div>
+
+        <div class="stat">
+            🖐️ Main : ${hand.forme}
+        </div>
+
+    </div>
+
+    <div class="prediction">
+        🔮 ${prediction}
+        <br><br>
+        ✨ Conseil mystique : ${arch.conseil}
+    </div>
+
+    <div class="small">
+        Analyse basée sur les contrastes, textures et symétries de la paume.
+    </div>
+
+    `;
+}
+
+async function performReading(){
+
+    const imgData = captureHand();
+
+    if(!imgData){
+        alert('Impossible de capturer la main');
+        return;
+    }
+
+    const btn = document.getElementById('captureBtn');
+
+    btn.disabled = true;
+    btn.innerHTML = '🔍 Lecture magique...';
+
+    await new Promise(r=>setTimeout(r,900));
+
+    const analysis = analyzeHandLines(
+        imgData,
+        imgData.width,
+        imgData.height
+    );
+
+    renderAnalysis(analysis);
+
+    btn.disabled = false;
+    btn.innerHTML = '🔮 Capturer & Analyser';
+
+    if(navigator.vibrate){
+        navigator.vibrate(100);
+    }
+}
+
+window.addEventListener('load', async ()=>{
+
+    await startCamera();
+
+    document
+        .getElementById('captureBtn')
+        .addEventListener('click',performReading);
+
+    document
+        .getElementById('switchBtn')
+        .addEventListener('click',switchCamera);
+
+    document
+        .getElementById('resetBtn')
+        .addEventListener('click',()=>location.reload());
+});
+
+window.addEventListener('beforeunload',()=>{
+    if(stream){
+        stream.getTracks().forEach(t=>t.stop());
+    }
+});
+
+</script></body>
 </html>

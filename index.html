@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>🔮 Oracle Astral - Lecture Ésotérique Personnalisée</title>
+<title>🔮 Grimoire Archétypal - Jung & Astrologie</title>
 <style>
   * {
     margin: 0;
@@ -12,65 +12,36 @@
   }
 
   body {
-    font-family: "Segoe UI", "Trebuchet MS", "Garamond", serif;
-    background: radial-gradient(circle at 10% 20%, #1a0b2e 0%, #05020a 100%);
-    color: #f3eaff;
+    font-family: "Garamond", "Segoe UI", "Times New Roman", serif;
+    background: radial-gradient(circle at 10% 20%, #1e1a2f 0%, #0b0712 100%);
+    color: #efe6ff;
     min-height: 100vh;
-    overflow-x: hidden;
     padding: 20px;
-    position: relative;
-  }
-
-  /* étoiles filantes animées */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
-                      radial-gradient(1px 1px at 70px 120px, #ffd966, rgba(0,0,0,0));
-    background-repeat: no-repeat;
-    background-size: 200px 200px, 300px 300px;
-    opacity: 0.3;
-    pointer-events: none;
-    animation: starTwinkle 4s infinite alternate;
-  }
-
-  @keyframes starTwinkle {
-    0% { opacity: 0.2; }
-    100% { opacity: 0.6; }
   }
 
   .container {
     max-width: 1500px;
     margin: auto;
-    position: relative;
-    z-index: 2;
   }
 
   .title {
     text-align: center;
     margin-bottom: 30px;
-    backdrop-filter: blur(4px);
   }
 
   .title h1 {
-    font-size: 3.2rem;
-    background: linear-gradient(135deg, #ffdd99, #e0b0ff, #c77dff);
+    font-size: 2.8rem;
+    background: linear-gradient(135deg, #f3cf7a, #c89eff, #9f6eff);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-shadow: 0 0 15px rgba(160,100,255,0.4);
-    letter-spacing: 2px;
+    letter-spacing: 1px;
   }
 
   .title p {
-    color: #cbbaff;
+    color: #cbb5ff;
     font-style: italic;
-    margin-top: 8px;
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .grid {
@@ -80,22 +51,20 @@
   }
 
   .card {
-    background: rgba(18, 10, 38, 0.7);
-    backdrop-filter: blur(14px);
-    border-radius: 48px;
+    background: rgba(16, 10, 32, 0.78);
+    backdrop-filter: blur(12px);
+    border-radius: 42px;
     padding: 24px;
-    border: 1px solid rgba(170, 120, 255, 0.3);
-    box-shadow: 0 20px 35px -12px rgba(0,0,0,0.6);
-    transition: all 0.2s ease;
+    border: 1px solid rgba(170, 110, 255, 0.4);
+    box-shadow: 0 20px 35px -10px black;
   }
 
   video, canvas {
     width: 100%;
     max-width: 540px;
-    border-radius: 32px;
-    border: 2px solid #ba88ff;
-    background: #170d2a;
-    box-shadow: 0 0 25px rgba(156, 90, 255, 0.4);
+    border-radius: 28px;
+    border: 2px solid #b87aff;
+    background: #100b1c;
   }
 
   canvas {
@@ -107,7 +76,7 @@
   }
 
   .buttons {
-    margin-top: 20px;
+    margin-top: 18px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -117,85 +86,63 @@
   button {
     border: none;
     border-radius: 60px;
-    padding: 12px 28px;
-    font-weight: bold;
-    font-size: 1rem;
-    background: linear-gradient(95deg, #5a2d9c, #9a4dff);
+    padding: 12px 24px;
+    background: linear-gradient(95deg, #3e2a62, #7950c2);
     color: white;
-    cursor: pointer;
-    transition: 0.25s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-weight: bold;
     font-family: inherit;
+    cursor: pointer;
+    transition: 0.2s;
   }
 
   button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 18px #b77eff;
-    background: linear-gradient(95deg, #6f3bc2, #ae65ff);
+    transform: scale(1.02);
+    box-shadow: 0 0 15px #b27aff;
   }
 
   .orb {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
+    width: 120px;
+    height: 120px;
     margin: 0 auto 20px;
-    background: radial-gradient(circle at 30% 30%, #fff0c0, #b266ff, #381f6e);
-    box-shadow: 0 0 45px #b87eff, 0 0 90px #6c2ed4;
-    animation: orbPulse 4s infinite ease-in-out;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ecd9ff, #a070e0, #3a2570);
+    box-shadow: 0 0 30px #aa88ff;
+    animation: orbPulse 3.5s infinite;
   }
 
   @keyframes orbPulse {
-    0% { transform: scale(1); opacity: 0.9; filter: blur(0px);}
-    50% { transform: scale(1.06); opacity: 1; filter: blur(0.5px);}
-    100% { transform: scale(1); opacity: 0.9;}
-  }
-
-  .scan-line {
-    position: absolute;
-    left: 10%;
-    right: 10%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #cf9eff, #ffffff, #cf9eff, transparent);
-    animation: scanMove 2.6s infinite linear;
-    border-radius: 100%;
-    pointer-events: none;
-  }
-
-  @keyframes scanMove {
-    0% { top: 12%; opacity: 0.2;}
-    50% { top: 75%; opacity: 1;}
-    100% { top: 12%; opacity: 0.2;}
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); }
   }
 
   .result-title {
-    text-align: center;
-    font-size: 1.9rem;
+    font-size: 1.8rem;
     font-weight: bold;
-    background: linear-gradient(120deg, #ffe5b4, #d7a9ff);
+    text-align: center;
+    background: linear-gradient(120deg, #ffe2a4, #d9b2ff);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-top: 8px;
   }
 
   .energy-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
-    margin: 20px 0 15px;
+    margin: 18px 0;
   }
 
   .energy-card {
-    background: rgba(12, 7, 28, 0.75);
+    background: rgba(28, 20, 48, 0.8);
     border-radius: 24px;
     padding: 12px;
-    border-left: 5px solid #b77aff;
-    font-weight: 500;
+    border-left: 5px solid #b57cff;
   }
 
   .bar {
-    height: 9px;
-    background: #2a1c47;
+    height: 8px;
+    background: #2f234f;
     border-radius: 10px;
     margin-top: 8px;
     overflow: hidden;
@@ -203,423 +150,330 @@
 
   .fill {
     height: 100%;
-    background: linear-gradient(90deg, #e3bbff, #a156ff);
-    border-radius: 10px;
+    background: linear-gradient(90deg, #ddb5ff, #9b60ff);
     width: 0%;
   }
 
   .prediction {
-    margin-top: 22px;
-    padding: 20px;
-    border-radius: 32px;
-    background: rgba(22, 12, 45, 0.85);
-    border: 1px solid rgba(168, 108, 255, 0.6);
-    font-size: 1rem;
-    line-height: 1.65;
-    box-shadow: inset 0 0 12px rgba(128,0,255,0.1);
+    margin-top: 20px;
+    padding: 18px;
+    background: rgba(22, 15, 42, 0.9);
+    border-radius: 28px;
+    border: 1px solid rgba(160, 100, 255, 0.5);
+    line-height: 1.6;
     font-style: normal;
   }
 
   .tag {
     display: inline-block;
-    padding: 5px 16px;
-    margin: 6px 5px;
-    border-radius: 40px;
-    background: #31215c;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    border: 1px solid #ab84f0;
+    background: #32255c;
+    padding: 4px 14px;
+    margin: 5px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    border: 1px solid #b58eff;
   }
 
   .footer {
-    margin-top: 16px;
-    text-align: center;
-    color: #b29ce6;
     font-size: 0.7rem;
+    text-align: center;
+    margin-top: 15px;
+    color: #ab95df;
   }
 
   .instructions {
-    margin-top: 18px;
-    font-size: 0.85rem;
-    background: rgba(0,0,0,0.3);
+    font-size: 0.8rem;
+    margin-top: 15px;
+    background: #00000030;
     padding: 8px;
-    border-radius: 24px;
+    border-radius: 28px;
   }
 
   @media(max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
-    .title h1 { font-size: 2.2rem; }
-    .orb { width: 100px; height: 100px; }
-  }
-
-  .lunar-badge {
-    font-size: 0.9rem;
-    text-align: center;
-    margin-top: 12px;
-    background: #2b1d4e70;
-    padding: 5px;
-    border-radius: 28px;
-  }
-
-  .spirit-message {
-    font-weight: bold;
-    color: #f0d5ff;
-    border-top: 1px dashed #aa77ff;
-    margin-top: 14px;
-    padding-top: 12px;
+    .title h1 { font-size: 2rem; }
   }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="title">
-    <h1>🔮 ORACLE ASTRAL · VOYANT ÉSOTÉRIQUE</h1>
-    <p>› Lecture des flux karmiques, signatures spectrales et destinées incarnées ‹</p>
+    <h1>📜 GRIMOIRE ARCHÉTYPAL</h1>
+    <p>Astrologie savante · Jung · Tradition hermétique</p>
   </div>
   <div class="grid">
     <div class="card camera-area">
-      <div class="scan-line"></div>
-      <h2>📸 Miroir d'âme</h2>
-      <br />
+      <h2>🪞 Miroir de l'Âme</h2>
+      <br/>
       <video id="video" autoplay playsinline muted></video>
       <canvas id="canvas"></canvas>
       <div class="buttons">
-        <button id="scanBtn">🜂 Lire l'aura & Destinée</button>
-        <button id="switchBtn">🔄 Changer caméra</button>
-        <button id="resetBtn">🌀 Renaissance / Nouveau tirage</button>
+        <button id="scanBtn">🌙 Lire le destin & l'Inconscient</button>
+        <button id="switchBtn">🔄 Caméra</button>
+        <button id="resetBtn">✨ Nouvelle consultation</button>
       </div>
       <div class="instructions">
-        ✨ Placez votre visage ou votre main devant la lumière.<br />
-        🌙 L'Oracle calcule les 7 strates astrales, l'héritage ancestral et votre alignement planétaire.
+        🔮 L'Oracle interprète votre visage comme untexte alchimique.<br/>
+        ⚡ Basé sur les 4 tempéraments, les planètes et les archétypes jungiens.
       </div>
     </div>
     <div class="card" id="resultArea">
       <div class="orb"></div>
-      <div class="result-title">🌙 En attente du rituel</div>
-      <div style="text-align:center; color:#cfbef5; line-height:1.6; font-style:italic;">
-        Concentrez-vous, activez la caméra et pressez « Lire l'aura ».<br />
-        Les murmures du cosmos se dévoileront.
-      </div>
+      <div class="result-title">⛤ En attente de l'extispice ⛤</div>
+      <div style="text-align:center; margin-top:20px; color:#cfbbff;">Placez votre visage devant la caméra et pressez « Lire le destin ».</div>
     </div>
   </div>
 </div>
 
 <script>
-  // ---------- SYSTÈME MYSTIQUE AVEC 36 ARCHÉTYPES DYNAMIQUES + 144 PRÉDICTIONS UNIQUES ----------
+  // ----------------------------------------------
+  //  SOURCES SAVANTES : Astrologie traditionnelle + Carl Jung + Grimoire 
+  //  - Planètes et leurs archétypes (Mars, Vénus, Saturne, Jupiter, Lune, Soleil, Mercure)
+  //  - 4 éléments & 4 tempéraments (mélancolique, sanguin, flegmatique, colérique)
+  //  - Jung : ombre, anima/animus, persona, Soi
+  //  - Grimoire : correspondances planétaires / jours / métaux / principes hermétiques
+  // ----------------------------------------------
+
   let stream;
   let facingMode = "user";
 
-  // Base d'archétypes étendus avec significations ésotériques
-  const MYSTIC_ARCHETYPES = {
-    LUMIERE_ETERNelle: {
-      icon: "✨",
-      title: "L'Incandescent Éternel",
-      desc: "Âme ancienne baignée de clarté primordiale, guide naturel.",
-      traits: ["Bienveillance", "Vision", "Guérison", "Clarté"]
+  // 1. 12 archétypes jungiens + planétaires inspirés de la tradition
+  const ARCHETYPES_TRADITION = {
+    SAGE_MERCURE: {
+      icon: "☿",
+      title: "L'Alchimiste Mental (Mercure)",
+      desc: "L'archétype du Communicateur, du Trickster sacré. Votre esprit relie les contraires.",
+      traits: ["Hermès", "Logos", "Adaptabilité", "Synthèse"]
     },
-    NECTAIRE_LUNAIRE: {
-      icon: "🌙💧",
-      title: "L'Enfant des Marées",
-      desc: "Vos émotions et votre intuition sont reliées aux océans cosmiques.",
-      traits: ["Intuition", "Empathie", "Rêves lucides", "Mystère"]
+    GUERRIER_MARS: {
+      icon: "♂",
+      title: "Le Guerrier Intérieur (Mars)",
+      desc: "Énergie d'action, volonté et courage. L'Ombre martienne vous pousse à l'affirmation.",
+      traits: ["Force", "Désir", "Initiation", "Pugnacité"]
     },
-    BRUME_OMBRE: {
-      icon: "🌫️",
-      title: "Le Passeur d'Ombre",
-      desc: "Vous naviguez entre les mondes, gardien des secrets enfouis.",
-      traits: ["Discrétion", "Résilience", "Alchimie nocturne", "Silence"]
+    AMANT_VENUS: {
+      icon: "♀",
+      title: "L'Archétype de l'Amant (Vénus)",
+      desc: "Connexion, beauté et résonance affective. Anima/Animus en éveil.",
+      traits: ["Harmonie", "Désir d'union", "Créativité", "Sensualité"]
     },
-    FUREUR_TELLURIQUE: {
-      icon: "⛰️🔥",
-      title: "Le Tellurique Révolté",
-      desc: "Votre énergie vibre au rythme des failles terrestres.",
-      traits: ["Puissance", "Créativité brute", "Changement", "Ténacité"]
+    JUGE_SATURNE: {
+      icon: "♄",
+      title: "Le Cronos Intérieur (Saturne)",
+      desc: "Le temps, la discipline et la structure. Votre ombre porte la sagesse des limites.",
+      traits: ["Responsabilité", "Maturité", "Karma", "Persévérance"]
     },
-    CELESTE_ETOILE: {
-      icon: "⭐🌠",
-      title: "L'Étoile Vagabonde",
-      desc: "Marqué par un destin hors norme, votre aura attire les synchronicités.",
-      traits: ["Magnétisme", "Destinée", "Élévation", "Influence"]
+    ROI_JUPITER: {
+      icon: "♃",
+      title: "Le Bienfaiteur (Jupiter)",
+      desc: "Expansion, optimisme et sens de la justice. Le Soi en expansion.",
+      traits: ["Abondance", "Générosité", "Éthique", "Opportunité"]
     },
-    RUNE_ANCESTRALE: {
-      icon: "ᚠᚢᚦ",
-      title: "Le Dépositaire des Runes",
-      desc: "Les symboles anciens parlent à travers votre corps et vos gestes.",
-      traits: ["Mémoire", "Ancestralité", "Pouvoir runique", "Savoir occulte"]
+    LUNE_PSYCHE: {
+      icon: "☽",
+      title: "L'Inconscient Lunaire",
+      desc: "Mémoire, rêves, réceptivité. L'Anima profonde. Phase cachée de l'être.",
+      traits: ["Intuition", "Rêves", "Réceptivité", "Cycles"]
     },
-    ABYSSAL: {
-      icon: "🌀",
-      title: "Le Visionnaire des Profondeurs",
-      desc: "Votre présence évoque les mystères du grand abysse.",
-      traits: ["Profondeur", "Sagesse sombre", "Médiumnité", "Transformation"]
+    SOLEIL_HERO: {
+      icon: "☉",
+      title: "Le Héros Solaire",
+      desc: "Conscience, vitalité, centre de gravité de la Persona. Chemin d'individuation.",
+      traits: ["Identité", "Rayonnement", "Volonté", "Individuation"]
     },
-    SOLAIRE_RAYONNANT: {
-      icon: "☀️👑",
-      title: "L'Héritier du Soleil Nocturne",
-      desc: "Vous rayonnez d'une énergie qui équilibre l'ombre et la lumière.",
-      traits: ["Leadership", "Chaleur", "Confiance", "Force créatrice"]
-    },
-    ETHEREAL: {
-      icon: "🪶",
-      title: "L'Éthéréen Sylphe",
-      desc: "Liaison avec les esprits de l'air, votre énergie est volatile.",
-      traits: ["Légèreté", "Adaptabilité", "Inspiration", "Musique astrale"]
+    OMBRE_CHTHON: {
+      icon: "⛤",
+      title: "L'Ombre Primordiale",
+      desc: "Refoulés, instincts bruts, puissance oubliée. Trésor caché de l'âme.",
+      traits: ["Puissance nocturne", "Créativité sombre", "Alchimie", "Mystère"]
     }
   };
 
-  const ARCHETYPE_KEYS = Object.keys(MYSTIC_ARCHETYPES);
+  // Correspondances planétaires réelles (astrologie)
+  const PLANETES = ["Mercure", "Mars", "Vénus", "Saturne", "Jupiter", "Lune", "Soleil", "Pluton (archétype)"];
+  const TETRAGRAMME = ["Feu (Colérique)", "Terre (Mélancolique)", "Air (Sanguin)", "Eau (Phlegmatique)"];
+  const METAUX_SACRES = ["Or ☉", "Argent ☽", "Cuivre ♀", "Fer ♂", "Étain ♃", "Plomb ♄", "Mercure ☿"];
 
-  // Banque de prédictions poétiques personnalisées par thèmes (144 combinaisons)
-  const ORACLE_SPEECH = {
-    ame: [
-      "Votre essence porte la mémoire d'une étoile filante du VIIe siècle.",
-      "Un fragment d'âme ancienne s'est réveillé lors de votre dernier songe.",
-      "La voie de votre destinée croise trois portails de vérité avant le prochain équinoxe."
-    ],
-    chance: [
-      "Les alignements planétaires vous offrent une brèche dans le temps : osez.",
-      "Une rencontre inattendue changera votre perception de la magie.",
-      "Votre hexagramme personnel est en phase d'ouverture, les synchronicités s'intensifient."
-    ],
-    gardien: [
-      "Un guide ancestral se tient près de votre épaule gauche.",
-      "Les murmures de vos ancêtres deviennent plus clairs à l'approche de la nouvelle lune.",
-      "Vous portez un talisman invisible, une bénédiction oubliée."
-    ],
-    defi: [
-      "Un blocage karmique se dissout doucement, libérez votre potentiel.",
-      "L'énergie de l'éther vous pousse à révéler votre vérité profonde.",
-      "Un enseignement à travers l'épreuve viendra d'une personne au regard clair."
-    ],
-    runique: [
-      "La rune Ansuz protège votre gorge, libérez votre parole sacrée.",
-      "Les trois Nornes ont tissé un fil d'argent autour de votre projet créatif.",
-      "Une invocation oubliée résonne en vous : écoutez le silence."
-    ],
-    lunaire_phase: [
-      "La lune en phase gibbeuse accentue votre clairvoyance nocturne.",
-      "Lorsque Selene touchera votre signe, un vœu profond s'exaucera.",
-      "Votre flux astral est synchronisé avec l'océan des songes."
-    ]
-  };
-
-  const RUNES_AVANCEES = ["ᚠ (Fehu)", "ᚢ (Uruz)", "ᚦ (Thurisaz)", "ᚱ (Raido)", "ᚲ (Kenaz)", "ᛉ (Algiz)", "ᛟ (Othala)", "ᛇ (Eihwaz)", "ᛈ (Perthro)"];
-  const ELEMENTS_SACRES = ["Feu stellaire", "Eau des miroirs", "Air ancestral", "Terre tellurique", "Éther primordial", "Vide créatif"];
-  const ESSENCES = ["Fleur de lune", "Poussière de comète", "Larmes de phénix", "Sève onirique", "Souffle de dragon", "Mélancolie d'ange"];
-
-  // fonction pour calculer phase lunaire précise
-  function getMoonPhaseDetails() {
+  // Phase lunaire réelle (astronomie)
+  function getMoonPhase() {
     const now = new Date();
-    const lp = 29.53058770576; // jours lunaires
+    const lp = 29.53058770576;
     const newMoonRef = new Date('2024-01-11T11:57:00Z').getTime();
     const diff = (now.getTime() - newMoonRef) / (1000 * 3600 * 24);
     const phase = (diff % lp) / lp;
     let phaseName = "";
-    if (phase < 0.0625) phaseName = "🌑 Nouvelle Lune (Portail des origines)";
-    else if (phase < 0.1875) phaseName = "🌒 Croissant cendré (Intuition naissante)";
-    else if (phase < 0.3125) phaseName = "🌓 Premier Quartier (Décision)";
-    else if (phase < 0.4375) phaseName = "🌔 Gibbeuse ascendante (Manifestation)";
-    else if (phase < 0.5625) phaseName = "🌕 Pleine Lune (Apogée magique)";
-    else if (phase < 0.6875) phaseName = "🌖 Gibbeuse descendante (Récolte intérieure)";
-    else if (phase < 0.8125) phaseName = "🌗 Dernier Quartier (Lâcher-prise)";
-    else phaseName = "🌘 Croissant décroissant (Rêves prophétiques)";
+    if (phase < 0.125) phaseName = "Nouvelle Lune (initiation)";
+    else if (phase < 0.25) phaseName = "Croissant (intention)";
+    else if (phase < 0.375) phaseName = "Premier Quartier (action)";
+    else if (phase < 0.5) phaseName = "Gibbeuse croissante (manifestation)";
+    else if (phase < 0.625) phaseName = "Pleine Lune (accomplissement)";
+    else if (phase < 0.75) phaseName = "Gibbeuse décroissante (récolte)";
+    else if (phase < 0.875) phaseName = "Dernier Quartier (lâcher prise)";
+    else phaseName = "Décroissante (retrait)";
     return { phaseValue: phase, phaseName };
   }
 
-  // Démarrage caméra
-  async function startCamera() {
-    if (stream) stream.getTracks().forEach(track => track.stop());
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
-      document.getElementById('video').srcObject = stream;
-    } catch(err) {
-      alert("Accès caméra requis pour la lecture ésotérique.");
+  // analyse d'image -> extraire des "tempéraments" basés sur l'histogramme et contraste (correspondance aux humeurs)
+  function analyseTemperaments(imageData, width, height) {
+    if (!imageData) return { feu: 40, terre: 40, air: 40, eau: 40 };
+    const data = imageData.data;
+    let sumR = 0, sumG = 0, sumB = 0;
+    let contrast = 0;
+    let n = 0;
+    for (let y = 0; y < height; y += 6) {
+      for (let x = 0; x < width; x += 6) {
+        const idx = (y * width + x) * 4;
+        const r = data[idx];
+        const g = data[idx + 1];
+        const b = data[idx + 2];
+        sumR += r; sumG += g; sumB += b;
+        if (x + 4 < width) contrast += Math.abs(r - data[idx + 12]);
+        n++;
+      }
     }
+    const avgR = sumR / n, avgG = sumG / n, avgB = sumB / n;
+    // interprétation alchimique : rouge/jaune = Feu & Sanguin ; vert/cyan = Eau/Flegmatique ; nuances bleues = mélancolique terre
+    let feu = Math.min(92, Math.floor(avgR / 2.8 + avgG / 6));
+    let terre = Math.min(92, Math.floor(avgB / 2.6 + (255 - avgR) / 9));
+    let air = Math.min(92, Math.floor((avgG + avgR) / 3.5 + contrast / 15));
+    let eau = Math.min(92, Math.floor((avgB + avgG) / 3.8 + (255 - avgR) / 12));
+    // normalisation
+    return { feu, terre, air, eau };
   }
 
-  async function switchCamera() {
-    facingMode = facingMode === 'user' ? 'environment' : 'user';
-    await startCamera();
+  // Graine unique inspirée par le moment et l'image -> déterminisme planétaire
+  function genererSeedArchetypal(imageData, width, height) {
+    if (!imageData) return Math.floor(Math.random() * 99999) + Date.now();
+    const data = imageData.data;
+    let hash = 0;
+    for (let i = 0; i < Math.min(data.length, 6000); i += 13) {
+      hash += data[i] * 31 + (data[i + 1] || 127) * 17;
+    }
+    const now = new Date();
+    const minuteJour = now.getHours() * 60 + now.getMinutes();
+    const seed = Math.abs(hash + minuteJour * 131 + now.getSeconds() * 29);
+    return seed % 131071;
   }
 
-  function capture() {
+  // choisir archétype jungien/planétaire d'après les 4 tempéraments dominants + seed
+  function selectionArchetype(temperaments, seed) {
+    const { feu, terre, air, eau } = temperaments;
+    const maxTemp = Math.max(feu, terre, air, eau);
+    let primary = "";
+    if (maxTemp === feu) primary = "GUERRIER_MARS";        // Mars / colérique
+    else if (maxTemp === terre) primary = "JUGE_SATURNE"; // Saturnien mélancolique
+    else if (maxTemp === air) primary = "SAGE_MERCURE";   // Mercure / sanguin
+    else primary = "LUNE_PSYCHE";                         // Eau / lunaire
+    if (feu > 68 && air > 60) primary = "ROI_JUPITER";
+    if (eau > 72 && terre > 55) primary = "OMBRE_CHTHON";
+    if (temperaments.feu + temperaments.air > 130) primary = "SOLEIL_HERO";
+    if ((seed % 5) === 2 && temperaments.eau > 60) primary = "AMANT_VENUS";
+    return ARCHETYPES_TRADITION[primary] || ARCHETYPES_TRADITION.SAGE_MERCURE;
+  }
+
+  // prédiction inspirée par Jung, Grimoire et aspects planétaires
+  function oracleJungien(temperaments, archetype, seed, moon) {
+    const r = (offset) => (seed + offset) % 100;
+    const phrases = [];
+
+    // Jung: Ombres et Persona
+    if (temperaments.terre > 70) phrases.push("🜁 Votre ombre saturnienne porte une sagesse des ancêtres. Selon Jung, l'intégration de l'Ombre vous ouvrira une porte alchimique.");
+    if (temperaments.feu > 75) phrases.push("⚔️ Mars domine votre persona : votre libido est tournée vers l'affirmation. Attention à la possession par l'archétype du Guerrier.");
+    if (temperaments.air > 68) phrases.push("💭 Un fort tempérament Mercurien, votre fonction psychologique dominante est l'intuition ou la pensée, comme décrit dans Types Psychologiques.");
+    
+    // correspondances grimoire
+    const metal = METAUX_SACRES[seed % METAUX_SACRES.length];
+    const planeteInsp = PLANETES[seed % PLANETES.length];
+    phrases.push(`📜 Correspondance grimorique : Métal ${metal} · Planète maîtresse : ${planeteInsp}`);
+    
+    // Archétype spécifique oracle
+    if (archetype.title.includes("Saturne")) phrases.push("♄ Le temps de Saturne vous demande de la discipline, mais aussi de reconnaître vos limites sacrées.");
+    if (archetype.title.includes("Mercure")) phrases.push("☿ Le Souffle d'Hermès traverse votre chemin : synchronicité et coïncidences significatives.");
+    
+    phrases.push(`🌙 Phase lunaire : ${moon.phaseName} — selon la tradition, influence sur les rituels et l'inconscient collectif.`);
+    const elementDominant = TETRAGRAMME[seed % TETRAGRAMME.length];
+    phrases.push(`⚖️ Humeur dominante : ${elementDominant} · Équilibre des 4 éléments (Feu:${temperaments.feu}%, Terre:${temperaments.terre}%, Air:${temperaments.air}%, Eau:${temperaments.eau}%)`);
+    phrases.push(`🔮 Extrait du Liber Astralis : « ${archetype.desc.split('.')[0]}. La voie d'individuation passe par l'accueil de votre ${archetype.traits[0]}. »`);
+    
+    return phrases.join(" · ");
+  }
+
+  // Capturer l'image vidéo
+  function captureImage() {
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    if (!video.videoWidth) return null;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    if(canvas.width === 0 || canvas.height === 0) return null;
-    ctx.drawImage(video, 0, 0);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     return ctx.getImageData(0, 0, canvas.width, canvas.height);
   }
 
-  // Seed mystique personnalisée + harmoniques astrologiques
-  function createDeepSeed(imageData, width, height) {
-    if(!imageData) return Math.floor(Math.random() * 1000000) + Date.now();
-    const data = imageData.data;
-    let hash = 0;
-    for(let i = 0; i < Math.min(data.length, 8000); i += 5) {
-      hash += (data[i] * 131) + (data[i+1] * 237) + (data[i+2] * 57);
-    }
-    const now = new Date();
-    const minutes = now.getMinutes() * now.getSeconds();
-    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-    const finalSeed = Math.abs(hash + minutes * 31 + dayOfYear * 79 + Math.floor(getMoonPhaseDetails().phaseValue * 10000));
-    return finalSeed % 987654;
-  }
-
-  // analyse multicouche (énergie + géométrie subtile)
-  function analyzeMysticVibe(imageData, width, height) {
-    if(!imageData) return generateFallbackAnalysis();
-    const data = imageData.data;
-    let sumR=0, sumG=0, sumB=0;
-    let contrast=0, microDetails=0;
-    let leftWeight=0, rightWeight=0;
-    const step = 6;
-    for(let y=2; y<height-2; y+=step){
-      for(let x=2; x<width-2; x+=step){
-        const idx = (y*width + x)*4;
-        const r = data[idx], g = data[idx+1], b = data[idx+2];
-        sumR+=r; sumG+=g; sumB+=b;
-        const neighbor = data[idx+12] || r;
-        contrast += Math.abs(r - neighbor);
-        if(x < width/2) leftWeight += (r+g+b);
-        else rightWeight += (r+g+b);
-        if((x+y)%7 === 0) microDetails += Math.abs(r - g);
-      }
-    }
-    const pixelCount = (height/step)*(width/step);
-    const avgR = sumR/pixelCount;
-    const avgG = sumG/pixelCount;
-    const avgB = sumB/pixelCount;
-    const solarRaw = Math.min(98, (avgR/255)*100 + (avgG/255)*40);
-    const lunarRaw = Math.min(98, (avgB/255)*100 + (getMoonPhaseDetails().phaseValue*60));
-    const ethericRaw = Math.min(98, (contrast/pixelCount)/2.5 + microDetails/150);
-    const shadowRaw = Math.min(98, Math.abs(leftWeight - rightWeight)/ (pixelCount*2.55));
-    const harmony = Math.max(15, 88 - Math.abs(solarRaw - lunarRaw)/2 + ethericRaw/8);
-    
-    return {
-      solaire: Math.floor(solarRaw),
-      lunaire: Math.floor(lunarRaw),
-      ether: Math.floor(ethericRaw),
-      ombre: Math.floor(shadowRaw),
-      harmonie: Math.floor(Math.min(100, harmony))
-    };
-  }
-
-  function generateFallbackAnalysis() {
-    return { solaire: 57, lunaire: 62, ether: 44, ombre: 38, harmonie: 71 };
-  }
-
-  // Choix d'archétype hyper-personnalisé avec mélange d'énergies
-  function selectArchetype(energies, seed) {
-    const vals = [energies.solaire, energies.lunaire, energies.ether, energies.ombre];
-    const maxVal = Math.max(...vals);
-    let primary = "";
-    if(maxVal === energies.solaire) primary = "SOLAIRE_RAYONNANT";
-    else if(maxVal === energies.lunaire) primary = "NECTAIRE_LUNAIRE";
-    else if(maxVal === energies.ether) primary = "ETHEREAL";
-    else primary = "BRUME_OMBRE";
-    if(energies.harmonie > 82) primary = "CELESTE_ETOILE";
-    if(energies.ether > 73 && energies.lunaire > 65) primary = "RUNE_ANCESTRALE";
-    if(energies.ombre > 70 && energies.solaire < 40) primary = "ABYSSAL";
-    if(energies.solaire > 75 && energies.ether > 45) primary = "LUMIERE_ETERNelle";
-    if(energies.lunaire > 80 && energies.ombre < 35) primary = "LUMIERE_ETERNelle";
-    if(seed % 7 === 3 && energies.harmonie > 65) primary = "FUREUR_TELLURIQUE";
-    return MYSTIC_ARCHETYPES[primary] || MYSTIC_ARCHETYPES["CELESTE_ETOILE"];
-  }
-
-  // Oracle de prédiction personnalisé avec 8 facteurs uniques
-  function buildOraclePrediction(energies, seed, moonPhase, archetype) {
-    const rng = (offset) => (seed + offset) % 12345;
-    const messagesList = [];
-    // sélection aléatoire mais unique
-    const temps = ORACLE_SPEECH.ame[rng(1) % ORACLE_SPEECH.ame.length];
-    const chance = ORACLE_SPEECH.chance[rng(7) % ORACLE_SPEECH.chance.length];
-    const gardien = ORACLE_SPEECH.gardien[rng(3) % ORACLE_SPEECH.gardien.length];
-    const runeSpeak = ORACLE_SPEECH.runique[rng(5) % ORACLE_SPEECH.runique.length];
-    messagesList.push(`✨ ${temps}`);
-    messagesList.push(`💫 ${chance}`);
-    messagesList.push(`🕯️ ${gardien}`);
-    messagesList.push(`ᚠ ${runeSpeak}`);
-    
-    if(energies.harmonie > 85) messagesList.push("⚖️ Harmonie absolue : votre chemin est béni par les Parques.");
-    if(energies.solaire > 78) messagesList.push("☀️ Un éclat solaire majeur vous rend magnétique aux yeux des autres.");
-    if(energies.lunaire > 80) messagesList.push("🌕 La lune vous chuchote ses secrets : tenez un journal de rêves.");
-    if(energies.ether > 70) messagesList.push("🌀 Vous êtes un catalyseur d'énergies, les synchronicités s'intensifient.");
-    if(energies.ombre > 72) messagesList.push("🌑 Votre ombre garde un ancien grimoire intérieur, explorez-le.");
-    
-    const rune = RUNES_AVANCEES[seed % RUNES_AVANCEES.length];
-    const essence = ESSENCES[(seed+13) % ESSENCES.length];
-    const elementSacred = ELEMENTS_SACRES[(seed+7) % ELEMENTS_SACRES.length];
-    messagesList.push(`🪨 Rune tutélaire : ${rune}`);
-    messagesList.push(`🍃 Essence spirituelle : ${essence}`);
-    messagesList.push(`🔥 Élément sacré dominant : ${elementSacred}`);
-    
-    if(moonPhase.phaseValue < 0.1) messagesList.push("🌑 Nouvelle lune : rituel d'intention puissant cette nuit.");
-    if(moonPhase.phaseValue > 0.45 && moonPhase.phaseValue < 0.55) messagesList.push("🌕 Pleine lune : vos prières atteindront les étoiles.");
-    return messagesList.join(" · ");
-  }
-
-  // Fonction principale analyse
-  async function performSacredReading() {
-    const img = capture();
-    if(!img) {
-      alert("Veuillez activer votre image face à la caméra.");
+  // ----- lancement de la lecture savante -----
+  async function runArchetypalReading() {
+    const img = captureImage();
+    if (!img) {
+      alert("Activez la caméra et montrez votre visage.");
       return;
     }
     const btn = document.getElementById('scanBtn');
     btn.disabled = true;
-    btn.innerHTML = "🌀 Lecture des 7 sceaux astraux...";
-    await new Promise(r => setTimeout(r, 1900));
+    btn.innerHTML = "📜 Invoque les archétypes...";
+    await new Promise(r => setTimeout(r, 1500));
+
+    const temperaments = analyseTemperaments(img, img.width, img.height);
+    const seed = genererSeedArchetypal(img, img.width, img.height);
+    const moon = getMoonPhase();
+    const archetype = selectionArchetype(temperaments, seed);
+    const prediction = oracleJungien(temperaments, archetype, seed, moon);
     
-    const energies = analyzeMysticVibe(img, img.width, img.height);
-    const seed = createDeepSeed(img, img.width, img.height);
-    const moonPhase = getMoonPhaseDetails();
-    const archetype = selectArchetype(energies, seed);
-    
-    // métrique supplémentaire personnalisée
-    const auraColor = ["Argent lunaire", "Or solaire", "Violet royal", "Bleu saphir", "Émeraude", "Rubis ardent"][seed % 6];
-    const signatureAstrale = `[${(seed%999).toString().padStart(3,'0')}]`;
-    
-    const predictionText = buildOraclePrediction(energies, seed, moonPhase, archetype);
-    
+    // Énergies pour les barres (tempéraments)
     const resultDiv = document.getElementById('resultArea');
     resultDiv.innerHTML = `
       <div class="orb"></div>
       <div class="result-title">${archetype.icon} ${archetype.title}</div>
-      <div style="text-align:center; color:#ddceff; margin: 8px;">${archetype.desc}</div>
-      <div style="text-align:center;">${archetype.traits.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div style="text-align:center; color:#dacdff;">${archetype.desc}</div>
+      <div style="text-align:center; margin: 8px;">${archetype.traits.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      
       <div class="energy-grid">
-        <div class="energy-card">☀️ Énergie solaire : ${energies.solaire}%<div class="bar"><div class="fill" style="width:${energies.solaire}%"></div></div></div>
-        <div class="energy-card">🌙 Résonance lunaire : ${energies.lunaire}%<div class="bar"><div class="fill" style="width:${energies.lunaire}%"></div></div></div>
-        <div class="energy-card">✨ Éther visions : ${energies.ether}%<div class="bar"><div class="fill" style="width:${energies.ether}%"></div></div></div>
-        <div class="energy-card">🌑 Ombre androgyne : ${energies.ombre}%<div class="bar"><div class="fill" style="width:${energies.ombre}%"></div></div></div>
+        <div class="energy-card">🔥 Feu / Colérique : ${temperaments.feu}%<div class="bar"><div class="fill" style="width:${temperaments.feu}%"></div></div></div>
+        <div class="energy-card">🌍 Terre / Mélancolique : ${temperaments.terre}%<div class="bar"><div class="fill" style="width:${temperaments.terre}%"></div></div></div>
+        <div class="energy-card">💨 Air / Sanguin : ${temperaments.air}%<div class="bar"><div class="fill" style="width:${temperaments.air}%"></div></div></div>
+        <div class="energy-card">💧 Eau / Phlegmatique : ${temperaments.eau}%<div class="bar"><div class="fill" style="width:${temperaments.eau}%"></div></div></div>
       </div>
       <div class="prediction">
-        🔮 ${predictionText}
-        <div class="lunar-badge">🌙 ${moonPhase.phaseName} · Harmonie astrale ${energies.harmonie}%</div>
-        <div class="spirit-message">✨ Aura spectrale : ${auraColor} ✨ Signature de l'âme : ${signatureAstrale}</div>
+        🧙 ${prediction}
+        <div style="margin-top: 12px; font-size:0.85rem;">🕯️ Alchimie intérieure — Carl Gustav Jung : « Qui regarde dehors rêve, qui regarde dedans s'éveille. »</div>
       </div>
-      <div class="footer">Consultation basée sur la morphopsychique astrale, cycles de selene et héritage runique.</div>
+      <div class="footer">Sources : Astrologie traditionnelle (Ptolémée, Planètes), Psychologie analytique (Jung, 4 archétypes), Grimoire du XVIIe (Correspondances planétaires).</div>
     `;
     
     btn.disabled = false;
-    btn.innerHTML = "🜂 Scanner l'aura";
-    if(navigator.vibrate) navigator.vibrate(80);
+    btn.innerHTML = "🌙 Lire le destin & l'Inconscient";
+    if (navigator.vibrate) navigator.vibrate(50);
+  }
+
+  // Gestion caméra
+  async function startCamera() {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
+      document.getElementById('video').srcObject = stream;
+    } catch(e) { alert("Permission caméra requise pour l'oracle."); }
+  }
+  async function switchCam() {
+    facingMode = facingMode === 'user' ? 'environment' : 'user';
+    await startCamera();
   }
 
   window.addEventListener('load', async () => {
     await startCamera();
-    document.getElementById('scanBtn').addEventListener('click', performSacredReading);
-    document.getElementById('switchBtn').addEventListener('click', switchCamera);
+    document.getElementById('scanBtn').addEventListener('click', runArchetypalReading);
+    document.getElementById('switchBtn').addEventListener('click', switchCam);
     document.getElementById('resetBtn').addEventListener('click', () => location.reload());
   });
-  
-  window.addEventListener('beforeunload', () => {
-    if(stream) stream.getTracks().forEach(t => t.stop());
-  });
+  window.addEventListener('beforeunload', () => { if(stream) stream.getTracks().forEach(t => t.stop()); });
 </script>
 </body>
 </html>

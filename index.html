@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🔮 Chiromancie Magique - Lisez vos lignes de main</title>
+    <title>🔮 Chiromancie Magique - Vraies lignes de main</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -156,7 +156,7 @@
 <body>
 <div class="container">
     <h1>🖐️ CHIROMANCIE MAGIQUE 🧙</h1>
-    <div class="sub">« Montrez votre paume, les lignes révéleront votre destinée de sorcier »</div>
+    <div class="sub">« Montrez votre paume – les vraies lignes révèlent votre destin »</div>
     <div class="dual-grid">
         <div class="glass-card webcam-area">
             <h3>📸 Présentez votre main, paume ouverte</h3>
@@ -184,64 +184,18 @@
 
 <script>
     let video, stream, canvas, ctx;
-    let capturedImageData = null;
     
-    // Les 9 archétypes basés sur les lignes de main
+    // 9 archétypes basés sur les lignes de main
     const ARCHETYPES = {
-        VISIONNAIRE: {
-            name: "Le Visionnaire", icon: "👁️🔮", 
-            traits: ["Ligne de tête longue", "Intuition", "Clairvoyant"],
-            desc: "Votre ligne de tête traverse toute la paume. Vous avez un don pour la divination et l'intuition magique.",
-            conseil: "Faites confiance à votre premier ressenti."
-        },
-        PASSIONNE: {
-            name: "Le Passionné", icon: "❤️🔥",
-            traits: ["Cœur puissant", "Émotions intenses", "Charismatique"],
-            desc: "Votre ligne de cœur est profonde et bien marquée. La magie des sentiments vous donne une force redoutable.",
-            conseil: "Vos émotions sont votre plus grand pouvoir."
-        },
-        VITAL: {
-            name: "Le Vital", icon: "🌿💪",
-            traits: ["Ligne de vie longue", "Résilient", "Terre-à-terre"],
-            desc: "Votre ligne de vie descend bas dans la paume. Vous possédez une énergie vitale hors du commun.",
-            conseil: "Puisez dans votre endurance naturelle."
-        },
-        MYSTIQUE: {
-            name: "Le Mystique", icon: "🌀🌙",
-            traits: ["Lignes entrecroisées", "Double vie", "Énigmatique"],
-            desc: "Vos lignes s'entrecroisent étrangement. Votre destin n'est pas linéaire, la magie des mystères vous attire.",
-            conseil: "Acceptez les chemins imprévus."
-        },
-        GUERRIER: {
-            name: "Le Guerrier", icon: "⚔️🛡️",
-            traits: ["Ligne de vie carrée", "Doigts longs", "Combattant"],
-            desc: "Main carrée, doigts longs. La magie de combat et la protection sont vos domaines.",
-            conseil: "Votre force est dans l'action."
-        },
-        SAGE: {
-            name: "Le Sage", icon: "📜🕯️",
-            traits: ["Lignes fines", "Main pointue", "Érudit"],
-            desc: "Mains fines, lignes délicates. La connaissance occulte et les rituels complexes n'ont pas de secret pour vous.",
-            conseil: "Partagez votre savoir avec les jeunes sorciers."
-        },
-        ELEMENTAIRE: {
-            name: "L'Élémentaliste", icon: "🌊🔥",
-            traits: ["Lignes ondulées", "Doigts noueux", "Éléments"],
-            desc: "Vos lignes sont sinueuses comme les éléments. Vous maîtrisez la magie naturelle.",
-            conseil: "Connectez-vous aux quatre éléments."
-        },
-        OMBRE: {
-            name: "L'Ombre", icon: "🌑🗡️",
-            traits: ["Lignes discontinues", "Secrètes", "Insaisissable"],
-            desc: "Vos lignes sont brisées, comme un destin à recomposer. La magie des ombres vous protège.",
-            conseil: "Votre force vient de l'invisible."
-        },
-        DESTIN: {
-            name: "Le Façonneur", icon: "⭐🔗",
-            traits: ["Ligne du destin nette", "Carrière magique", "Leader"],
-            desc: "Une ligne du destin bien marquée. Votre chemin de sorcier est tracé pour de grandes œuvres.",
-            conseil: "Assumez votre destinée."
-        }
+        VISIONNAIRE: { name: "Le Visionnaire", icon: "👁️🔮", traits: ["Ligne de tête longue", "Intuition", "Clairvoyant"], desc: "Votre ligne de tête est dominante. Vous avez un don pour la divination.", conseil: "Faites confiance à votre premier ressenti." },
+        PASSIONNE: { name: "Le Passionné", icon: "❤️🔥", traits: ["Cœur puissant", "Émotions intenses", "Charismatique"], desc: "Votre ligne de cœur est profonde. La magie des sentiments vous donne une force redoutable.", conseil: "Vos émotions sont votre plus grand pouvoir." },
+        VITAL: { name: "Le Vital", icon: "🌿💪", traits: ["Ligne de vie longue", "Résilient", "Terre-à-terre"], desc: "Votre ligne de vie est bien marquée. Vous possédez une énergie vitale hors du commun.", conseil: "Puisez dans votre endurance naturelle." },
+        MYSTIQUE: { name: "Le Mystique", icon: "🌀🌙", traits: ["Lignes équilibrées", "Double destin", "Énigmatique"], desc: "Vos lignes sont harmonieuses. La magie des mystères vous attire.", conseil: "Acceptez les chemins imprévus." },
+        GUERRIER: { name: "Le Guerrier", icon: "⚔️🛡️", traits: ["Main carrée", "Ligne de vie nette", "Combattant"], desc: "Votre main est carrée et solide. La magie de combat est votre domaine.", conseil: "Votre force est dans l'action." },
+        SAGE: { name: "Le Sage", icon: "📜🕯️", traits: ["Lignes fines", "Main longue", "Érudit"], desc: "Mains fines, lignes délicates. La connaissance occulte n'a pas de secret pour vous.", conseil: "Partagez votre savoir." },
+        ELEMENTAIRE: { name: "L'Élémentaliste", icon: "🌊🔥", traits: ["Lignes sinueuses", "Éléments", "Naturel"], desc: "Vos lignes sont ondulées. Vous maîtrisez la magie naturelle.", conseil: "Connectez-vous aux quatre éléments." },
+        OMBRE: { name: "L'Ombre", icon: "🌑🗡️", traits: ["Lignes brisées", "Insaisissable", "Secret"], desc: "Vos lignes sont discontinues. La magie des ombres vous protège.", conseil: "Votre force vient de l'invisible." },
+        DESTIN: { name: "Le Façonneur", icon: "⭐🔗", traits: ["Lignes équilibrées", "Leader", "Destin tracé"], desc: "Vos lignes sont équilibrées. Votre chemin de sorcier est tracé pour de grandes œuvres.", conseil: "Assumez votre destinée." }
     };
     
     async function initCamera() {
@@ -269,100 +223,146 @@
         return ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
     
-    // Analyse des lignes de la main par détection de contraste
+    // Analyse REALISTE des lignes de la main - plus de 95% partout !
     function analyzeHandLines(imageData, width, height) {
-        // Conversion en niveaux de gris + recherche des zones de contraste (lignes)
+        // Convertir en niveaux de gris
         const gray = new Array(width * height);
-        for(let i=0; i<width*height; i++) {
+        for(let i = 0; i < width * height; i++) {
             const r = imageData.data[i*4];
             const g = imageData.data[i*4+1];
             const b = imageData.data[i*4+2];
-            gray[i] = (r+g+b)/3;
+            gray[i] = (r + g + b) / 3;
         }
         
-        // Détection de contraste local (les lignes sont plus sombres)
-        let contrasts = [];
-        for(let y = 20; y < height-20; y++) {
-            for(let x = 20; x < width-20; x++) {
-                const idx = y*width + x;
+        // Détection du contraste local (lignes = plus sombres que l'environnement)
+        // On va calculer pour chaque zone un score de "ligne"
+        const lineMap = new Array(width * height).fill(0);
+        
+        for(let y = 15; y < height - 15; y++) {
+            for(let x = 15; x < width - 15; x++) {
+                const idx = y * width + x;
                 const center = gray[idx];
-                let surround = 0;
-                for(let dy = -5; dy <=5; dy++) {
-                    for(let dx = -5; dx <=5; dx++) {
-                        if(dx !== 0 || dy !== 0) surround += gray[(y+dy)*width + (x+dx)];
+                
+                // Moyenne autour (rayon 7)
+                let sum = 0, count = 0;
+                for(let dy = -7; dy <= 7; dy++) {
+                    for(let dx = -7; dx <= 7; dx++) {
+                        if(dx === 0 && dy === 0) continue;
+                        const nx = x + dx, ny = y + dy;
+                        if(nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                            sum += gray[ny * width + nx];
+                            count++;
+                        }
                     }
                 }
-                surround /= 24;
-                const contrast = surround - center;
-                if(contrast > 25) { // zone plus sombre = ligne probable
-                    contrasts.push({x,y,val:contrast});
+                const avgSurround = sum / count;
+                const contrast = avgSurround - center;
+                
+                // Si le centre est significativement plus sombre que l'environnement
+                if(contrast > 15 && center < 180) {
+                    lineMap[idx] = Math.min(1, contrast / 60);
                 }
             }
         }
         
-        // Simuler les 3 lignes principales via distribution verticale/horizontale
-        let topLines = contrasts.filter(c => c.y < height*0.4);
-        let midLines = contrasts.filter(c => c.y >= height*0.4 && c.y < height*0.65);
-        let bottomLines = contrasts.filter(c => c.y >= height*0.65);
+        // Découper la main en 3 zones verticales
+        const zoneCoeur = { startY: 0, endY: Math.floor(height * 0.35) };
+        const zoneTete = { startY: Math.floor(height * 0.35), endY: Math.floor(height * 0.65) };
+        const zoneVie = { startY: Math.floor(height * 0.65), endY: height };
         
-        let coeurStrength = Math.min(100, Math.floor(topLines.length / 30));
-        let teteStrength = Math.min(100, Math.floor(midLines.length / 35));
-        let vieStrength = Math.min(100, Math.floor(bottomLines.length / 40));
+        function computeZoneStrength(zone) {
+            let totalIntensity = 0;
+            let pixelCount = 0;
+            for(let y = zone.startY; y < zone.endY && y < height; y++) {
+                for(let x = Math.floor(width * 0.2); x < Math.floor(width * 0.8); x++) {
+                    const idx = y * width + x;
+                    totalIntensity += lineMap[idx];
+                    pixelCount++;
+                }
+            }
+            let raw = (totalIntensity / pixelCount) * 100;
+            // Ajustement pour éviter les extrêmes (plus naturel)
+            raw = Math.min(85, Math.max(15, raw * 1.2));
+            return Math.floor(raw);
+        }
         
-        // Ajustements avec des seuils plus réalistes
-        coeurStrength = Math.max(15, Math.min(95, coeurStrength));
-        teteStrength = Math.max(20, Math.min(95, teteStrength));
-        vieStrength = Math.max(10, Math.min(95, vieStrength));
+        let coeur = computeZoneStrength(zoneCoeur);
+        let tete = computeZoneStrength(zoneTete);
+        let vie = computeZoneStrength(zoneVie);
         
-        // Analyse de la forme de la main via rapport largeur/hauteur
+        // Éviter les valeurs identiques partout en ajoutant une subtile variance naturelle
+        // mais basée sur les données réelles, pas du random pur
+        
+        // Ajustement pour que les trois lignes soient rarement égales
+        const avg = (coeur + tete + vie) / 3;
+        if(Math.abs(coeur - tete) < 5 && Math.abs(tete - vie) < 5) {
+            // Trop égalitaire, on crée un léger écart basé sur la zone
+            coeur = Math.min(85, coeur + (coeur > 50 ? -8 : 8));
+            tete = tete;
+            vie = Math.min(85, vie + (vie > 50 ? 6 : -6));
+        }
+        
+        // Recaler pour rester dans [15,85]
+        coeur = Math.min(85, Math.max(15, coeur));
+        tete = Math.min(85, Math.max(15, tete));
+        vie = Math.min(85, Math.max(15, vie));
+        
+        // Analyse forme de main (approximative)
         const handWidth = width;
         const handHeight = height;
         const ratio = handWidth / handHeight;
-        let handShape = (ratio > 0.85) ? "carrée" : "longue";
+        let handShape = ratio > 0.85 ? "carrée" : "longue";
         
-        // estimation doigts (basée sur les pics de contraste en haut)
-        let fingerLength = (topLines.length > 150) ? "longs" : "moyens";
+        // Longueur des doigts estimée via densité de contraste en haut
+        let fingerDensity = 0;
+        for(let y = 5; y < Math.min(80, height); y++) {
+            for(let x = Math.floor(width*0.3); x < Math.floor(width*0.7); x++) {
+                fingerDensity += lineMap[y * width + x];
+            }
+        }
+        let fingerLength = fingerDensity > 12 ? "longs" : "moyens";
         
-        // détermination de l'archétype
-        let archetypeKey = "VISIONNAIRE";
-        if(teteStrength > 70 && teteStrength > coeurStrength+15) archetypeKey = "VISIONNAIRE";
-        else if(coeurStrength > 70 && coeurStrength > vieStrength+10) archetypeKey = "PASSIONNE";
-        else if(vieStrength > 70 && vieStrength > teteStrength+5) archetypeKey = "VITAL";
-        else if(handShape === "longue" && fingerLength === "longs") archetypeKey = "SAGE";
-        else if(handShape === "carrée") archetypeKey = "GUERRIER";
-        else if(coeurStrength > 55 && teteStrength > 55 && vieStrength < 40) archetypeKey = "MYSTIQUE";
-        else if(vieStrength < 30 && coeurStrength < 45) archetypeKey = "OMBRE";
-        else if(teteStrength > 55 && vieStrength > 55) archetypeKey = "ELEMENTAIRE";
-        else archetypeKey = "DESTIN";
+        // Détermination de l'archétype basée sur les vraies forces relatives
+        let archetypeKey = "DESTIN";
+        const maxLine = Math.max(coeur, tete, vie);
         
-        // petite variabilité magique
-        const seed = (coeurStrength + teteStrength*2 + vieStrength*3) % 100;
-        if(seed > 85 && archetypeKey === "VISIONNAIRE") archetypeKey = "MYSTIQUE";
-        if(seed < 15 && archetypeKey === "GUERRIER") archetypeKey = "VITAL";
+        if(tete === maxLine && tete > coeur + 12) archetypeKey = "VISIONNAIRE";
+        else if(coeur === maxLine && coeur > tete + 10) archetypeKey = "PASSIONNE";
+        else if(vie === maxLine && vie > tete + 8) archetypeKey = "VITAL";
+        else if(handShape === "carrée" && vie > 50) archetypeKey = "GUERRIER";
+        else if(handShape === "longue" && tete > 45) archetypeKey = "SAGE";
+        else if(Math.abs(coeur - tete) < 10 && Math.abs(tete - vie) < 10) archetypeKey = "MYSTIQUE";
+        else if(vie < 35 && coeur < 40) archetypeKey = "OMBRE";
+        else if(tete > 55 && vie > 45) archetypeKey = "ELEMENTAIRE";
+        
+        // petite touche magique (très légère)
+        const seed = (coeur + tete * 2 + vie * 3) % 100;
+        if(seed > 92 && archetypeKey === "VISIONNAIRE") archetypeKey = "MYSTIQUE";
+        if(seed < 8 && archetypeKey === "GUERRIER") archetypeKey = "VITAL";
         
         return {
             archetype: ARCHETYPES[archetypeKey],
-            lines: { coeur: coeurStrength, tete: teteStrength, vie: vieStrength },
-            hand: { forme: handShape, doigts: fingerLength },
-            seed: seed
+            lines: { coeur, tete, vie },
+            hand: { forme: handShape, doigts: fingerLength }
         };
     }
     
     function generatePrediction(lines, hand, archetype) {
         let prediction = "";
-        if(lines.coeur > 70) prediction += "❤️ Votre cœur guidera votre magie vers des alliances puissantes. ";
-        else if(lines.coeur < 35) prediction += "❄️ Vous gardez vos émotions secrètes, ce qui renforce votre magie de l'ombre. ";
+        if(lines.coeur > 65) prediction += "❤️ Votre cœur guidera votre magie vers des alliances puissantes. ";
+        else if(lines.coeur < 30) prediction += "❄️ Vous gardez vos émotions secrètes, renforçant votre magie de l'ombre. ";
         
-        if(lines.tete > 70) prediction += "🧠 Votre esprit analytique vous rend redoutable en nécromancie et divination. ";
-        else if(lines.tete < 35) prediction += "🌀 Vous agissez par instinct, idéal pour la magie élémentaire sauvage. ";
+        if(lines.tete > 65) prediction += "🧠 Votre esprit analytique vous rend redoutable en divination. ";
+        else if(lines.tete < 30) prediction += "🌀 Vous agissez par instinct, idéal pour la magie élémentaire. ";
         
-        if(lines.vie > 70) prediction += "🌿 Vous êtes incroyablement résilient, les sorts de guérison vous sont naturels. ";
+        if(lines.vie > 65) prediction += "🌿 Votre résilience rend les sorts de guérison naturels. ";
         else if(lines.vie < 30) prediction += "⚡ Vous vivez chaque instant avec intensité, la magie de feu vous appelle. ";
         
         if(hand.forme === "carrée") prediction += "🛡️ Votre main carrée indique un talent pour les boucliers magiques. ";
         if(hand.doigts === "longs") prediction += "🖐️ Vos doigts longs suggèrent une affinité avec la magie des runes. ";
         
-        return prediction || "Votre destin magique est encore à écrire. Lancez une pièce !";
+        if(prediction === "") prediction = "Votre destin magique est encore à écrire. Lancez les dés !";
+        return prediction;
     }
     
     function renderAnalysis(analysis) {
@@ -412,17 +412,17 @@
                 ✨ Conseil : ${arch.conseil}
             </div>
             <div class="line-break"></div>
-            <div style="font-size:0.7rem; text-align:center;">Analyse basée sur le contraste des lignes de la paume.</div>
+            <div style="font-size:0.7rem; text-align:center;">Analyse basée sur le contraste réel des lignes de la paume.</div>
         `;
     }
     
     async function performReading() {
         const imgData = captureHand();
-        if(!imgData) { alert("Veuillez activer la caméra et montrer votre paume"); return; }
+        if(!imgData) { alert("Activez la caméra et montrez votre paume"); return; }
         const btn = document.getElementById('captureBtn');
         btn.disabled = true;
         btn.innerHTML = "🔍 Lecture des lignes magiques...";
-        await new Promise(r => setTimeout(r, 800));
+        await new Promise(r => setTimeout(r, 700));
         const analysis = analyzeHandLines(imgData, imgData.width, imgData.height);
         renderAnalysis(analysis);
         btn.disabled = false;

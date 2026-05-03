@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🔮 Chiromancie Magique - Vraies lignes de main</title>
+    <title>🔮 Chiromancie Magique - Bascule caméra</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -69,9 +69,9 @@
             background: linear-gradient(105deg, #7b3fe4, #a06eff);
             border: none;
             font-weight: bold;
-            font-size: 1.2rem;
-            padding: 14px 28px;
-            margin: 20px 12px 5px;
+            font-size: 1rem;
+            padding: 12px 20px;
+            margin: 10px 6px;
             border-radius: 60px;
             cursor: pointer;
             color: white;
@@ -142,6 +142,14 @@
             border-top: 1px dashed #6a5a9e;
             padding-top: 15px;
         }
+        .cam-badge {
+            background: #2a2355;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
         @media (max-width: 850px) { .dual-grid { grid-template-columns: 1fr; } h1 { font-size: 1.8rem; } }
         .instruction {
             background: #1e1836;
@@ -160,15 +168,17 @@
     <div class="dual-grid">
         <div class="glass-card webcam-area">
             <h3>📸 Présentez votre main, paume ouverte</h3>
+            <div><span class="cam-badge" id="camLabel">📱 Caméra selfie</span></div>
             <video id="webcam" autoplay playsinline muted></video>
             <canvas id="previewCanvas"></canvas>
             <div>
-                <button id="captureBtn">🔮 CAPTURER & ANALYSER LA MAIN 🔮</button>
+                <button id="captureBtn">🔮 CAPTURER & ANALYSER 🔮</button>
+                <button id="switchCamBtn">🔄 Basculer caméra</button>
                 <button id="resetBtn" style="background:#4a337a;">🌀 Nouvelle lecture</button>
             </div>
             <div class="instruction">
                 ✨ Astuce : placez votre main à plat, paume bien visible, doigts légèrement écartés.<br>
-                La magie analysera les 3 lignes principales : Cœur ❤️, Tête 🧠, Vie 🌿
+                📷 Utilisez le bouton "Basculer" pour passer en caméra arrière si nécessaire.
             </div>
         </div>
         <div class="glass-card" id="resultContainer">
@@ -184,8 +194,9 @@
 
 <script>
     let video, stream, canvas, ctx;
+    let currentFacingMode = "user"; // "user" = selfie, "environment" = arrière
     
-    // 9 archétypes basés sur les lignes de main
+    // 9 archétypes
     const ARCHETYPES = {
         VISIONNAIRE: { name: "Le Visionnaire", icon: "👁️🔮", traits: ["Ligne de tête longue", "Intuition", "Clairvoyant"], desc: "Votre ligne de tête est dominante. Vous avez un don pour la divination.", conseil: "Faites confiance à votre premier ressenti." },
         PASSIONNE: { name: "Le Passionné", icon: "❤️🔥", traits: ["Cœur puissant", "Émotions intenses", "Charismatique"], desc: "Votre ligne de cœur est profonde. La magie des sentiments vous donne une force redoutable.", conseil: "Vos émotions sont votre plus grand pouvoir." },
@@ -198,34 +209,69 @@
         DESTIN: { name: "Le Façonneur", icon: "⭐🔗", traits: ["Lignes équilibrées", "Leader", "Destin tracé"], desc: "Vos lignes sont équilibrées. Votre chemin de sorcier est tracé pour de grandes œuvres.", conseil: "Assumez votre destinée." }
     };
     
-    async function initCamera() {
-        video = document.getElementById('webcam');
-        canvas = document.getElementById('previewCanvas');
-        ctx = canvas.getContext('2d');
+    async function startCamera() {
+        // Arrêter l'ancien stream si existant
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        
+        const constraints = {
+            video: { facingMode: { exact: currentFacingMode } }
+        };
+        
         try {
-            const str = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
-            video.srcObject = str;
+            const str = await navigator.mediaDevices.getUserMedia(constraints);
             stream = str;
+            video = document.getElementById('webcam');
+            video.srcObject = stream;
             await new Promise(r => { video.onloadedmetadata = r; });
             video.play();
+            
+            // Mettre à jour le label
+            const label = document.getElementById('camLabel');
+            if (currentFacingMode === "user") {
+                label.innerHTML = "📱 Caméra selfie (frontale)";
+                label.style.background = "#2a2355";
+            } else {
+                label.innerHTML = "📷 Caméra arrière";
+                label.style.background = "#3a2a6b";
+            }
             return true;
         } catch(e) {
-            document.getElementById('resultContainer').innerHTML = `<div style="color:#ffa7a7">❌ Caméra inaccessible (HTTPS requis).</div>`;
-            return false;
+            console.warn("Mode exact failed, trying default");
+            // Fallback : mode sans exact
+            try {
+                const fallbackConstraints = { video: { facingMode: currentFacingMode } };
+                const str = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+                stream = str;
+                video.srcObject = stream;
+                await new Promise(r => { video.onloadedmetadata = r; });
+                video.play();
+                return true;
+            } catch(err) {
+                document.getElementById('resultContainer').innerHTML = `<div style="color:#ffa7a7">❌ Caméra inaccessible.</div>`;
+                return false;
+            }
         }
+    }
+    
+    async function switchCamera() {
+        currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+        await startCamera();
     }
     
     function captureHand() {
         if (!video || video.readyState < 2) return null;
+        canvas = document.getElementById('previewCanvas');
+        ctx = canvas.getContext('2d');
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         return ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
     
-    // Analyse REALISTE des lignes de la main - plus de 95% partout !
+    // Analyse réaliste des lignes
     function analyzeHandLines(imageData, width, height) {
-        // Convertir en niveaux de gris
         const gray = new Array(width * height);
         for(let i = 0; i < width * height; i++) {
             const r = imageData.data[i*4];
@@ -234,16 +280,12 @@
             gray[i] = (r + g + b) / 3;
         }
         
-        // Détection du contraste local (lignes = plus sombres que l'environnement)
-        // On va calculer pour chaque zone un score de "ligne"
         const lineMap = new Array(width * height).fill(0);
         
         for(let y = 15; y < height - 15; y++) {
             for(let x = 15; x < width - 15; x++) {
                 const idx = y * width + x;
                 const center = gray[idx];
-                
-                // Moyenne autour (rayon 7)
                 let sum = 0, count = 0;
                 for(let dy = -7; dy <= 7; dy++) {
                     for(let dx = -7; dx <= 7; dx++) {
@@ -257,15 +299,12 @@
                 }
                 const avgSurround = sum / count;
                 const contrast = avgSurround - center;
-                
-                // Si le centre est significativement plus sombre que l'environnement
                 if(contrast > 15 && center < 180) {
                     lineMap[idx] = Math.min(1, contrast / 60);
                 }
             }
         }
         
-        // Découper la main en 3 zones verticales
         const zoneCoeur = { startY: 0, endY: Math.floor(height * 0.35) };
         const zoneTete = { startY: Math.floor(height * 0.35), endY: Math.floor(height * 0.65) };
         const zoneVie = { startY: Math.floor(height * 0.65), endY: height };
@@ -281,7 +320,6 @@
                 }
             }
             let raw = (totalIntensity / pixelCount) * 100;
-            // Ajustement pour éviter les extrêmes (plus naturel)
             raw = Math.min(85, Math.max(15, raw * 1.2));
             return Math.floor(raw);
         }
@@ -290,30 +328,19 @@
         let tete = computeZoneStrength(zoneTete);
         let vie = computeZoneStrength(zoneVie);
         
-        // Éviter les valeurs identiques partout en ajoutant une subtile variance naturelle
-        // mais basée sur les données réelles, pas du random pur
-        
-        // Ajustement pour que les trois lignes soient rarement égales
         const avg = (coeur + tete + vie) / 3;
         if(Math.abs(coeur - tete) < 5 && Math.abs(tete - vie) < 5) {
-            // Trop égalitaire, on crée un léger écart basé sur la zone
             coeur = Math.min(85, coeur + (coeur > 50 ? -8 : 8));
-            tete = tete;
             vie = Math.min(85, vie + (vie > 50 ? 6 : -6));
         }
         
-        // Recaler pour rester dans [15,85]
         coeur = Math.min(85, Math.max(15, coeur));
         tete = Math.min(85, Math.max(15, tete));
         vie = Math.min(85, Math.max(15, vie));
         
-        // Analyse forme de main (approximative)
-        const handWidth = width;
-        const handHeight = height;
-        const ratio = handWidth / handHeight;
+        const ratio = width / height;
         let handShape = ratio > 0.85 ? "carrée" : "longue";
         
-        // Longueur des doigts estimée via densité de contraste en haut
         let fingerDensity = 0;
         for(let y = 5; y < Math.min(80, height); y++) {
             for(let x = Math.floor(width*0.3); x < Math.floor(width*0.7); x++) {
@@ -322,7 +349,6 @@
         }
         let fingerLength = fingerDensity > 12 ? "longs" : "moyens";
         
-        // Détermination de l'archétype basée sur les vraies forces relatives
         let archetypeKey = "DESTIN";
         const maxLine = Math.max(coeur, tete, vie);
         
@@ -335,11 +361,6 @@
         else if(vie < 35 && coeur < 40) archetypeKey = "OMBRE";
         else if(tete > 55 && vie > 45) archetypeKey = "ELEMENTAIRE";
         
-        // petite touche magique (très légère)
-        const seed = (coeur + tete * 2 + vie * 3) % 100;
-        if(seed > 92 && archetypeKey === "VISIONNAIRE") archetypeKey = "MYSTIQUE";
-        if(seed < 8 && archetypeKey === "GUERRIER") archetypeKey = "VITAL";
-        
         return {
             archetype: ARCHETYPES[archetypeKey],
             lines: { coeur, tete, vie },
@@ -347,7 +368,7 @@
         };
     }
     
-    function generatePrediction(lines, hand, archetype) {
+    function generatePrediction(lines, hand) {
         let prediction = "";
         if(lines.coeur > 65) prediction += "❤️ Votre cœur guidera votre magie vers des alliances puissantes. ";
         else if(lines.coeur < 30) prediction += "❄️ Vous gardez vos émotions secrètes, renforçant votre magie de l'ombre. ";
@@ -369,7 +390,7 @@
         const arch = analysis.archetype;
         const lines = analysis.lines;
         const hand = analysis.hand;
-        const prediction = generatePrediction(lines, hand, arch);
+        const prediction = generatePrediction(lines, hand);
         
         const container = document.getElementById('resultContainer');
         container.innerHTML = `
@@ -382,28 +403,10 @@
                 <div style="margin:12px 0">${arch.desc}</div>
             </div>
             <div class="stats-grid">
-                <div class="stat-cell">
-                    <span>❤️ Ligne de Cœur</span>
-                    <span>${lines.coeur}%</span>
-                    <div class="gauge"><div class="gauge-fill" style="width:${lines.coeur}%"></div></div>
-                    <small>Passion, amour, émotions</small>
-                </div>
-                <div class="stat-cell">
-                    <span>🧠 Ligne de Tête</span>
-                    <span>${lines.tete}%</span>
-                    <div class="gauge"><div class="gauge-fill" style="width:${lines.tete}%"></div></div>
-                    <small>Intellect, intuition, décisions</small>
-                </div>
-                <div class="stat-cell">
-                    <span>🌿 Ligne de Vie</span>
-                    <span>${lines.vie}%</span>
-                    <div class="gauge"><div class="gauge-fill" style="width:${lines.vie}%"></div></div>
-                    <small>Énergie, résilience, destinée</small>
-                </div>
-                <div class="stat-cell">
-                    <span>🖐️ Main</span>
-                    <span>${hand.forme === "carrée" ? "Carrée ⬛" : "Longue ➖"} | Doigts ${hand.doigts}</span>
-                </div>
+                <div class="stat-cell"><span>❤️ Ligne de Cœur</span><span>${lines.coeur}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.coeur}%"></div></div><small>Passion, amour, émotions</small></div>
+                <div class="stat-cell"><span>🧠 Ligne de Tête</span><span>${lines.tete}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.tete}%"></div></div><small>Intellect, intuition, décisions</small></div>
+                <div class="stat-cell"><span>🌿 Ligne de Vie</span><span>${lines.vie}%</span><div class="gauge"><div class="gauge-fill" style="width:${lines.vie}%"></div></div><small>Énergie, résilience, destinée</small></div>
+                <div class="stat-cell"><span>🖐️ Main</span><span>${hand.forme === "carrée" ? "Carrée ⬛" : "Longue ➖"} | Doigts ${hand.doigts}</span></div>
             </div>
             <div class="line-break"></div>
             <div class="prediction-box">
@@ -426,23 +429,30 @@
         const analysis = analyzeHandLines(imgData, imgData.width, imgData.height);
         renderAnalysis(analysis);
         btn.disabled = false;
-        btn.innerHTML = "🔮 CAPTURER & ANALYSER LA MAIN 🔮";
+        btn.innerHTML = "🔮 CAPTURER & ANALYSER 🔮";
         if(navigator.vibrate) navigator.vibrate(100);
     }
     
-    document.getElementById('captureBtn').addEventListener('click', performReading);
-    document.getElementById('resetBtn').addEventListener('click', () => {
-        document.getElementById('resultContainer').innerHTML = `
-            <div class="result-card">
-                <div class="hand-icon">🖐️❓</div>
-                <div class="wizard-name">Nouvelle lecture</div>
-                <div style="text-align:center; margin:12px">Capturez une nouvelle photo de votre paume.</div>
-            </div>
-            <div id="detailsArea">✨ Prêt pour l'analyse</div>
-        `;
+    // Initialisation
+    window.addEventListener('load', async () => {
+        video = document.getElementById('webcam');
+        canvas = document.getElementById('previewCanvas');
+        await startCamera();
+        
+        document.getElementById('captureBtn').addEventListener('click', performReading);
+        document.getElementById('switchCamBtn').addEventListener('click', switchCamera);
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            document.getElementById('resultContainer').innerHTML = `
+                <div class="result-card">
+                    <div class="hand-icon">🖐️❓</div>
+                    <div class="wizard-name">Nouvelle lecture</div>
+                    <div style="text-align:center; margin:12px">Capturez une nouvelle photo de votre paume.</div>
+                </div>
+                <div id="detailsArea">✨ Prêt pour l'analyse</div>
+            `;
+        });
     });
     
-    window.addEventListener('load', initCamera);
     window.addEventListener('beforeunload', () => { if(stream) stream.getTracks().forEach(t => t.stop()); });
 </script>
 </body>

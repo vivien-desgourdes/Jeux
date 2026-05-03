@@ -1,714 +1,704 @@
 <!DOCTYPE html><html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🔮 Chiromancie Magique</title><style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🔮 Oracle Astral</title><style>
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top, #22103c, #090510);
-    color: #f3e8ff;
-    min-height: 100vh;
-    padding: 20px;
+  font-family: "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top, #24103f 0%, #090511 60%),
+    #090511;
+  color: #f2eaff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 20px;
 }
 
 .container {
-    max-width: 1400px;
-    margin: auto;
-    background: rgba(20, 15, 40, 0.88);
-    border-radius: 40px;
-    padding: 25px;
-    border: 1px solid rgba(200,160,255,0.4);
-    backdrop-filter: blur(8px);
+  max-width: 1500px;
+  margin: auto;
 }
 
-h1 {
-    text-align: center;
-    font-size: 2.7rem;
-    margin-bottom: 10px;
-    background: linear-gradient(90deg,#ffe39d,#d09cff);
-    -webkit-background-clip: text;
-    color: transparent;
+.title {
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-.sub {
-    text-align: center;
-    color: #c9b6ff;
-    margin-bottom: 30px;
+.title h1 {
+  font-size: 3rem;
+  background: linear-gradient(90deg,#ffe29c,#d29bff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.title p {
+  color: #bca8e9;
+  margin-top: 8px;
 }
 
 .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 25px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
 }
 
 .card {
-    background: rgba(35,25,60,0.7);
-    border-radius: 30px;
-    padding: 20px;
-    border: 1px solid rgba(200,180,255,0.2);
+  background: rgba(25,18,45,0.82);
+  border-radius: 32px;
+  padding: 22px;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(178,116,255,0.12), transparent 40%);
+  pointer-events: none;
 }
 
 video,
 canvas {
-    width: 100%;
-    max-width: 500px;
-    border-radius: 25px;
-    border: 3px solid #b77eff;
-    background: #10091f;
+  width: 100%;
+  max-width: 520px;
+  border-radius: 28px;
+  border: 3px solid #ae7eff;
+  background: #10091e;
 }
 
 canvas {
-    display: none;
+  display: none;
+}
+
+.camera-area {
+  text-align: center;
+}
+
+.buttons {
+  margin-top: 15px;
 }
 
 button {
-    border: none;
-    border-radius: 999px;
-    padding: 14px 22px;
-    margin: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
-    background: linear-gradient(90deg,#7a3cff,#b26dff);
-    transition: 0.2s;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 22px;
+  margin: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  background: linear-gradient(90deg,#7136ff,#ba73ff);
+  transition: 0.2s;
 }
 
 button:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 15px #b77eff;
+  transform: scale(1.04);
+  box-shadow: 0 0 20px rgba(183,126,255,0.7);
 }
 
-.result-card {
-    background: linear-gradient(145deg,#151028,#0c0819);
-    border-radius: 28px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-left: 8px solid #cb9eff;
+.orb {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 10px auto 20px;
+  background: radial-gradient(circle,#ffffff,#7b42ff,#26114f);
+  box-shadow:
+    0 0 30px rgba(179,126,255,0.8),
+    0 0 80px rgba(115,54,255,0.4);
+  animation: pulse 3s infinite ease-in-out;
 }
 
-.hand-icon {
-    font-size: 4rem;
-    text-align: center;
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-.wizard-name {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-top: 10px;
-    background: linear-gradient(90deg,#fff0b2,#d8b3ff);
-    -webkit-background-clip: text;
-    color: transparent;
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,transparent,#b77eff,transparent);
+  animation: scan 3s linear infinite;
 }
 
-.badge {
-    display: inline-block;
-    background: #2d2250;
-    padding: 6px 14px;
-    border-radius: 999px;
-    margin: 5px;
-    font-size: 0.85rem;
+@keyframes scan {
+  0% { top: 0%; }
+  100% { top: 100%; }
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+.result-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg,#ffe5a8,#ca9cff);
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
-.stat {
-    background: #100c21;
-    padding: 14px;
-    border-radius: 20px;
-    border-left: 3px solid #9d72ff;
+.energy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
 }
 
-.gauge {
-    height: 10px;
-    background: #2a2044;
-    border-radius: 999px;
-    overflow: hidden;
-    margin-top: 8px;
+.energy-card {
+  background: rgba(10,8,22,0.8);
+  border-radius: 20px;
+  padding: 14px;
+  border-left: 4px solid #a16cff;
 }
 
-.gauge-fill {
-    height: 100%;
-    background: linear-gradient(90deg,#d5adff,#8f5dff);
+.bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #261c45;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg,#d5adff,#8458ff);
 }
 
 .prediction {
-    margin-top: 20px;
-    background: #1b1434;
-    border-radius: 24px;
-    padding: 18px;
-    border: 1px dashed #b57cff;
-    line-height: 1.7;
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(18,12,35,0.9);
+  line-height: 1.8;
+  border: 1px dashed rgba(180,120,255,0.5);
 }
 
-.instruction {
-    margin-top: 18px;
-    text-align: center;
-    color: #c9b6ff;
-    font-size: 0.9rem;
+.tag {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 5px;
+  border-radius: 999px;
+  background: #2c204c;
+  font-size: 0.85rem;
 }
 
-.small {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 0.75rem;
-    color: #9d8ec4;
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  color: #998abf;
+  font-size: 0.75rem;
 }
 
-@media(max-width: 900px){
-    .grid {
-        grid-template-columns: 1fr;
-    }
+.instructions {
+  margin-top: 18px;
+  color: #bfaee8;
+  line-height: 1.6;
+}
+
+@media(max-width: 950px){
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .title h1 {
+    font-size: 2.2rem;
+  }
 }
 </style></head>
-<body><div class="container"><h1>🖐️ CHIROMANCIE MAGIQUE</h1>
-<div class="sub">Analyse mystique dynamique de la paume</div><div class="grid"><div class="card" style="text-align:center;"><h2>📸 Présentez votre main</h2>
-<br><video id="webcam" autoplay playsinline muted></video> <canvas id="canvas"></canvas>
+<body><div class="container"><div class="title">
+  <h1>🔮 ORACLE ASTRAL</h1>
+  <p>Système ésotérique de lecture énergétique et destinée mystique</p>
+</div><div class="grid"><div class="card camera-area"><div class="scan-line"></div><h2>📸 Analyse énergétique</h2>
+<br><video id="video" autoplay playsinline muted></video> <canvas id="canvas"></canvas>
 
-<div>
-<button id="captureBtn">🔮 Capturer & Analyser</button>
-<button id="switchBtn">🔄 Caméra</button>
-<button id="resetBtn">🌀 Reset</button>
-</div><div class="instruction">
-✨ Placez votre paume bien ouverte<br>
-💡 Une bonne lumière améliore la lecture magique
-</div></div><div class="card" id="resultContainer"><div class="result-card">
-<div class="hand-icon">🖐️❓</div>
-<div class="wizard-name">En attente</div>
-<div style="text-align:center;margin-top:10px;">
-Capturez votre main pour révéler votre destinée.
-</div>
+<div class="buttons">
+  <button id="scanBtn">🜂 Scanner l'aura</button>
+  <button id="switchBtn">🔄 Caméra</button>
+  <button id="resetBtn">🌀 Nouvelle lecture</button>
+</div><div class="instructions">
+✨ Présentez votre main ou votre visage à la caméra.<br>
+🌙 L'Oracle analyse les flux énergétiques, les polarités et les signatures astrales.
+</div></div><div class="card" id="resultArea"><div class="orb"></div><div class="result-title">En attente de lecture</div><div style="text-align:center; color:#cdb8f7; line-height:1.7;">
+Le système attend votre signature énergétique.
 </div></div></div>
 </div><script>
 
 let stream;
-let currentFacingMode = "user";
+let facingMode = "user";
 
 const ARCHETYPES = {
 
-VISIONNAIRE: {
-    name: "Le Visionnaire",
-    icon: "👁️🔮",
-    traits: ["Intuition", "Clairvoyance", "Esprit"],
-    desc: "Votre esprit perçoit des choses invisibles aux autres.",
-    conseil: "Suivez vos intuitions profondes."
+LUNAIRE: {
+  icon: "🌙",
+  title: "Le Voyageur Lunaire",
+  desc: "Votre énergie est guidée par les cycles invisibles.",
+  traits: ["Intuition","Mystère","Sensibilité"]
 },
 
-PASSIONNE: {
-    name: "Le Passionné",
-    icon: "❤️🔥",
-    traits: ["Émotions", "Charisme", "Feu intérieur"],
-    desc: "Vos émotions alimentent une puissance rare.",
-    conseil: "Vos sentiments sont votre force."
+SOLAIRE: {
+  icon: "☀️",
+  title: "L'Héritier Solaire",
+  desc: "Votre présence influence naturellement les autres.",
+  traits: ["Leadership","Rayonnement","Volonté"]
 },
 
-VITAL: {
-    name: "Le Vital",
-    icon: "🌿💪",
-    traits: ["Résistance", "Vitalité", "Énergie"],
-    desc: "Votre énergie vitale semble inépuisable.",
-    conseil: "Canalisez votre force naturelle."
-},
-
-MYSTIQUE: {
-    name: "Le Mystique",
-    icon: "🌙🌀",
-    traits: ["Mystère", "Équilibre", "Secrets"],
-    desc: "Votre paume cache des symboles anciens.",
-    conseil: "Acceptez l'inconnu."
-},
-
-GUERRIER: {
-    name: "Le Guerrier",
-    icon: "⚔️🛡️",
-    traits: ["Action", "Protection", "Force"],
-    desc: "Votre énergie évoque les anciens protecteurs.",
-    conseil: "Agissez avec détermination."
-},
-
-SAGE: {
-    name: "Le Sage",
-    icon: "📜✨",
-    traits: ["Connaissance", "Réflexion", "Savoir"],
-    desc: "Votre esprit cherche sans cesse la vérité.",
-    conseil: "Partagez votre sagesse."
-},
-
-ELEMENTAIRE: {
-    name: "L'Élémentaliste",
-    icon: "🌊🔥",
-    traits: ["Nature", "Chaos", "Éléments"],
-    desc: "Votre paume réagit fortement aux forces naturelles.",
-    conseil: "Écoutez les éléments autour de vous."
+RUNIQUE: {
+  icon: "ᚱ",
+  title: "Le Gardien Runique",
+  desc: "Des symboles anciens semblent liés à votre destinée.",
+  traits: ["Connaissance","Ancien savoir","Vision"]
 },
 
 OMBRE: {
-    name: "L'Ombre",
-    icon: "🌑🗡️",
-    traits: ["Secret", "Nuit", "Silence"],
-    desc: "Votre énergie demeure difficile à lire.",
-    conseil: "Votre discrétion est un pouvoir."
+  icon: "🌑",
+  title: "L'Enfant des Ombres",
+  desc: "Votre énergie reste difficile à déchiffrer.",
+  traits: ["Secret","Instinct","Silence"]
 },
 
-DESTIN: {
-    name: "Le Façonneur",
-    icon: "⭐🔗",
-    traits: ["Destin", "Leadership", "Influence"],
-    desc: "Votre paume révèle une destinée exceptionnelle.",
-    conseil: "Assumez votre rôle."
+ELEMENTAIRE: {
+  icon: "🜂",
+  title: "L'Élémentaliste",
+  desc: "Les forces naturelles réagissent fortement à votre présence.",
+  traits: ["Nature","Chaos","Transformation"]
+},
+
+CELESTE: {
+  icon: "⭐",
+  title: "Le Porteur d'Étoiles",
+  desc: "Votre trajectoire semble liée aux forces célestes.",
+  traits: ["Destin","Influence","Éveil"]
 }
 
 };
 
+const RUNES = ["ᚠ","ᚢ","ᚦ","ᚱ","ᚲ","ᛉ","ᛟ"];
+
+const AURAS = [
+  "Feu Astral",
+  "Brume Lunaire",
+  "Souffle Doré",
+  "Néant Violet",
+  "Éther Ancien",
+  "Tempête Runique"
+];
+
+const ELEMENTS = [
+  "Feu",
+  "Eau",
+  "Air",
+  "Terre",
+  "Éther"
+];
+
 async function startCamera(){
 
-    if(stream){
-        stream.getTracks().forEach(track => track.stop());
-    }
+  if(stream){
+    stream.getTracks().forEach(track => track.stop());
+  }
 
-    try {
+  try {
 
-        stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: currentFacingMode
-            }
-        });
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode
+      }
+    });
 
-        const video = document.getElementById('webcam');
-        video.srcObject = stream;
+    document.getElementById('video').srcObject = stream;
 
-    } catch(e){
-        alert('Impossible d’accéder à la caméra');
-    }
+  } catch(err){
+    alert("Impossible d'accéder à la caméra.");
+  }
 }
 
 async function switchCamera(){
-    currentFacingMode = currentFacingMode === 'user'
-        ? 'environment'
-        : 'user';
 
-    await startCamera();
+  facingMode = facingMode === 'user'
+    ? 'environment'
+    : 'user';
+
+  await startCamera();
 }
 
-function captureHand(){
+function capture(){
 
-    const video = document.getElementById('webcam');
-    const canvas = document.getElementById('canvas');
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
 
-    const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d');
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
 
-    ctx.drawImage(video,0,0);
+  ctx.drawImage(video,0,0);
 
-    return ctx.getImageData(0,0,canvas.width,canvas.height);
+  return ctx.getImageData(0,0,canvas.width,canvas.height);
 }
 
-function analyzeHandLines(imageData,width,height){
+function calculateMoonPhase(){
 
-    const data = imageData.data;
+  const now = new Date();
 
-    const gray = new Array(width * height);
+  const lp = 2551443;
+  const newMoon = new Date('2000-01-06T18:14:00Z').getTime() / 1000;
 
-    for(let i=0;i<width*height;i++){
-        gray[i] = (
-            data[i*4] +
-            data[i*4+1] +
-            data[i*4+2]
-        ) / 3;
-    }
+  const phase = ((now.getTime()/1000 - newMoon) % lp) / lp;
 
-    const edges = new Array(width * height).fill(0);
-
-    let totalEdges = 0;
-
-    for(let y=1;y<height-1;y++){
-        for(let x=1;x<width-1;x++){
-
-            const idx = y * width + x;
-
-            const gx = gray[idx+1] - gray[idx-1];
-            const gy = gray[idx+width] - gray[idx-width];
-
-            const magnitude = Math.sqrt(gx*gx + gy*gy);
-
-            edges[idx] = magnitude;
-            totalEdges += magnitude;
-        }
-    }
-
-    const avgEdges = totalEdges / (width * height);
-
-    function zoneStats(yStart,yEnd){
-
-        let energy = 0;
-        let strongLines = 0;
-        let darkPixels = 0;
-        let variance = 0;
-        let count = 0;
-
-        const values = [];
-
-        for(let y=Math.floor(yStart); y<Math.floor(yEnd); y++){
-            for(let x=Math.floor(width*0.2); x<Math.floor(width*0.8); x++){“
-
-                const idx = Math.floor(y * width + x);
-
-                const e = edges[idx];
-                const g = gray[idx];
-
-                energy += e;
-
-                if(e > avgEdges * 1.4) strongLines++;
-                if(g < 110) darkPixels++;
-
-                values.push(e);
-                count++;
-            }
-        }
-
-        const mean = energy / count;
-
-        for(const v of values){
-            variance += Math.abs(v - mean);
-        }
-
-        variance /= count;
-
-        return {
-            energy,
-            strongLines,
-            darkPixels,
-            variance,
-            count
-        };
-    }
-
-    const coeurZone = zoneStats(0,height*0.33);
-    const teteZone = zoneStats(height*0.33,height*0.66);
-    const vieZone = zoneStats(height*0.66,height);
-
-    function computeScore(zone){
-
-        let score = 0;
-
-        score += (zone.energy / Math.max(1, zone.count)) * 0.4;
-        score += zone.strongLines * 0.002;
-        score += zone.darkPixels * 0.0008;
-        score += zone.variance * 0.5;
-
-        score = Math.floor(score);
-
-        // Évite les valeurs infinies ou NaN
-        if(isNaN(score) || !isFinite(score)){
-            score = 50;
-        }
-
-        return Math.max(10, Math.min(95, score));
-    }
-
-    let coeur = computeScore(coeurZone);
-    let tete = computeScore(teteZone);
-    let vie = computeScore(vieZone);
-
-    let brightness = 0;
-
-    for(let i=0;i<gray.length;i+=50){
-        brightness += gray[i];
-    }
-
-    brightness /= Math.max(1, (gray.length / 50));
-
-    const texture = avgEdges;
-
-    let leftEnergy = 0;
-    let rightEnergy = 0;
-
-    for(let y=0;y<height;y++){
-        for(let x=0;x<width;x++){
-
-            const idx = y * width + x;
-
-            if(x < width/2) leftEnergy += edges[idx];
-            else rightEnergy += edges[idx];
-        }
-    }
-
-    const asymmetry = Math.abs(leftEnergy - rightEnergy);
-
-    coeur += Math.floor((brightness - 120) / 20);
-    tete += Math.floor(texture / 30);
-    vie += Math.floor(asymmetry / 120000);
-
-    coeur = Math.max(10, Math.min(95, coeur));
-    tete = Math.max(10, Math.min(95, tete));
-    vie = Math.max(10, Math.min(95, vie));
-
-    const ratio = width / height;
-
-    let handShape;
-
-    if(ratio > 0.9) handShape = 'carrée';
-    else if(ratio > 0.75) handShape = 'équilibrée';
-    else handShape = 'longue';
-
-    const scores = [
-        {key:'PASSIONNE', value: coeur},
-        {key:'VISIONNAIRE', value: tete},
-        {key:'VITAL', value: vie}
-    ];
-
-    scores.sort((a,b)=>b.value-a.value);
-
-    let archetypeKey = scores[0].key;
-
-    if(Math.abs(coeur-tete)<8 && Math.abs(tete-vie)<8){
-        archetypeKey = 'MYSTIQUE';
-    }
-
-    if(handShape === 'carrée' && vie > 60){
-        archetypeKey = 'GUERRIER';
-    }
-
-    if(handShape === 'longue' && tete > 65){
-        archetypeKey = 'SAGE';
-    }
-
-    if(texture > 40 && coeur > 55 && vie > 55){
-        archetypeKey = 'ELEMENTAIRE';
-    }
-
-    if(asymmetry > 2500000){
-        archetypeKey = 'OMBRE';
-    }
-
-    if(vie > 80 && tete > 75){
-        archetypeKey = 'DESTIN';
-    }
-
-    const aura = [
-        'Feu Astral',
-        'Brume Lunaire',
-        'Éther Doré',
-        'Néant Violet',
-        'Souffle Solaire',
-        'Tempête Runique'
-    ];
-
-    const rune = ['ᚠ','ᚢ','ᚦ','ᚱ','ᚲ','ᛉ','ᛟ'];
-
-    return {
-
-        archetype: ARCHETYPES[archetypeKey],
-
-        lines: {
-            coeur,
-            tete,
-            vie
-        },
-
-        hand: {
-            forme: handShape
-        },
-
-        aura: aura[Math.floor(texture) % aura.length],
-
-        rune: rune[Math.floor(brightness) % rune.length],
-
-        metrics: {
-            texture: Math.floor(texture),
-            asymmetry: Math.floor(asymmetry / 1000),
-            brightness: Math.floor(brightness)
-        }
-    };
+  return phase;
 }
 
-function generatePrediction(lines,hand,analysis){
+function createMysticSeed(imageData){
 
-    const coeurText = [
-        'Votre aura émotionnelle attire les âmes perdues.',
-        'Les émotions guident vos décisions secrètes.',
-        'Votre cœur agit avant votre esprit.',
-        'Vous cachez une puissance affective rare.'
-    ];
+  const data = imageData.data;
 
-    const teteText = [
-        'Votre esprit voit ce que les autres ignorent.',
-        'Les symboles anciens vous parlent naturellement.',
-        'Votre intuition dépasse souvent la logique.',
-        'Vous percevez les motifs cachés du destin.'
-    ];
+  let seed = 0;
 
-    const vieText = [
-        'Votre énergie semble inépuisable.',
-        'Vous traversez les épreuves avec une force étrange.',
-        'Votre présence influence votre entourage.',
-        'Votre vitalité possède quelque chose d’anormal.'
-    ];
+  for(let i=0;i<data.length;i+=120){
+    seed += data[i] * 3;
+    seed += data[i+1] * 5;
+    seed += data[i+2] * 7;
+  }
 
-    function pick(arr,seed){
-        return arr[seed % arr.length];
-    }
+  const now = new Date();
 
-    const text = [];
+  seed += now.getHours() * 111;
+  seed += now.getMinutes() * 13;
 
-    text.push(pick(coeurText,lines.coeur));
-    text.push(pick(teteText,lines.tete));
-    text.push(pick(vieText,lines.vie));
+  seed += Math.floor(calculateMoonPhase() * 1000);
 
-    text.push(`Aura détectée : ${analysis.aura}`);
-    text.push(`Rune dominante : ${analysis.rune}`);
-
-    if(analysis.metrics.texture > 45){
-        text.push('Les lignes de votre paume semblent particulièrement agitées.');
-    }
-
-    if(analysis.metrics.brightness < 100){
-        text.push('Une énergie nocturne entoure votre destinée.');
-    }
-
-    if(analysis.metrics.asymmetry > 1500){
-        text.push('Votre chemin de vie semble imprévisible.');
-    }
-
-    return text.join(' ');
+  return Math.abs(seed);
 }
 
-function renderAnalysis(analysis){
+function analyzeEnergy(imageData,width,height){
 
-    const arch = analysis.archetype;
-    const lines = analysis.lines;
-    const hand = analysis.hand;
+  const data = imageData.data;
 
-    const prediction = generatePrediction(lines,hand,analysis);
+  let brightness = 0;
+  let red = 0;
+  let blue = 0;
+  let green = 0;
 
-    const container = document.getElementById('resultContainer');
+  let texture = 0;
 
-    container.innerHTML = `
+  let left = 0;
+  let right = 0;
 
-    <div class="result-card">
+  for(let y=1;y<height-1;y++){
+    for(let x=1;x<width-1;x++){
 
-        <div class="hand-icon">${arch.icon}</div>
+      const idx = (y * width + x) * 4;
 
-        <div class="wizard-name">${arch.name}</div>
+      const r = data[idx];
+      const g = data[idx+1];
+      const b = data[idx+2];
 
-        <div style="text-align:center;margin-top:10px;">
-            ${arch.traits.map(t=>`<span class="badge">${t}</span>`).join('')}
-        </div>
+      brightness += (r+g+b)/3;
 
-        <div style="margin-top:15px;line-height:1.6;">
-            ${arch.desc}
-        </div>
+      red += r;
+      green += g;
+      blue += b;
 
+      const rightPixel = data[idx+4] || r;
+      const bottomPixel = data[idx+(width*4)] || r;
+
+      texture += Math.abs(r-rightPixel);
+      texture += Math.abs(r-bottomPixel);
+
+      if(x < width/2){
+        left += r+g+b;
+      } else {
+        right += r+g+b;
+      }
+    }
+  }
+
+  const totalPixels = width * height;
+
+  brightness /= totalPixels;
+  red /= totalPixels;
+  green /= totalPixels;
+  blue /= totalPixels;
+  texture /= totalPixels;
+
+  const asymmetry = Math.abs(left-right) / totalPixels;
+
+  const moonPhase = calculateMoonPhase();
+
+  const solarEnergy = Math.min(100, Math.floor((red/255)*100 + brightness/5));
+
+  const lunarEnergy = Math.min(100, Math.floor((blue/255)*100 + moonPhase*40));
+
+  const etherEnergy = Math.min(100, Math.floor(texture * 2));
+
+  const shadowEnergy = Math.min(100, Math.floor(asymmetry / 2));
+
+  const harmony = Math.max(10,
+    100 - Math.abs(solarEnergy - lunarEnergy)
+  );
+
+  const energies = {
+    solaire: solarEnergy,
+    lunaire: lunarEnergy,
+    ether: etherEnergy,
+    ombre: shadowEnergy,
+    harmonie: harmony
+  };
+
+  let archetype = 'LUNAIRE';
+
+  const maxEnergy = Math.max(
+    solarEnergy,
+    lunarEnergy,
+    etherEnergy,
+    shadowEnergy
+  );
+
+  if(maxEnergy === solarEnergy){
+    archetype = 'SOLAIRE';
+  }
+
+  if(maxEnergy === lunarEnergy){
+    archetype = 'LUNAIRE';
+  }
+
+  if(maxEnergy === etherEnergy){
+    archetype = 'ELEMENTAIRE';
+  }
+
+  if(maxEnergy === shadowEnergy){
+    archetype = 'OMBRE';
+  }
+
+  if(harmony > 85){
+    archetype = 'CELESTE';
+  }
+
+  if(etherEnergy > 70 && lunarEnergy > 65){
+    archetype = 'RUNIQUE';
+  }
+
+  const seed = createMysticSeed(imageData);
+
+  return {
+
+    archetype: ARCHETYPES[archetype],
+
+    seed,
+
+    aura: AURAS[seed % AURAS.length],
+
+    rune: RUNES[seed % RUNES.length],
+
+    element: ELEMENTS[seed % ELEMENTS.length],
+
+    moonPhase,
+
+    energies,
+
+    metrics: {
+      brightness: Math.floor(brightness),
+      texture: Math.floor(texture),
+      asymmetry: Math.floor(asymmetry)
+    }
+  };
+}
+
+function prophecy(analysis){
+
+  const messages = {
+
+    solaire: [
+      "Une force de rayonnement influence actuellement vos choix.",
+      "Votre énergie attire naturellement les autres vers vous.",
+      "Une période d'affirmation personnelle approche."
+    ],
+
+    lunaire: [
+      "Votre intuition semble particulièrement éveillée.",
+      "Les cycles invisibles influencent fortement votre destinée.",
+      "Des vérités cachées cherchent à émerger."
+    ],
+
+    ether: [
+      "Votre aura entre en résonance avec des forces anciennes.",
+      "Votre énergie traverse actuellement une transformation.",
+      "Une ouverture spirituelle semble imminente."
+    ],
+
+    ombre: [
+      "Votre destinée suit un chemin difficile à prévoir.",
+      "Certaines énergies autour de vous restent voilées.",
+      "Votre silence cache une grande puissance."
+    ]
+  };
+
+  function pick(arr,seed){
+    return arr[seed % arr.length];
+  }
+
+  const seed = analysis.seed;
+
+  const text = [];
+
+  text.push(pick(messages.solaire, seed));
+  text.push(pick(messages.lunaire, seed+3));
+  text.push(pick(messages.ether, seed+6));
+  text.push(pick(messages.ombre, seed+9));
+
+  text.push(`Rune dominante : ${analysis.rune}`);
+
+  text.push(`Aura détectée : ${analysis.aura}`);
+
+  text.push(`Élément spirituel : ${analysis.element}`);
+
+  if(analysis.energies.harmonie > 80){
+    text.push("Vos flux énergétiques sont particulièrement alignés.");
+  }
+
+  if(analysis.metrics.texture > 35){
+    text.push("L'Oracle détecte une agitation astrale inhabituelle.");
+  }
+
+  if(analysis.metrics.brightness < 90){
+    text.push("Une influence nocturne semble entourer votre trajectoire.");
+  }
+
+  return text.join(' ');
+}
+
+function render(analysis){
+
+  const result = document.getElementById('resultArea');
+
+  const arch = analysis.archetype;
+
+  const prediction = prophecy(analysis);
+
+  result.innerHTML = `
+
+  <div class="orb"></div>
+
+  <div class="result-title">
+    ${arch.icon} ${arch.title}
+  </div>
+
+  <div style="text-align:center;color:#cebaf5;line-height:1.7;">
+    ${arch.desc}
+  </div>
+
+  <div style="text-align:center;margin-top:12px;">
+    ${arch.traits.map(t=>`<span class="tag">${t}</span>`).join('')}
+  </div>
+
+  <div class="energy-grid">
+
+    <div class="energy-card">
+      ☀️ Énergie solaire : ${analysis.energies.solaire}%
+      <div class="bar">
+        <div class="fill" style="width:${analysis.energies.solaire}%"></div>
+      </div>
     </div>
 
-    <div class="stats-grid">
-
-        <div class="stat">
-            ❤️ Ligne de cœur : ${lines.coeur}%
-            <div class="gauge">
-                <div class="gauge-fill" style="width:${lines.coeur}%"></div>
-            </div>
-        </div>
-
-        <div class="stat">
-            🧠 Ligne de tête : ${lines.tete}%
-            <div class="gauge">
-                <div class="gauge-fill" style="width:${lines.tete}%"></div>
-            </div>
-        </div>
-
-        <div class="stat">
-            🌿 Ligne de vie : ${lines.vie}%
-            <div class="gauge">
-                <div class="gauge-fill" style="width:${lines.vie}%"></div>
-            </div>
-        </div>
-
-        <div class="stat">
-            🖐️ Main : ${hand.forme}
-        </div>
-
+    <div class="energy-card">
+      🌙 Résonance lunaire : ${analysis.energies.lunaire}%
+      <div class="bar">
+        <div class="fill" style="width:${analysis.energies.lunaire}%"></div>
+      </div>
     </div>
 
-    <div class="prediction">
-        🔮 ${prediction}
-        <br><br>
-        ✨ Conseil mystique : ${arch.conseil}
+    <div class="energy-card">
+      ✨ Flux éthérique : ${analysis.energies.ether}%
+      <div class="bar">
+        <div class="fill" style="width:${analysis.energies.ether}%"></div>
+      </div>
     </div>
 
-    <div class="small">
-        Analyse basée sur les contrastes, textures et symétries de la paume.
+    <div class="energy-card">
+      🌑 Polarité d'ombre : ${analysis.energies.ombre}%
+      <div class="bar">
+        <div class="fill" style="width:${analysis.energies.ombre}%"></div>
+      </div>
     </div>
 
-    `;
+  </div>
+
+  <div class="prediction">
+    🔮 ${prediction}
+    <br><br>
+    🜂 Harmonie astrale : ${analysis.energies.harmonie}%
+    <br>
+    🌘 Phase lunaire : ${Math.floor(analysis.moonPhase * 100)}%
+  </div>
+
+  <div class="footer">
+    Analyse énergétique basée sur les couleurs, textures, polarités, luminosité et cycles lunaires.
+  </div>
+
+  `;
 }
 
-async function performReading(){
+async function performScan(){
 
-    const imgData = captureHand();
+  const image = capture();
 
-    if(!imgData){
-        alert('Impossible de capturer la main');
-        return;
-    }
+  if(!image){
+    alert('Impossible de capturer l’image');
+    return;
+  }
 
-    const btn = document.getElementById('captureBtn');
+  const btn = document.getElementById('scanBtn');
 
-    btn.disabled = true;
-    btn.innerHTML = '🔍 Lecture magique...';
+  btn.disabled = true;
+  btn.innerHTML = '🜂 Lecture des flux astrals...';
 
-    await new Promise(r=>setTimeout(r,900));
+  await new Promise(r=>setTimeout(r,1800));
 
-    const analysis = analyzeHandLines(
-        imgData,
-        imgData.width,
-        imgData.height
-    );
+  const analysis = analyzeEnergy(
+    image,
+    image.width,
+    image.height
+  );
 
-    renderAnalysis(analysis);
+  render(analysis);
 
-    btn.disabled = false;
-    btn.innerHTML = '🔮 Capturer & Analyser';
+  btn.disabled = false;
+  btn.innerHTML = "🜂 Scanner l'aura";
 
-    if(navigator.vibrate){
-        navigator.vibrate(100);
-    }
+  if(navigator.vibrate){
+    navigator.vibrate([100,50,100]);
+  }
 }
 
 window.addEventListener('load', async ()=>{
 
-    await startCamera();
+  await startCamera();
 
-    document
-        .getElementById('captureBtn')
-        .addEventListener('click',performReading);
+  document
+    .getElementById('scanBtn')
+    .addEventListener('click', performScan);
 
-    document
-        .getElementById('switchBtn')
-        .addEventListener('click',switchCamera);
+  document
+    .getElementById('switchBtn')
+    .addEventListener('click', switchCamera);
 
-    document
-        .getElementById('resetBtn')
-        .addEventListener('click',()=>location.reload());
+  document
+    .getElementById('resetBtn')
+    .addEventListener('click', ()=> location.reload());
 });
 
 window.addEventListener('beforeunload',()=>{
-    if(stream){
-        stream.getTracks().forEach(t=>t.stop());
-    }
+  if(stream){
+    stream.getTracks().forEach(t=>t.stop());
+  }
 });
 
 </script></body>
